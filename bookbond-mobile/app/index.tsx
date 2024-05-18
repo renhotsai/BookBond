@@ -9,7 +9,7 @@ export default function Index() {
         alignItems: "center",
       }}
     >
-      <Text>Folder structure change</Text>
+      <Text>Test github action</Text>
     </View>
   );
 }
