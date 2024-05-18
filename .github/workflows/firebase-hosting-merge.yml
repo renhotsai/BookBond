@@ -20,9 +20,7 @@ jobs:
         working-directory: bookbond-web
         run: npm ci && npm run build
 
-      - uses: FirebaseExtended/action-hosting-deploy@v0
-        with:
-          repoToken: ${{ secrets.GITHUB_TOKEN }}
-          firebaseServiceAccount: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_BOOKBOND_CC6D2 }}
-          channelId: live
-          projectId: bookbond-cc6d2
+      - name: Deploy to Firebase Hosting
+        run: |
+          firebase use --add bookbond-cc6d2 --token ${{ secrets.FIREBASE_SERVICE_ACCOUNT_BOOKBOND_CC6D2 }}
+          firebase deploy --only hosting --project bookbond-cc6d2 --config bookbond-web/firebase.json
