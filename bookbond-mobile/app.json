@@ -1,6 +1,6 @@
 {
   "expo": {
-    "owner":"wip-gp3",
+    "owner": "wip-gp3",
     "name": "G3_BookBondApp",
     "slug": "G3_BookBondApp",
     "version": "1.0.0",
@@ -13,7 +13,8 @@
       "backgroundColor": "#ffffff"
     },
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "bookbond-mobile"
     },
     "android": {
       "adaptiveIcon": {
@@ -23,6 +24,11 @@
     },
     "web": {
       "favicon": "./assets/favicon.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "90b11c71-93e3-42ba-8d1a-135e8e704f87"
+      }
     }
   }
 }
