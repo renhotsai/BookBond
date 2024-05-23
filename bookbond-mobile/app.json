@@ -1,8 +1,8 @@
 {
   "expo": {
     "owner": "wip-gp3",
-    "name": "BookBond",
-    "slug": "BookBond",
+    "name": "bookbond",
+    "slug": "bookbond",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
