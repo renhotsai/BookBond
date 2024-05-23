@@ -3,6 +3,7 @@ import LoginScreen from "./screens/LoginScreen";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { NavigationContainer } from "@react-navigation/native";
 import SignUpScreen from "./screens/SignUpScreen";
+import BookDetails from './screens/BookDetailScreen';
 
 const App = () => {
   const Stack = createNativeStackNavigator();
@@ -16,6 +17,7 @@ const App = () => {
             options={{ headerShown: false }}
           />
           <Stack.Screen name="SignUp" component={SignUpScreen} />
+          <Stack.Screen name="BookDetails" component={BookDetails} />
         </Stack.Navigator>
       </NavigationContainer>
     </SafeAreaView>

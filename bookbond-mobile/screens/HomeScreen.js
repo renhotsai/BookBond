@@ -2,13 +2,11 @@ import { useEffect, useState } from "react";
 import { FlatList, Text, View, Image, StyleSheet, TextInput, TouchableOpacity } from "react-native";
 import { AntDesign } from '@expo/vector-icons';
 
-const HomeScreen = () => {
+const HomeScreen = ({navigation}) => {
 
     useEffect(() => {
         fetchData()
     }, [])
-
-    const [col, setCol] = useState([]);
 
     const [booksFromAPI, setBooksFromAPI] = useState([]);
     const fetchData = async () => {
@@ -22,6 +20,7 @@ const HomeScreen = () => {
     const onBookPress = () => {
         console.log("onBookPress");
         // Book details page
+        navigation.navigate("BookDetails");
     }
 
     const renderBookItem = (item) => {
