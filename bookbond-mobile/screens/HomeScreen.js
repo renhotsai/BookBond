@@ -17,22 +17,25 @@ const HomeScreen = () => {
     }
 
     const onSearchPress = () => {
-        console.log(col);
+        // Search
+    }
+    const onBookPress = () => {
+        console.log("onBookPress");
+        // Book details page
     }
 
     const renderBookItem = (item) => {
 
         console.log(item.volumeInfo.imageLinks.thumbnail);
         return (
-            <View style={{ display: "flex", flexDirection: "row", padding: 5, gap: 10 }}>
-
+            <TouchableOpacity style={{ display: "flex", flexDirection: "row", padding: 5, gap: 10 }} onPress={onBookPress}>
                 <Image source={{ uri: `${item.volumeInfo.imageLinks.thumbnail}` }} style={{ width: 100, height: 100 }} />
 
                 <View style={{ justifyContent: "space-around" }}>
                     <Text>{item.volumeInfo.title}</Text>
                     <Text>{item.volumeInfo.authors}</Text>
                 </View>
-            </View>
+            </TouchableOpacity>
         )
     }
 
