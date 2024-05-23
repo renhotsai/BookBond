@@ -1,0 +1,176 @@
+import { useState } from "react";
+import {
+  StyleSheet,
+  Text,
+  TextInput,
+  View,
+  TouchableOpacity,
+  Image,
+} from "react-native";
+import TabScreen from "./TabScreen";
+import {
+  auth,
+  db,
+  signInWithEmailAndPassword,
+  signOut,
+  createUserWithEmailAndPassword,
+} from "../firebaseConfig";
+
+const LoginScreen = ({ navigation }) => {
+  const [emailFromUI, setEmailFromUI] = useState("user@email.com");
+  const [passwordFromUI, setPasswordFromUI] = useState("123456");
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  const onLogin = async () => {
+    try {
+      const userCredential = await signInWithEmailAndPassword(
+        auth,
+        emailFromUI,
+        passwordFromUI
+      );
+      alert("Login Successful!");
+      setIsLoggedIn(true);
+    } catch (err) {
+      alert("Invalid Credentials");
+      console.log(err);
+    }
+  };
+
+  const onLogout = async () => {
+    try {
+      //1. check if user is currently logged in
+      if (auth.currentUser === null) {
+        alert(`Sorry, no user is logged in.`);
+      } else {
+        await signOut(auth);
+        setIsLoggedIn(false);
+        alert(`Logged Out!`);
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  const signUp = () => {
+    navigation.navigate("SignUp");
+  };
+
+  return (
+    <View style={{ flex: 1 }}>
+      {isLoggedIn ? (
+        <TabScreen onLogout={onLogout} />
+      ) : (
+        <View style={styles.container}>
+          <Image
+            style={{
+              height: 200,
+              width: 400,
+              objectFit: "contain",
+            }}
+            source={require("../assets/icon.png")}
+          />
+          <View style={{ justifyContent: "center", alignItems: "center" }}>
+            <Text style={styles.title}>Login Screen</Text>
+          </View>
+
+          <View style={styles.form}>
+            <TextInput
+              style={styles.textInputStyles}
+              placeholder="Enter Email"
+              onChangeText={setEmailFromUI}
+              value={emailFromUI}
+              keyboardType="email-address"
+              autoCapitalize="none"
+            />
+
+            <TextInput
+              style={styles.textInputStyles}
+              placeholder="Enter Password"
+              onChangeText={setPasswordFromUI}
+              value={passwordFromUI}
+              secureTextEntry={true}
+              keyboardType="default"
+            />
+
+            <TouchableOpacity
+              style={styles.button}
+              //   onPress={() => onLogin(emailFromUI, passwordFromUI)}
+              onPress={onLogin}
+            >
+              <Text style={styles.buttonText}>Login</Text>
+            </TouchableOpacity>
+
+            <View style={styles.signUpContainer}>
+              <Text style={styles.signUpNeedAnAccount}>Need an Account? </Text>
+              <TouchableOpacity onPress={signUp}>
+                <Text style={styles.signUpHere}>Register Here</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      )}
+    </View>
+  );
+};
+export default LoginScreen;
+
+const styles = StyleSheet.create({
+  container: {
+    padding: 40,
+    flex: 1,
+    width: "100%",
+    justifyContent: "center",
+    alignItems: "center",
+    // backgroundColor: 'blue'
+  },
+  title: {
+    fontWeight: "bold",
+    fontSize: "25",
+    alignContent: "center",
+    padding: 10,
+  },
+  form: {
+    width: "100%",
+    height: "50%",
+    backgroundColor: "white",
+    borderRadius: 10,
+    padding: 20,
+    justifyContent: "space-evenly",
+    borderColor: "#151515",
+  },
+
+  button: {
+    padding: 10,
+    backgroundColor: "#A91D3A",
+    borderRadius: 10,
+    alignItems: "center",
+  },
+
+  buttonText: {
+    color: "white",
+    fontSize: 16,
+    fontWeight: "bold",
+  },
+
+  textInputStyles: {
+    backgroundColor: "#dedede",
+    borderWidth: 1,
+    borderColor: "#D3d3d3",
+    borderRadius: 8,
+    paddingHorizontal: 10,
+    paddingVertical: 8,
+    fontSize: 16,
+  },
+
+  signUpContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  signUpNeedAnAccount: {
+    fontStyle: "italic",
+    color: "#B4B4B8",
+  },
+  signUpHere: {
+    color: "#378CE7",
+  },
+});
