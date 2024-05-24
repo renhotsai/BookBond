@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { FlatList, Text, View, Image, StyleSheet, TextInput, TouchableOpacity } from "react-native";
 import { AntDesign } from '@expo/vector-icons';
 
-const HomeScreen = ({navigation}) => {
+const HomeScreen = ({ navigation }) => {
 
     useEffect(() => {
         fetchData()

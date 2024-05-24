@@ -16,7 +16,7 @@ import {
   createUserWithEmailAndPassword,
 } from "../firebaseConfig";
 
-const LoginScreen = ({ navigation }) => {
+const LoginScreen = (props) => {
   const [emailFromUI, setEmailFromUI] = useState("user@email.com");
   const [passwordFromUI, setPasswordFromUI] = useState("123456");
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -29,7 +29,8 @@ const LoginScreen = ({ navigation }) => {
         passwordFromUI
       );
       alert("Login Successful!");
-      setIsLoggedIn(true);
+      props.screenChange({ screenName: "Main" })
+      
     } catch (err) {
       alert("Invalid Credentials");
       console.log(err);
@@ -52,7 +53,7 @@ const LoginScreen = ({ navigation }) => {
   };
 
   const signUp = () => {
-    navigation.navigate("SignUp");
+    props.screenChange({ screenName: "SignUp" })
   };
 
   return (
