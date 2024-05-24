@@ -1,10 +1,15 @@
 import { Text, View, TouchableOpacity } from "react-native";
+import { auth } from "../firebaseConfig";
 
 const ProfileScreen = (props) => {
+
+  const logOut = () => {
+    props.logout();
+  }
   return (
     <View>
       <Text>Sign Up Screen Jeremy</Text>
-      <TouchableOpacity onPress={props.logOut}>
+      <TouchableOpacity onPress={logOut}>
         <Text style={{color: 'blue'}}>Sign Out</Text>
       </TouchableOpacity>
     </View>

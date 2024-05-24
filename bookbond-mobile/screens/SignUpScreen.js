@@ -8,7 +8,7 @@ import {
 } from "react-native";
 import { createUserWithEmailAndPassword, auth } from "../firebaseConfig";
 
-const SignUpScreen = () => {
+const SignUpScreen = ( props ) => {
   const [firstNameFromUI, setFirstNameFromUI] = useState("");
   const [lastNameFromUI, setLastNameFromUI] = useState("");
   const [phoneNumberFromUI, setPhoneNumberFromUI] = useState("");
@@ -41,6 +41,11 @@ const SignUpScreen = () => {
       console.log("Account not Registered!");
     }
   };
+
+  const onLoginPress = () =>{
+    props.screenChange({ screenName: "Login" })
+  }
+
   return (
     <View style={{ flex: 1 }}>
       <View style={styles.form}>
@@ -93,6 +98,9 @@ const SignUpScreen = () => {
 
         <TouchableOpacity style={styles.button} onPress={onRegister}>
           <Text style={styles.buttonText}>Register</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.button} onPress={onLoginPress}>
+          <Text style={styles.buttonText}>Back to Login</Text>
         </TouchableOpacity>
       </View>
     </View>
