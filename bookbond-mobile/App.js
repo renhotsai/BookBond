@@ -2,8 +2,6 @@ import { SafeAreaView, StyleSheet, Text, View } from "react-native";
 import LoginScreen from "./screens/LoginScreen";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import SignUpScreen from "./screens/SignUpScreen";
-import BookDetails from './screens/BookDetailScreen';
-import TabScreen from "./screens/TabScreen";
 import { useState } from "react";
 import { NavigationContainer } from "@react-navigation/native";
 import StackScreen from "./screens/StackScreen";
@@ -40,12 +38,3 @@ const App = () => {
   );
 };
 export default App;
-
-// const styles = StyleSheet.create({
-//   container: {
-//     flex: 1,
-//     backgroundColor: "#D2E9E9",
-//     alignItems: "center",
-//     justifyContent: "center",
-//   },
-// });

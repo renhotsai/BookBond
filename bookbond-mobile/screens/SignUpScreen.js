@@ -6,9 +6,10 @@ import {
   TextInput,
   TouchableOpacity,
 } from "react-native";
-import { createUserWithEmailAndPassword, auth } from "../firebaseConfig";
+import { createUserWithEmailAndPassword, auth, db } from "../firebaseConfig";
+import { collection, doc, setDoc } from "firebase/firestore";
 
-const SignUpScreen = ( props ) => {
+const SignUpScreen = (props) => {
   const [firstNameFromUI, setFirstNameFromUI] = useState("");
   const [lastNameFromUI, setLastNameFromUI] = useState("");
   const [phoneNumberFromUI, setPhoneNumberFromUI] = useState("");
@@ -17,7 +18,13 @@ const SignUpScreen = ( props ) => {
   const [reenterPasswordFromUI, setReenterPasswordFromUI] = useState("");
 
   const onRegister = async () => {
-    if (passwordFromUI == reenterPasswordFromUI) {
+    if (
+      passwordFromUI == reenterPasswordFromUI &&
+      firstNameFromUI !== "" &&
+      lastNameFromUI !== "" &&
+      phoneNumberFromUI !== "" &&
+      emailFromUI !== ""
+    ) {
       console.log(
         firstNameFromUI,
         lastNameFromUI,
@@ -31,20 +38,34 @@ const SignUpScreen = ( props ) => {
           emailFromUI,
           passwordFromUI
         );
+
+        const documentRef = doc(
+          collection(db, "UsersCollection"), //Firebase Collection name
+          emailFromUI //Document ID
+        );
+        await setDoc(documentRef, {
+          firstName: firstNameFromUI,
+          lastName: lastNameFromUI,
+          contactNumber: phoneNumberFromUI,
+          emailAddress: emailFromUI,
+          userPassword: passwordFromUI,
+        });
+
+        // Display success message
         alert("Register Successful!");
-        setIsLoggedIn(true);
       } catch (err) {
         console.log(err);
       }
       console.log("Account Registered");
     } else {
       console.log("Account not Registered!");
+      alert("Unable to Register. Please check Fields.");
     }
   };
 
-  const onLoginPress = () =>{
-    props.screenChange({ screenName: "Login" })
-  }
+  const onLoginPress = () => {
+    props.screenChange({ screenName: "Login" });
+  };
 
   return (
     <View style={{ flex: 1 }}>

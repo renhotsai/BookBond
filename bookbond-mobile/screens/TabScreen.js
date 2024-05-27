@@ -7,14 +7,13 @@ import { Ionicons } from "@expo/vector-icons";
 const TabScreen = (props) => {
   const Tab = createBottomTabNavigator();
 
-
+ 
   const logout = () => {
-    props.logout()
-  }
+    props.logout();
+  };
 
-  
   return (
-    <Tab.Navigator screenOptions={{headerShown:false}}>
+    <Tab.Navigator screenOptions={{ headerShown: false }}>
       <Tab.Screen
         name="Home"
         options={{
@@ -32,7 +31,7 @@ const TabScreen = (props) => {
           ),
         }}
       >
-        {() => <ProfileScreen logout={logout} />}
+        {() => <ProfileScreen logout={logout} user={props.user} />}
       </Tab.Screen>
     </Tab.Navigator>
   );

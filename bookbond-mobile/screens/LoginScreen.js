@@ -21,6 +21,8 @@ const LoginScreen = (props) => {
   const [passwordFromUI, setPasswordFromUI] = useState("123456");
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
+  const [userLoggedIn, setUserLoggedIn] = useState("");
+
   const onLogin = async () => {
     try {
       const userCredential = await signInWithEmailAndPassword(
@@ -29,6 +31,7 @@ const LoginScreen = (props) => {
         passwordFromUI
       );
       alert("Login Successful!");
+      setUserLoggedIn(emailFromUI);
       props.screenChange({ screenName: "Main" })
       
     } catch (err) {
@@ -43,8 +46,8 @@ const LoginScreen = (props) => {
       if (auth.currentUser === null) {
         alert(`Sorry, no user is logged in.`);
       } else {
-        alert(`Logged Out!`);
         await signOut(auth);
+        setUserLoggedIn("");
         setIsLoggedIn(false);
         
       }
@@ -60,7 +63,7 @@ const LoginScreen = (props) => {
   return (
     <View style={{ flex: 1 }}>
       {isLoggedIn ? (
-        <TabScreen logout={onLogout} />
+        <TabScreen logout={onLogout} user={userLoggedIn} />
       ) : (
         <View style={styles.container}>
           <Image
