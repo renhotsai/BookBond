@@ -1,11 +1,13 @@
 import { Text, View, TouchableOpacity } from "react-native";
-import { auth } from "../firebaseConfig";
 
 const ProfileScreen = (props) => {
 
   const logOut = () => {
     props.logout();
+    
   }
+
+
   return (
     <View>
       <Text>Sign Up Screen Jeremy</Text>

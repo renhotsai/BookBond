@@ -43,9 +43,10 @@ const LoginScreen = (props) => {
       if (auth.currentUser === null) {
         alert(`Sorry, no user is logged in.`);
       } else {
+        alert(`Logged Out!`);
         await signOut(auth);
         setIsLoggedIn(false);
-        alert(`Logged Out!`);
+        
       }
     } catch (err) {
       console.log(err);
@@ -59,7 +60,7 @@ const LoginScreen = (props) => {
   return (
     <View style={{ flex: 1 }}>
       {isLoggedIn ? (
-        <TabScreen onLogout={onLogout} />
+        <TabScreen logout={onLogout} />
       ) : (
         <View style={styles.container}>
           <Image
