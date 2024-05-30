@@ -14,7 +14,11 @@ const ProfileScreen = (props) => {
       <Stack.Screen name="User Profile" options={{ headerShown: false }}>
         {() => <Profile logout={props.logout} />}
       </Stack.Screen>
-      <Stack.Screen name="Edit Profile" component={EditProfileScreen} />
+      <Stack.Screen
+        name="Edit Profile"
+        component={EditProfileScreen}
+        options={{ headerShown: false }}
+      />
     </Stack.Navigator>
   );
 };
