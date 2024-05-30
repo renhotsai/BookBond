@@ -1,9 +1,10 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Text, View, TouchableOpacity, StyleSheet, Image } from "react-native";
-import { auth } from "../firebaseConfig";
+import { auth, db } from "../firebaseConfig";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import EditProfileScreen from "./EditProfileScreen";
 import { useNavigation } from "@react-navigation/native";
+import { doc, getDoc } from "firebase/firestore";
 
 const ProfileScreen = (props) => {
   const Stack = createNativeStackNavigator();
@@ -21,6 +22,10 @@ export default ProfileScreen;
 
 const Profile = (props) => {
   const navigation = useNavigation();
+
+  const [userFirstName, setUserFirstName] = useState("");
+  const [userLastName, setUserLastName] = useState("");
+
   const logOut = () => {
     props.logout();
     alert(`Logged Out!`);
@@ -28,11 +33,26 @@ const Profile = (props) => {
 
   const editProfileHandler = () => {
     navigation.navigate("Edit Profile");
-  }
+  };
 
   useEffect(() => {
-    console.log(auth.currentUser.email);
+    // console.log(auth.currentUser.email);
+    getData();
   }, []);
+
+  const getData = async () => {
+    const docRef = doc(db, "UsersCollection", `${auth.currentUser.email}`);
+    const docSnap = await getDoc(docRef);
+
+    if (docSnap.exists()) {
+      // console.log("Document data:", docSnap.data());
+      const userData = docSnap.data();
+      setUserFirstName(userData.firstName);
+      setUserLastName(userData.lastName);
+    } else {
+      console.log("No such document!");
+    }
+  };
 
   return (
     <View style={{ flex: 1, padding: 20, justifyContent: "center" }}>
@@ -50,8 +70,8 @@ const Profile = (props) => {
         </TouchableOpacity>
       </View>
 
-      <Text style={styles.firstNameStyle}>First Name</Text>
-      <Text style={styles.lastNameStyle}>Last Name</Text>
+      <Text style={styles.firstNameStyle}>{userFirstName}</Text>
+      <Text style={styles.lastNameStyle}>{userLastName}</Text>
       <Text style={styles.emailStyle}>{auth.currentUser.email}</Text>
 
       <View style={{ alignItems: "flex-end" }}>
