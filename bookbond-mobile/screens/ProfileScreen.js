@@ -11,7 +11,7 @@ const ProfileScreen = (props) => {
 
   return (
     <Stack.Navigator initialRouteName="Profile">
-      <Stack.Screen name="User Profile">
+      <Stack.Screen name="User Profile" options={{ headerShown: false }}>
         {() => <Profile logout={props.logout} />}
       </Stack.Screen>
       <Stack.Screen name="Edit Profile" component={EditProfileScreen} />
@@ -65,7 +65,10 @@ const Profile = (props) => {
           source={require("../assets/profilepic.jpg")}
         />
 
-        <TouchableOpacity style={styles.editProfileButton} onPress={editProfileHandler}>
+        <TouchableOpacity
+          style={styles.editProfileButton}
+          onPress={editProfileHandler}
+        >
           <Text style={styles.editProfileText}>Edit Profile</Text>
         </TouchableOpacity>
       </View>

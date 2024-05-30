@@ -24,7 +24,7 @@ const StackScreen = (props) => {
                 {()=><TabScreen logout={logout}/>}
             </Stack.Screen>
             <Stack.Screen name="BookDetails" component={BookDetailScreen} />
-            <Stack.Screen name="Profile" options={{headerShown:false}}>
+            <Stack.Screen name="Profile">
                 {()=><ProfileScreen logout={logout}/>}
             </Stack.Screen>
         </Stack.Navigator>
