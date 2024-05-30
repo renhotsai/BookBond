@@ -31,7 +31,7 @@ const TabScreen = (props) => {
           ),
         }}
       >
-        {() => <ProfileScreen logout={logout} user={props.user} />}
+        {() => <ProfileScreen logout={logout} />}
       </Tab.Screen>
     </Tab.Navigator>
   );
