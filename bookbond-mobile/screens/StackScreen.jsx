@@ -7,6 +7,7 @@ import BookDetailScreen from './BookDetailScreen'
 import { ScreenStackHeaderSearchBarView } from 'react-native-screens'
 import { Ionicons } from "@expo/vector-icons";
 import { auth } from '../firebaseConfig'
+import ProfileScreen from './ProfileScreen'
 
 const StackScreen = (props) => {
     const Stack = createNativeStackNavigator()
@@ -23,6 +24,9 @@ const StackScreen = (props) => {
                 {()=><TabScreen logout={logout}/>}
             </Stack.Screen>
             <Stack.Screen name="BookDetails" component={BookDetailScreen} />
+            <Stack.Screen name="Profile" options={{headerShown:false}}>
+                {()=><ProfileScreen logout={logout}/>}
+            </Stack.Screen>
         </Stack.Navigator>
     )
 }

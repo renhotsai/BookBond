@@ -1,15 +1,129 @@
-import { View, Text } from 'react-native'
-import React from 'react'
+import React, { useState } from 'react';
+import { ScrollView, Text, Image, StyleSheet, TouchableOpacity, View, Alert } from 'react-native';
+import { auth, db } from '../firebaseConfig';
+import { addDoc, collection } from 'firebase/firestore';
 
-const BookDetails
- = () => {
-  return (
-    <View>
-      <Text>
-      BookDetails
-      </Text>
-    </View>
-  )
-}
+const BookDetailsScreen = ({ route }) => {
+    const { book } = route.params;
+    const [isExpanded, setIsExpanded] = useState(false);
 
-export default BookDetails
+    const toggleDescription = () => {
+        setIsExpanded(!isExpanded);
+    };
+
+    const renderDescription = () => {
+        const description = book.volumeInfo.description;
+        if (isExpanded) {
+            return (
+                <>
+                    <Text style={styles.description}>{description}</Text>
+                    <TouchableOpacity onPress={toggleDescription}>
+                        <Text style={styles.readMoreText}>Read Less</Text>
+                    </TouchableOpacity>
+                </>
+            );
+        } else {
+            const shortDescription = description.length > 200 ? description.substring(0, 200) + '...' : description;
+            return (
+                <>
+                    <Text style={styles.description}>{shortDescription}</Text>
+                    {description.length > 200 && (
+                        <TouchableOpacity onPress={toggleDescription}>
+                            <Text style={styles.readMoreText}>Read More</Text>
+                        </TouchableOpacity>
+                    )}
+                </>
+            );
+        }
+    };
+
+    const handleSubmit = async () => {
+        const user = auth.currentUser;
+        if (user !== null) {
+            try {
+                const booksColRef = collection(db, 'borrowedBooks');
+                const bookToInsert = {
+                    borrower: user.email,
+                    title: book.volumeInfo.title ?? 'No title',
+                    authors: book.volumeInfo.authors?.join(', ') ?? 'No authors',
+                    image: book.volumeInfo.imageLinks.thumbnail ?? 'No Image',
+                };
+                await addDoc(booksColRef, bookToInsert);
+                Alert.alert("Listing Created", "You have borrowed the book");
+            } catch (error) {
+                console.error("Error adding document: ", error);
+                Alert.alert("Error", "There was an error borrowing the book.");
+            }
+        } else {
+            Alert.alert("Not signed in", "You must be signed in to create a listing.");
+        }
+    };
+
+    return (
+        <ScrollView style={styles.container}>
+            {book.volumeInfo.imageLinks && book.volumeInfo.imageLinks.thumbnail && (
+                <Image source={{ uri: book.volumeInfo.imageLinks.thumbnail }} style={styles.image} />
+            )}
+            <Text style={styles.title}>{book.volumeInfo.title}</Text>
+            <Text style={styles.authors}>{book.volumeInfo.authors?.join(', ')}</Text>
+            {renderDescription()}
+            <View style={styles.buttonContainer}>
+                <TouchableOpacity style={styles.button} onPress={handleSubmit}>
+                    <Text style={styles.buttonText}>Borrow</Text>
+                </TouchableOpacity>
+            </View>
+        </ScrollView>
+    );
+};
+
+const styles = StyleSheet.create({
+    container: {
+        padding: 20,
+        backgroundColor: '#f8f8f8',
+    },
+    image: {
+        width: '100%',
+        height: 300,
+        resizeMode: 'contain',
+        marginBottom: 20,
+    },
+    title: {
+        fontSize: 24,
+        fontWeight: 'bold',
+        color: '#333',
+        marginBottom: 10,
+    },
+    authors: {
+        fontSize: 18,
+        color: '#666',
+        marginBottom: 20,
+    },
+    description: {
+        fontSize: 16,
+        color: '#444',
+        lineHeight: 24,
+        marginBottom: 10,
+    },
+    readMoreText: {
+        fontSize: 16,
+        color: '#1e90ff',
+        marginTop: 5,
+    },
+    buttonContainer: {
+        alignItems: 'center',
+        marginTop: 20,
+    },
+    button: {
+        backgroundColor: '#1e90ff',
+        paddingVertical: 15,
+        paddingHorizontal: 30,
+        borderRadius: 5,
+    },
+    buttonText: {
+        color: '#fff',
+        fontSize: 18,
+        fontWeight: 'bold',
+    },
+});
+
+export default BookDetailsScreen;

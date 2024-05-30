@@ -24,6 +24,8 @@ const App = () => {
         return <SignUpScreen screenChange={changeScreen} />;
       case 'Main':
         return <StackScreen screenChange={changeScreen} />;
+      case 'Profile':
+        return <StackScreen screenChange={changeScreen} />;
       default:
         return <LoginScreen screenChange={changeScreen} />;
     }

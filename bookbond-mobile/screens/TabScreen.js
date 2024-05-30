@@ -3,11 +3,12 @@ import { Text, TouchableOpacity, View } from "react-native";
 import HomeScreen from "./HomeScreen";
 import ProfileScreen from "./ProfileScreen";
 import { Ionicons } from "@expo/vector-icons";
+import BorrowedBooksScreen from "./BorrowedBooksScreen";
 
 const TabScreen = (props) => {
   const Tab = createBottomTabNavigator();
 
- 
+
   const logout = () => {
     props.logout();
   };
@@ -24,14 +25,15 @@ const TabScreen = (props) => {
         component={HomeScreen}
       ></Tab.Screen>
       <Tab.Screen
-        name="Profile"
+        name="Borrowed Books"
         options={{
           tabBarIcon: ({ color, size }) => (
-            <Ionicons name="person-circle" size={24} color="black" />
+            <Ionicons name="book-outline" size={24} color="black" />
           ),
         }}
+        component={BorrowedBooksScreen}
       >
-        {() => <ProfileScreen logout={logout} />}
+        {/* {() => <ProfileScreen logout={logout} />} */}
       </Tab.Screen>
     </Tab.Navigator>
   );
