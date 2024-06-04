@@ -4,6 +4,7 @@ import HomeScreen from "./HomeScreen";
 import ProfileScreen from "./ProfileScreen";
 import { Ionicons } from "@expo/vector-icons";
 import BorrowedBooksScreen from "./BorrowedBooksScreen";
+import MyLibraryScreen from "./MyLibraryScreen";
 
 const TabScreen = (props) => {
   const Tab = createBottomTabNavigator();
@@ -25,15 +26,14 @@ const TabScreen = (props) => {
         component={HomeScreen}
       ></Tab.Screen>
       <Tab.Screen
-        name="Borrowed Books"
+        name="My Library"
         options={{
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="book-outline" size={24} color="black" />
           ),
         }}
-        component={BorrowedBooksScreen}
+        component={MyLibraryScreen}
       >
-        {/* {() => <ProfileScreen logout={logout} />} */}
       </Tab.Screen>
     </Tab.Navigator>
   );
