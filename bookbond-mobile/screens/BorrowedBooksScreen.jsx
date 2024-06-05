@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { FlatList, Text, View, Image, StyleSheet, TouchableOpacity } from 'react-native';
 import { collection, query, where, onSnapshot, getDocs, updateDoc, doc } from 'firebase/firestore';
 import { db, auth } from '../firebaseConfig';
+import Book from '../components/Book';
 
 const BorrowedBooksScreen = () => {
 
@@ -47,7 +48,7 @@ const BorrowedBooksScreen = () => {
         <View style={styles.container}>
             <FlatList
                 data={bookingsList}
-                renderItem={renderBookItem}
+                renderItem={({ item }) => <Book item={item} />}
                 keyExtractor={(item, index) => index.toString()}
                 ListEmptyComponent={<Text>No borrowed books</Text>}
             />
