@@ -3,6 +3,9 @@
         "Config",
         "const",
         "Firestore",
-        "Ionicons"
+        "hearto",
+        "Ionicons",
+        "params",
+        "stringify"
     ]
 }
