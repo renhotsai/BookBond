@@ -37,16 +37,6 @@ const CollectionScreen = () => {
           return () => unsubscribe();
         });
 
-        // const books = await getDocs(booksCollectionColRef)
-        // if (books.size === 0) {
-        //   return
-        // }
-
-        // books.forEach((book) => {
-        //   // console.log(JSON.stringify(book.data()));
-        //   temp.push(book.data())
-        // }
-        // )
       } catch (error) {
         console.error("Error adding document: ", error);
         Alert.alert("Error", "There was an error borrowing the book.");
