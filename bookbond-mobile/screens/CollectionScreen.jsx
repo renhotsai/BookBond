@@ -53,7 +53,7 @@ const CollectionScreen = () => {
       <FlatList
         data={booksCollection}
         renderItem={({ item }) => <Book item={item} />}
-        keyExtractor={(item, index) => index.toString()}
+        keyExtractor={(item) => item.id}
         ListEmptyComponent={<Text>No collection books</Text>}
       />
     </View>

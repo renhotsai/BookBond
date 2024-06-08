@@ -1,15 +1,17 @@
 import React, { useEffect } from 'react'
-import { Text, View, Image, StyleSheet } from 'react-native';
+import { Text, View, Image, StyleSheet, TouchableOpacity } from 'react-native';
+
+
 
 const Book = ({ item }) => (
-    <View style={styles.bookItem}>
-        {item.image && <Image source={{ uri: item.image }} style={styles.bookImage} />}
-        <View style={styles.bookInfo}>
-            <Text style={styles.bookTitle}>{item.title}</Text>
-            <Text style={styles.bookAuthors}>{item.authors}</Text>
+        <View style={styles.bookItem} >
+            {item.imageLinks.thumbnail && <Image source={{ uri: item.imageLinks.thumbnail }} style={styles.bookImage} />}
+            <View style={styles.bookInfo}>
+                <Text style={styles.bookTitle}>{item.title}</Text>
+                <Text style={styles.bookAuthors}>{item.authors}</Text>
+            </View>
         </View>
-    </View>
-);
+    )
 
 export default Book
 

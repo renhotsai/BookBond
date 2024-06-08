@@ -12,7 +12,7 @@ const BookDetailsScreen = ({ route }) => {
     };
 
     const renderDescription = () => {
-        const description = book.volumeInfo.description;
+        const description = book.description;
         if (isExpanded) {
             return (
                 <>
@@ -44,9 +44,7 @@ const BookDetailsScreen = ({ route }) => {
                 const booksColRef = collection(db, 'borrowedBooks');
                 const bookToInsert = {
                     borrower: user.email,
-                    title: book.volumeInfo.title ?? 'No title',
-                    authors: book.volumeInfo.authors?.join(', ') ?? 'No authors',
-                    image: book.volumeInfo.imageLinks.thumbnail ?? 'No Image',
+                    ...book
                 };
                 await addDoc(booksColRef, bookToInsert);
                 Alert.alert("Listing Created", "You have borrowed the book");
@@ -61,11 +59,11 @@ const BookDetailsScreen = ({ route }) => {
 
     return (
         <ScrollView style={styles.container}>
-            {book.volumeInfo.imageLinks && book.volumeInfo.imageLinks.thumbnail && (
-                <Image source={{ uri: book.volumeInfo.imageLinks.thumbnail }} style={styles.image} />
+            {book.imageLinks && book.imageLinks.thumbnail && (
+                <Image source={{ uri: book.imageLinks.thumbnail }} style={styles.image} />
             )}
-            <Text style={styles.title}>{book.volumeInfo.title}</Text>
-            <Text style={styles.authors}>{book.volumeInfo.authors?.join(', ')}</Text>
+            <Text style={styles.title}>{book.title}</Text>
+            <Text style={styles.authors}>{book.authors?.join(', ')}</Text>
             {renderDescription()}
             <View style={styles.buttonContainer}>
                 <TouchableOpacity style={styles.button} onPress={handleSubmit}>
