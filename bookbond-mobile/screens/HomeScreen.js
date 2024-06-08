@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { FlatList, Text, View, Image, TextInput, TouchableOpacity, StyleSheet } from "react-native";
 import { AntDesign, Ionicons } from '@expo/vector-icons';
+import Book from "../components/Book";
 
 const HomeScreen = ({ navigation }) => {
 
@@ -11,8 +12,16 @@ const HomeScreen = ({ navigation }) => {
     const [booksFromAPI, setBooksFromAPI] = useState([]);
 
     const fetchData = async () => {
-        const dataJson = await (await fetch(`https://www.googleapis.com/books/v1/volumes?q=""&startIndex=0&maxResults=40`)).json();
-        setBooksFromAPI(dataJson.items);
+        const dataJson = await (await fetch(`https://www.googleapis.com/books/v1/volumes?q=""&startIndex=0&maxResults=1`)).json();
+        const temp = []
+        for (const item of dataJson.items) {
+            const book = {
+                id: item.id,
+                ...item.volumeInfo
+            }
+            temp.push(book);
+        }
+        setBooksFromAPI(temp);
     };
 
     const onSearchPress = () => {
@@ -20,7 +29,7 @@ const HomeScreen = ({ navigation }) => {
     };
 
     const onBookPress = (item) => {
-        console.log("onBookPress", item.volumeInfo.title);
+        console.log("onBookPress", item.title);
 
         navigation.navigate("BookDetails", { book: item });
     };
@@ -31,14 +40,8 @@ const HomeScreen = ({ navigation }) => {
 
     const renderBookItem = ({ item }) => {
         return (
-            <TouchableOpacity style={styles.bookItem} onPress={() => onBookPress(item)}>
-                {item.volumeInfo.imageLinks && item.volumeInfo.imageLinks.thumbnail && (
-                    <Image source={{ uri: item.volumeInfo.imageLinks.thumbnail }} style={styles.bookImage} />
-                )}
-                <View style={styles.bookInfo}>
-                    <Text style={styles.bookTitle}>{item.volumeInfo.title}</Text>
-                    <Text style={styles.bookAuthors}>{item.volumeInfo.authors?.join(', ')}</Text>
-                </View>
+            <TouchableOpacity onPress={() => onBookPress(item)}>
+                <Book item={item}/>
             </TouchableOpacity>
         );
     };
