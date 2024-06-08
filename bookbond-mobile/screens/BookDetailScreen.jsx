@@ -69,6 +69,9 @@ const BookDetailsScreen = ({ route }) => {
                 <TouchableOpacity style={styles.button} onPress={handleSubmit}>
                     <Text style={styles.buttonText}>Borrow</Text>
                 </TouchableOpacity>
+                <TouchableOpacity style={styles.button} onPress={handleSubmit}>
+                    <Text style={styles.buttonText}>I have it</Text>
+                </TouchableOpacity>
             </View>
         </ScrollView>
     );
@@ -108,8 +111,9 @@ const styles = StyleSheet.create({
         marginTop: 5,
     },
     buttonContainer: {
-        alignItems: 'center',
         marginTop: 20,
+        flexDirection:'row',
+        justifyContent:'space-around'
     },
     button: {
         backgroundColor: '#1e90ff',
