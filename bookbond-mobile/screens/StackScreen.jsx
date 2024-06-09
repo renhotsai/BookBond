@@ -1,4 +1,4 @@
-import { View, Text, TouchableOpacity, Alert } from "react-native";
+import { View, Text, TouchableOpacity, Alert, Button } from "react-native";
 import React from "react";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
@@ -27,7 +27,8 @@ const StackScreen = (props) => {
   const Stack = createNativeStackNavigator();
 
   const logout = () => {
-    auth.signOut();
+      auth.signOut();
+      alert(`Logged Out!`);
     props.screenChange({ screenName: "Login" });
   };
 
@@ -93,8 +94,19 @@ const StackScreen = (props) => {
           ),
         })}
       />
-      <Stack.Screen name="Profile">
-        {() => <ProfileScreen logout={logout} />}
+      <Stack.Screen
+        name="Profile"
+        options={{
+          headerRight: () => (
+            <Button
+              onPress={logout}
+              title="Sign Out"
+              color="blue" // optional: set the button color
+            />
+          ),
+        }}
+      >
+        {() => <ProfileScreen />}
       </Stack.Screen>
       <Stack.Screen
         name="Edit Profile"

@@ -4,16 +4,11 @@ import { auth, db } from "../firebaseConfig";
 import { useNavigation } from "@react-navigation/native";
 import { doc, getDoc } from "firebase/firestore";
 
-const ProfileScreen = (props) => {
+const ProfileScreen = () => {
   const navigation = useNavigation();
 
   const [userFirstName, setUserFirstName] = useState("");
   const [userLastName, setUserLastName] = useState("");
-
-  const logOut = () => {
-    props.logout();
-    alert(`Logged Out!`);
-  };
 
   const editProfileHandler = () => {
     navigation.navigate("Edit Profile");
@@ -60,12 +55,6 @@ const ProfileScreen = (props) => {
       <Text style={styles.firstNameStyle}>{userFirstName}</Text>
       <Text style={styles.lastNameStyle}>{userLastName}</Text>
       <Text style={styles.emailStyle}>{auth.currentUser.email}</Text>
-
-      <View style={{ alignItems: "flex-end" }}>
-        <TouchableOpacity style={styles.signOutButton} onPress={logOut}>
-          <Text style={styles.signOutText}>Sign Out</Text>
-        </TouchableOpacity>
-      </View>
     </View>
   );
 };
