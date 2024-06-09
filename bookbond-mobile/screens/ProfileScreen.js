@@ -1,30 +1,10 @@
 import { useEffect, useState } from "react";
 import { Text, View, TouchableOpacity, StyleSheet, Image } from "react-native";
 import { auth, db } from "../firebaseConfig";
-import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import EditProfileScreen from "./EditProfileScreen";
 import { useNavigation } from "@react-navigation/native";
 import { doc, getDoc } from "firebase/firestore";
 
 const ProfileScreen = (props) => {
-  const Stack = createNativeStackNavigator();
-
-  return (
-    <Stack.Navigator initialRouteName="Profile">
-      <Stack.Screen name="User Profile" options={{ headerShown: false }}>
-        {() => <Profile logout={props.logout} />}
-      </Stack.Screen>
-      <Stack.Screen
-        name="Edit Profile"
-        component={EditProfileScreen}
-        options={{ headerShown: false }}
-      />
-    </Stack.Navigator>
-  );
-};
-export default ProfileScreen;
-
-const Profile = (props) => {
   const navigation = useNavigation();
 
   const [userFirstName, setUserFirstName] = useState("");
@@ -89,6 +69,7 @@ const Profile = (props) => {
     </View>
   );
 };
+export default ProfileScreen;
 
 const styles = StyleSheet.create({
   profilePicStyle: {
