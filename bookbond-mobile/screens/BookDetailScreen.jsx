@@ -12,7 +12,6 @@ const BookDetailsScreen = ({ route }) => {
     };
 
     useEffect(() => {
-        console.log(JSON.stringify(book));
         checkOwnBook()
     }, [])
 
@@ -115,7 +114,6 @@ const BookDetailsScreen = ({ route }) => {
                     ...book
                 };
                 const docRef = await addDoc(booksColRef, bookToInsert);
-                console.log(docRef.id);
                 const userRef = doc(db, UsersCollection, user.email);
                 const userOwnColRef = collection(userRef, OwnBooks);
                 const bookToUser = {
@@ -124,7 +122,6 @@ const BookDetailsScreen = ({ route }) => {
                     authors: book.authors,
                     imageLinks: book.imageLinks
                 }
-                console.log(`start to insert`);
                 await setDoc(doc(userOwnColRef, docRef.id), bookToUser);
                 setIsOwnBook(true)
             } catch (error) {

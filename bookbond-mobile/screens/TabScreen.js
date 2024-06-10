@@ -1,14 +1,10 @@
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import { Text, TouchableOpacity, View } from "react-native";
 import HomeScreen from "./HomeScreen";
-import ProfileScreen from "./ProfileScreen";
 import { Ionicons } from "@expo/vector-icons";
-import BorrowedBooksScreen from "./BorrowedBooksScreen";
 import MyLibraryScreen from "./MyLibraryScreen";
 
 const TabScreen = (props) => {
   const Tab = createBottomTabNavigator();
-
 
   const logout = () => {
     props.logout();
@@ -33,8 +29,7 @@ const TabScreen = (props) => {
           ),
         }}
         component={MyLibraryScreen}
-      >
-      </Tab.Screen>
+      ></Tab.Screen>
     </Tab.Navigator>
   );
 };

@@ -26,7 +26,6 @@ const CollectionScreen = () => {
         const unsubscribe = onSnapshot(query(booksCollectionColRef), (querySnapshot) => {
           const temp = []
           querySnapshot.forEach((doc) => {
-            console.log(JSON.stringify(doc.data()));
             temp.push({
               id: doc.id,
               ...doc.data()
