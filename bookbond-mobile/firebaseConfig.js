@@ -32,10 +32,23 @@ const auth = initializeAuth(app, {
 
 const db = getFirestore(app);
 
+//Collections
+const UsersCollection = "UsersCollection"
+const BooksCollection = "BooksCollection"
+
+
+//User's SubCollection
+const OwnBooks = "OwnBooks"
+const CollectBooks = "CollectBooks"
+
 export {
   db,
   auth,
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
   signOut,
+  UsersCollection,
+  BooksCollection,
+  OwnBooks,
+  CollectBooks,
 };

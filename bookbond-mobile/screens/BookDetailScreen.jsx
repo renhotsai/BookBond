@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { ScrollView, Text, Image, StyleSheet, TouchableOpacity, View, Alert } from 'react-native';
-import { auth, db } from '../firebaseConfig';
-import { addDoc, collection } from 'firebase/firestore';
+import { BooksCollection, OwnBooks, UsersCollection, auth, db } from '../firebaseConfig';
+import { addDoc, collection, doc, getDocs, query, setDoc, where } from 'firebase/firestore';
 
 const BookDetailsScreen = ({ route }) => {
     const { book } = route.params;
@@ -10,6 +10,12 @@ const BookDetailsScreen = ({ route }) => {
     const toggleDescription = () => {
         setIsExpanded(!isExpanded);
     };
+
+    useEffect(() => {
+        checkOwnBook()
+    }, [])
+
+    const [isOwnBook, setIsOwnBook] = useState(false)
 
     const renderDescription = () => {
         const description = book.description;
@@ -37,6 +43,45 @@ const BookDetailsScreen = ({ route }) => {
         }
     };
 
+    const checkOwnBook = async () => {
+        const user = auth.currentUser
+        if (user !== null) {
+            try {
+                const userDocRef = doc(db, UsersCollection, user.email)
+                const ownBooksColRef = collection(userDocRef, OwnBooks)
+                const q = query(ownBooksColRef, where("id", "==", book.id));
+                const querySnapshot = await getDocs(q)
+
+                if (querySnapshot.size !== 0) {
+                    setIsOwnBook(true)
+                } else {
+                    setIsOwnBook(false)
+                }
+            } catch (error) {
+                console.error(error);
+            }
+        }
+    }
+
+    const renderButtons = () => {
+        if (!isOwnBook) {
+            return (
+                <View style={styles.buttonContainer}>
+                    <TouchableOpacity style={styles.button} onPress={handleSubmit}>
+                        <Text style={styles.buttonText}>Borrow</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity style={styles.button} onPress={onOwnPress}>
+                        <Text style={styles.buttonText}>I have it</Text>
+                    </TouchableOpacity>
+                </View>
+            )
+        }else{
+            return (
+                <View style={styles.buttonContainer}/>
+            )
+        }
+    }
+
     const handleSubmit = async () => {
         const user = auth.currentUser;
         if (user !== null) {
@@ -57,6 +102,36 @@ const BookDetailsScreen = ({ route }) => {
         }
     };
 
+    const onOwnPress = async () => {
+        console.log(`onOwnPress`);
+        const user = auth.currentUser;
+        if (user !== null) {
+            try {
+                const booksColRef = collection(db, BooksCollection);
+                const bookToInsert = {
+                    borrowed: false,
+                    owner: user.email,
+                    ...book
+                };
+                const docRef = await addDoc(booksColRef, bookToInsert);
+                const userRef = doc(db, UsersCollection, user.email);
+                const userOwnColRef = collection(userRef, OwnBooks);
+                const bookToUser = {
+                    id: book.id,
+                    title: book.title,
+                    authors: book.authors,
+                    imageLinks: book.imageLinks
+                }
+                await setDoc(doc(userOwnColRef, docRef.id), bookToUser);
+                setIsOwnBook(true)
+            } catch (error) {
+                console.error(error);
+            }
+        } else {
+            Alert.alert("Not signed in", "You must be signed in to create a listing.");
+        }
+    }
+
     return (
         <ScrollView style={styles.container}>
             {book.imageLinks && book.imageLinks.thumbnail && (
@@ -65,11 +140,9 @@ const BookDetailsScreen = ({ route }) => {
             <Text style={styles.title}>{book.title}</Text>
             <Text style={styles.authors}>{book.authors?.join(', ')}</Text>
             {renderDescription()}
-            <View style={styles.buttonContainer}>
-                <TouchableOpacity style={styles.button} onPress={handleSubmit}>
-                    <Text style={styles.buttonText}>Borrow</Text>
-                </TouchableOpacity>
-            </View>
+
+            {renderButtons()}
+
         </ScrollView>
     );
 };
@@ -108,8 +181,9 @@ const styles = StyleSheet.create({
         marginTop: 5,
     },
     buttonContainer: {
-        alignItems: 'center',
         marginTop: 20,
+        flexDirection: 'row',
+        justifyContent: 'space-around'
     },
     button: {
         backgroundColor: '#1e90ff',

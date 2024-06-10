@@ -12,7 +12,7 @@ const HomeScreen = ({ navigation }) => {
     const [booksFromAPI, setBooksFromAPI] = useState([]);
 
     const fetchData = async () => {
-        const dataJson = await (await fetch(`https://www.googleapis.com/books/v1/volumes?q=""&startIndex=0&maxResults=1`)).json();
+        const dataJson = await (await fetch(`https://www.googleapis.com/books/v1/volumes?q=""&startIndex=0&maxResults=40`)).json();
         const temp = []
         for (const item of dataJson.items) {
             const book = {
