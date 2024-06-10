@@ -27,8 +27,8 @@ const StackScreen = (props) => {
   const Stack = createNativeStackNavigator();
 
   const logout = () => {
-      auth.signOut();
-      alert(`Logged Out!`);
+    auth.signOut();
+    alert(`Logged Out!`);
     props.screenChange({ screenName: "Login" });
   };
 
@@ -98,11 +98,7 @@ const StackScreen = (props) => {
         name="Profile"
         options={{
           headerRight: () => (
-            <Button
-              onPress={logout}
-              title="Sign Out"
-              color="blue" // optional: set the button color
-            />
+            <Button onPress={logout} title="Sign Out" color="blue" />
           ),
         }}
       >
