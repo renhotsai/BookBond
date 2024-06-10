@@ -2,41 +2,40 @@ import { useEffect, useState } from "react";
 import { Text, View, TouchableOpacity, StyleSheet, Image } from "react-native";
 import { auth, db } from "../firebaseConfig";
 import { useNavigation } from "@react-navigation/native";
-import { doc, getDoc } from "firebase/firestore";
+import { doc, onSnapshot } from "firebase/firestore";
 
 const ProfileScreen = () => {
   const navigation = useNavigation();
 
   const [userFirstName, setUserFirstName] = useState("");
   const [userLastName, setUserLastName] = useState("");
+  const [contactNumber, setContactNumber] = useState("");
 
   const editProfileHandler = () => {
     navigation.navigate("Edit Profile");
   };
 
   useEffect(() => {
-    // console.log(auth.currentUser.email);
     getData();
   }, []);
 
-  const getData = async () => {
-    const docRef = doc(db, "UsersCollection", `${auth.currentUser.email}`);
-    const docSnap = await getDoc(docRef);
+  const getData = () => {
+    const docRef = doc(db, "UsersCollection", auth.currentUser.email);
 
-    if (docSnap.exists()) {
-      // console.log("Document data:", docSnap.data());
-      const userData = docSnap.data();
-      setUserFirstName(userData.firstName);
-      setUserLastName(userData.lastName);
-    } else {
-      console.log("No such document!");
-    }
+    onSnapshot(docRef, (docSnap) => {
+      if (docSnap.exists()) {
+        const userData = docSnap.data();
+        setUserFirstName(userData.firstName);
+        setUserLastName(userData.lastName);
+        setContactNumber(userData.contactNumber);
+      } else {
+        console.log("No such document!");
+      }
+    });
   };
 
   return (
     <View style={{ flex: 1, padding: 20, justifyContent: "center" }}>
-      {/* <Text>Sign Up Screen {auth.currentUser.email}</Text> */}
-
       <View style={{ alignItems: "center" }}>
         <Text style={styles.welcomeStyle}>Welcome</Text>
         <Image
@@ -54,6 +53,7 @@ const ProfileScreen = () => {
 
       <Text style={styles.firstNameStyle}>{userFirstName}</Text>
       <Text style={styles.lastNameStyle}>{userLastName}</Text>
+      <Text style={styles.emailStyle}>{contactNumber}</Text>
       <Text style={styles.emailStyle}>{auth.currentUser.email}</Text>
     </View>
   );
