@@ -6,7 +6,7 @@ import TabScreen from './TabScreen'
 import BookDetailScreen from './BookDetailScreen'
 import { ScreenStackHeaderSearchBarView } from 'react-native-screens'
 import { Ionicons } from "@expo/vector-icons";
-import { auth, db } from '../firebaseConfig'
+import { CollectBooks, UsersCollection, auth, db } from '../firebaseConfig'
 import ProfileScreen from './ProfileScreen'
 import { AntDesign } from '@expo/vector-icons';
 import { addDoc, collection, deleteDoc, doc, getDoc, getDocs, query, setDoc, where } from 'firebase/firestore'
@@ -32,8 +32,8 @@ const StackScreen = (props) => {
         const user = auth.currentUser
         if (user !== null) {
             try {
-                const userDocRef = doc(db, 'UsersCollection', user.email);
-                const booksCollectionColRef = collection(userDocRef, 'BooksCollection')
+                const userDocRef = doc(db, UsersCollection, user.email);
+                const booksCollectionColRef = collection(userDocRef, CollectBooks)
 
                 const q = query(booksCollectionColRef, where("id", "==", book.id));
                 const books = await getDocs(q)
@@ -41,11 +41,12 @@ const StackScreen = (props) => {
                     await deleteDoc(doc(booksCollectionColRef,book.id));
                     Alert.alert("Success", `You remove this book from your collection`);
                 } else {
+
                     const bookToInsert = {
                         id: book.id,
-                        title: book.volumeInfo.title ?? 'No title',
-                        authors: book.volumeInfo.authors?.join(', ') ?? 'No authors',
-                        image: book.volumeInfo.imageLinks.thumbnail ?? 'No Image',
+                        title: book.title ?? 'No title',
+                        authors: book.authors?.join(', ') ?? 'No authors',
+                        imageLinks: book.imageLinks ?? 'No Image',
                     };
                     await setDoc(doc(booksCollectionColRef, book.id), bookToInsert);
                     Alert.alert("Success", `You have collected this book`);

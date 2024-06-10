@@ -1,7 +1,7 @@
 import { FlatList, StyleSheet, Text, View } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import { collection, doc, getDocs, onSnapshot, query } from 'firebase/firestore'
-import { auth, db } from '../firebaseConfig'
+import { CollectBooks, UsersCollection, auth, db } from '../firebaseConfig'
 import Book from '../components/Book'
 
 
@@ -19,13 +19,14 @@ const CollectionScreen = () => {
     const user = auth.currentUser
     if (user !== null) {
       try {
-        const userDocRef = doc(db, 'UsersCollection', user.email);
-        const booksCollectionColRef = collection(userDocRef, 'BooksCollection')
+        const userDocRef = doc(db, UsersCollection, user.email);
+        const booksCollectionColRef = collection(userDocRef, CollectBooks)
 
 
         const unsubscribe = onSnapshot(query(booksCollectionColRef), (querySnapshot) => {
           const temp = []
           querySnapshot.forEach((doc) => {
+            console.log(JSON.stringify(doc.data()));
             temp.push({
               id: doc.id,
               ...doc.data()
