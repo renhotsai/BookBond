@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { ScrollView, Text, Image, StyleSheet, TouchableOpacity, View, Alert } from 'react-native';
 import { BooksCollection, OwnBooks, UsersCollection, auth, db } from '../firebaseConfig';
 import { addDoc, collection, doc, getDocs, query, setDoc, where } from 'firebase/firestore';
+import Button from '../components/Button';
 
 const BookDetailsScreen = ({ route }) => {
     const { book } = route.params;
@@ -67,17 +68,17 @@ const BookDetailsScreen = ({ route }) => {
         if (!isOwnBook) {
             return (
                 <View style={styles.buttonContainer}>
-                    <TouchableOpacity style={styles.button} onPress={handleSubmit}>
-                        <Text style={styles.buttonText}>Borrow</Text>
+                    <TouchableOpacity onPress={handleSubmit}>
+                        <Button buttonText={"Borrow"} />
                     </TouchableOpacity>
-                    <TouchableOpacity style={styles.button} onPress={onOwnPress}>
-                        <Text style={styles.buttonText}>I have it</Text>
+                    <TouchableOpacity onPress={onOwnPress}>
+                        <Button buttonText={"I have it"} />
                     </TouchableOpacity>
                 </View>
             )
-        }else{
+        } else {
             return (
-                <View style={styles.buttonContainer}/>
+                <View style={styles.buttonContainer} />
             )
         }
     }
