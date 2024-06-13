@@ -4,7 +4,7 @@ import { BooksCollection, OwnBooks, UsersCollection, auth, db } from '../firebas
 import { addDoc, collection, doc, getDocs, query, setDoc, where } from 'firebase/firestore';
 import Button from '../components/Button';
 
-const BookDetailsScreen = ({ route }) => {
+const BookDetailsScreen = ({ navigation,route }) => {
     const { book } = route.params;
     const [isExpanded, setIsExpanded] = useState(false);
 
@@ -63,12 +63,17 @@ const BookDetailsScreen = ({ route }) => {
             }
         }
     }
+    
+    const onBorrowPress =()=>{
+        console.log("onBorrowPress");
+        navigation.navigate('Borrow Book', { book: book });
+    }
 
     const renderButtons = () => {
         if (!isOwnBook) {
             return (
                 <View style={styles.buttonContainer}>
-                    <TouchableOpacity onPress={handleSubmit}>
+                    <TouchableOpacity onPress={onBorrowPress}>
                         <Button buttonText={"Borrow"} />
                     </TouchableOpacity>
                     <TouchableOpacity onPress={onOwnPress}>
@@ -82,26 +87,6 @@ const BookDetailsScreen = ({ route }) => {
             )
         }
     }
-
-    const handleSubmit = async () => {
-        const user = auth.currentUser;
-        if (user !== null) {
-            try {
-                const booksColRef = collection(db, 'borrowedBooks');
-                const bookToInsert = {
-                    borrower: user.email,
-                    ...book
-                };
-                await addDoc(booksColRef, bookToInsert);
-                Alert.alert("Listing Created", "You have borrowed the book");
-            } catch (error) {
-                console.error("Error adding document: ", error);
-                Alert.alert("Error", "There was an error borrowing the book.");
-            }
-        } else {
-            Alert.alert("Not signed in", "You must be signed in to create a listing.");
-        }
-    };
 
     const onOwnPress = async () => {
         console.log(`onOwnPress`);

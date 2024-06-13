@@ -31,7 +31,7 @@ const HomeScreen = ({ navigation }) => {
     const onBookPress = (item) => {
         console.log("onBookPress", item.title);
 
-        navigation.navigate("BookDetails", { book: item });
+        navigation.navigate("Book Details", { book: item });
     };
 
     const navigateToProfile = () => {
