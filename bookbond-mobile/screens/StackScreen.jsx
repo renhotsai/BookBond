@@ -22,6 +22,7 @@ import {
 } from "firebase/firestore";
 import { get } from "firebase/database";
 import EditProfileScreen from "./EditProfileScreen";
+import SelectOwnerScreen from "./SelectOwnerScreen";
 import CreateOrderScreen from "./CreateOrderScreen";
 
 const StackScreen = (props) => {
@@ -112,6 +113,10 @@ const StackScreen = (props) => {
       ></Stack.Screen>
       <Stack.Screen
         name="Borrow Book"
+        component={SelectOwnerScreen}
+      />
+      <Stack.Screen
+        name="Create Order"
         component={CreateOrderScreen}
       />
     </Stack.Navigator>
