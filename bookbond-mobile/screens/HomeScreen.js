@@ -5,11 +5,19 @@ import Book from "../components/Book";
 
 const HomeScreen = ({ navigation }) => {
 
+    const [searchText, setSearchText] = useState('');
+    const [booksFromAPI, setBooksFromAPI] = useState([]);
+    const [filteredBooks, setFilteredBooks] = useState([]);
+
     useEffect(() => {
         fetchData();
     }, []);
-
-    const [booksFromAPI, setBooksFromAPI] = useState([]);
+    useEffect(() => {
+        const filtered = booksFromAPI.filter(book =>
+            book.title.toLowerCase().includes(searchText.toLowerCase())
+        );
+        setFilteredBooks(filtered);
+    }, [searchText, booksFromAPI]);
 
     const fetchData = async () => {
         const dataJson = await (await fetch(`https://www.googleapis.com/books/v1/volumes?q=""&startIndex=0&maxResults=40`)).json();
@@ -41,7 +49,7 @@ const HomeScreen = ({ navigation }) => {
     const renderBookItem = ({ item }) => {
         return (
             <TouchableOpacity onPress={() => onBookPress(item)}>
-                <Book item={item}/>
+                <Book item={item} />
             </TouchableOpacity>
         );
     };
@@ -55,13 +63,18 @@ const HomeScreen = ({ navigation }) => {
                 </TouchableOpacity>
             </View>
             <View style={styles.searchBar}>
-                <TextInput placeholder="Search" style={styles.searchInput} />
+                <TextInput
+                    style={styles.searchInput}
+                    placeholder="Search a book"
+                    value={searchText}
+                    onChangeText={setSearchText}
+                />
                 <TouchableOpacity onPress={onSearchPress}>
                     <AntDesign name="search1" size={24} color="black" />
                 </TouchableOpacity>
             </View>
             <FlatList
-                data={booksFromAPI}
+                data={filteredBooks}
                 renderItem={renderBookItem}
                 keyExtractor={(item) => item.id}
                 contentContainerStyle={styles.bookList}
