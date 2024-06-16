@@ -1,8 +1,9 @@
 import { FlatList, Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import React, { useEffect, useState } from 'react'
-import { auth, db } from '../../firebaseConfig';
+import { BooksCollection, Orders, UsersCollection, auth, db } from '../../firebaseConfig';
 import { collection, doc, getDoc, getDocs, query, where } from 'firebase/firestore';
 import Button from '../../components/Button';
+import OrderStatus from '../../model/OrderStatus';
 
 const SelectOwnerScreen = ({ navigation, route }) => {
     const { book } = route.params;
@@ -20,9 +21,10 @@ const SelectOwnerScreen = ({ navigation, route }) => {
         try {
             const user = auth.currentUser;
             if (user !== null) {
-                const userDocRef = doc(db, 'UsersCollection', user.email)
-                const userOrderColRef = collection(userDocRef, 'Orders')
-                const orders = await getDocs(userOrderColRef)
+                const userDocRef = doc(db, UsersCollection, user.email)
+                const userOrderColRef = collection(userDocRef, Orders)
+                const q = query(userOrderColRef,where("status","not-in",[OrderStatus.Cancelled,OrderStatus.Denied,OrderStatus.Returned]))
+                const orders = await getDocs(q)
 
                 if (orders.size !== 0) {
                     const temp = []
@@ -39,7 +41,7 @@ const SelectOwnerScreen = ({ navigation, route }) => {
 
     const getBooks = async () => {
         try {
-            const booksColRef = collection(db, 'BooksCollection');
+            const booksColRef = collection(db, BooksCollection);
             const q = query(booksColRef, where('id', '==', book.id), where('borrowed', '==', false));
             const querySnapshot = await getDocs(q);
 
@@ -67,21 +69,12 @@ const SelectOwnerScreen = ({ navigation, route }) => {
     }
 
     const renderOwnerWithButton = ({ item }) => {
-        let ordered = false
-        let order = {}
-        for (const currOrder of orders) {
-            if (currOrder.bookId === item.bookId) {
-                ordered = true
-                order = currOrder
-                break
-            }
-        }
-
-        if (ordered) {
+        const orderIndex  = orders.findIndex(order => order.bookId === item.bookId)
+        if (orders.length > 0){
             return (
                 <View style={{ flex: 1, flexDirection: "row", justifyContent: "space-around", alignItems: "center" }}>
                     <Text>{item.address}</Text>
-                    <Button buttonText={order.status}/>
+                    <Button buttonText={orders[orderIndex].status} />
                 </View>
             )
         } else {

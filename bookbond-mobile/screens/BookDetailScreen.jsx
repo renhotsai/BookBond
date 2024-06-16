@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { ScrollView, Text, Image, StyleSheet, TouchableOpacity, View, Alert } from 'react-native';
-import { BooksCollection, OwnBooks, UsersCollection, auth, db } from '../firebaseConfig';
-import { addDoc, collection, doc, getDocs, query, setDoc, where } from 'firebase/firestore';
+import { BooksCollection, Orders, OwnBooks, UsersCollection, auth, db } from '../firebaseConfig';
+import { addDoc, collection, doc, getDoc, getDocs, query, setDoc, where } from 'firebase/firestore';
 import Button from '../components/Button';
+import OrderStatus from '../model/OrderStatus';
 
-const BookDetailsScreen = ({ navigation,route }) => {
+const BookDetailsScreen = ({ navigation, route }) => {
     const { book } = route.params;
     const [isExpanded, setIsExpanded] = useState(false);
 
@@ -63,10 +64,29 @@ const BookDetailsScreen = ({ navigation,route }) => {
             }
         }
     }
-    
-    const onBorrowPress =()=>{
+
+    const onBorrowPress = async () => {
         console.log("onBorrowPress");
-        navigation.navigate('Borrow Book', { book: book });
+
+        const user = auth.currentUser
+        if (user !== null) {
+            try {
+                const userDocRef = doc(db, UsersCollection, user.email)
+                const userOrderColRef = collection(userDocRef, Orders)
+                const q = query(userOrderColRef, where("status", "not-in", [OrderStatus.Returned, OrderStatus.Cancelled, OrderStatus.Denied]))
+                const querySnapshot = await getDocs(q)
+                if (querySnapshot.size === 0) {
+                    navigation.navigate('Borrow Book', { book: book });
+                } else {
+                    querySnapshot.forEach((doc) => {
+                        const item = doc.data()
+                        navigation.navigate("Order Details", { order: item })
+                    })
+                }
+            } catch (error) {
+                console.error(error);
+            }
+        }
     }
 
     const renderButtons = () => {
@@ -74,7 +94,7 @@ const BookDetailsScreen = ({ navigation,route }) => {
             return (
                 <View style={styles.buttonContainer}>
                     <TouchableOpacity onPress={onBorrowPress}>
-                        <Button buttonText={"Borrow"} />
+                        <Button buttonText={"I want borrow"} />
                     </TouchableOpacity>
                     <TouchableOpacity onPress={onOwnPress}>
                         <Button buttonText={"I have it"} />

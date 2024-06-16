@@ -1,10 +1,11 @@
 import { Alert, FlatList, Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import React, { useEffect, useState } from 'react'
-import { auth, db } from '../../firebaseConfig';
+import { OrderCollection, Orders, UsersCollection, auth, db } from '../../firebaseConfig';
 import { addDoc, collection, doc, getDoc, getDocs, query, setDoc, where } from 'firebase/firestore';
 import Button from '../../components/Button';
-import OrderStatus from '../../model/status';
+import OrderStatus from '../../model/OrderStatus';
 import { set } from 'firebase/database';
+import OrderType from '../../model/OrderType';
 
 const CreateOrderScreen = ({ navigation, route }) => {
     const { book } = route.params;
@@ -36,9 +37,8 @@ const CreateOrderScreen = ({ navigation, route }) => {
     const [owner, setOwner] = useState({});
 
     const getOwner = async () => {
-        const userDocRef = doc(db, 'UsersCollection', book.owner);
+        const userDocRef = doc(db, UsersCollection, book.owner);
         const user = await getDoc(userDocRef);
-        console.log(JSON.stringify(user.data()));
         setOwner(user.data());
     }
 
@@ -55,12 +55,16 @@ const CreateOrderScreen = ({ navigation, route }) => {
         const user = auth.currentUser;
         if (user !== null) {
             try {
-                const orderColRef = collection(db, "OrderCollection")
+                const orderColRef = collection(db, OrderCollection)
                 const orderToInsert = {
+                    id:book.id,
                     bookId: book.bookId,
                     borrower: user.email,
                     owner: owner.emailAddress,
                     status: OrderStatus.Pending,
+                    imageLinks:book.imageLinks,
+                    title: book.title,
+                    authors: book.authors,
                 }
                 const order = await addDoc(orderColRef, orderToInsert);
                 orderToLandlord(owner.emailAddress, order.id, orderToInsert);
@@ -78,16 +82,18 @@ const CreateOrderScreen = ({ navigation, route }) => {
 
 
     const orderToLandlord = (email, orderId, orderToInsert) => {
-        const userDocRef = doc(db, "UsersCollection", email)
-        const userOrderDocRef = doc(userDocRef, "Orders", orderId);
+        const userDocRef = doc(db, UsersCollection, email)
+        const userOrderDocRef = doc(userDocRef, Orders, orderId);
         orderToInsert.orderId = orderId;
+        orderToInsert.orderType = OrderType.Out
         setDoc(userOrderDocRef, orderToInsert)
     }
 
     const orderToTenant = (email, orderId, orderToInsert) => {
-        const userDocRef = doc(db, "UsersCollection", email)
-        const userOrderDocRef = doc(userDocRef, "Orders", orderId);
+        const userDocRef = doc(db, UsersCollection, email)
+        const userOrderDocRef = doc(userDocRef, Orders, orderId);
         orderToInsert.orderId = orderId;
+        orderToInsert.orderType = OrderType.Out
         setDoc(userOrderDocRef, orderToInsert)
     }
 
