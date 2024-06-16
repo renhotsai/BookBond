@@ -1,7 +1,7 @@
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import HomeScreen from "./HomeScreen";
 import { Ionicons } from "@expo/vector-icons";
-import MyLibraryScreen from "./MyLibraryScreen";
+import MyLibraryScreen from "./myLibrary/MyLibraryScreen";
 
 const TabScreen = (props) => {
   const Tab = createBottomTabNavigator();
