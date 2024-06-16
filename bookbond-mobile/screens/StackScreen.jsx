@@ -24,6 +24,7 @@ import { get } from "firebase/database";
 import EditProfileScreen from "./EditProfileScreen";
 import SelectOwnerScreen from "./orders/SelectOwnerScreen";
 import CreateOrderScreen from "./orders/CreateOrderScreen";
+import OrderDetailScreen from "./orders/OrderDetailScreen";
 
 const StackScreen = (props) => {
   const Stack = createNativeStackNavigator();
@@ -118,6 +119,10 @@ const StackScreen = (props) => {
       <Stack.Screen
         name="Create Order"
         component={CreateOrderScreen}
+      />
+      <Stack.Screen
+      name="Order Details"
+      component={OrderDetailScreen}
       />
     </Stack.Navigator>
   );

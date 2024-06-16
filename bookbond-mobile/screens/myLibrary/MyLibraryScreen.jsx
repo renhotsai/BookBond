@@ -4,6 +4,7 @@ import BorrowedBooksScreen from './BorrowedBooksScreen';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 import CollectionScreen from './CollectionScreen';
 import MyBooksScreen from './MyBooksScreen';
+import BorrowingScreen from './BorrowingScreen';
 
 const Tab = createMaterialTopTabNavigator();
 
@@ -14,6 +15,7 @@ const MyLibraryScreen = () => {
                 <Tab.Screen name="History" component={BorrowedBooksScreen} />
                 <Tab.Screen name="Collections" component={CollectionScreen} />
                 <Tab.Screen name="My Books" component={MyBooksScreen} />  
+                <Tab.Screen name="Borrowing" component={BorrowingScreen} />
             </Tab.Navigator>
         </View>
     );
