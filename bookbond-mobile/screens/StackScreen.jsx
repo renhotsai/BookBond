@@ -22,8 +22,8 @@ import {
 } from "firebase/firestore";
 import { get } from "firebase/database";
 import EditProfileScreen from "./EditProfileScreen";
-import SelectOwnerScreen from "./SelectOwnerScreen";
-import CreateOrderScreen from "./CreateOrderScreen";
+import SelectOwnerScreen from "./orders/SelectOwnerScreen";
+import CreateOrderScreen from "./orders/CreateOrderScreen";
 
 const StackScreen = (props) => {
   const Stack = createNativeStackNavigator();
