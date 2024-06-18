@@ -1,12 +1,12 @@
 import { FlatList, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import React, { useEffect, useState } from 'react'
-import { collection, doc, getDocs, onSnapshot, query, where } from 'firebase/firestore'
 import { Orders, UsersCollection, auth, db } from '../../firebaseConfig'
-import Book from '../../components/Book'
-import OrderStatus from '../../model/OrderStatus'
+import { collection, doc, onSnapshot, or, query, where } from 'firebase/firestore'
 import OrderType from '../../model/OrderType'
+import OrderStatus from '../../model/OrderStatus'
+import Book from '../../components/Book'
 
-const BorrowingScreen = ({ navigation }) => {
+const OwnerOrderScreen = ({ navigation }) => {
 
   useEffect(() => {
     getBorrowingOrders()
@@ -22,8 +22,8 @@ const BorrowingScreen = ({ navigation }) => {
         const orderColRef = collection(userDocRef, Orders)
         const q = query(
           orderColRef,
-          where("orderType", "==", OrderType.In),
-          where("status", "not-in", [OrderStatus.Cancelled, OrderStatus.Checked, OrderStatus.Denied])
+            where("orderType", "==", OrderType.Out),
+            where("status", "not-in", [OrderStatus.Cancelled, OrderStatus.Checked, OrderStatus.Denied])
         )
         const unsubscribe = onSnapshot(q, (querySnapshot) => {
           const temp = []
@@ -46,13 +46,11 @@ const BorrowingScreen = ({ navigation }) => {
 
 
   const renderBook = ({ item }) => {
-    const displayStatus = item.orderType !== OrderType.In ? item.status  : item.status !== OrderStatus.Accepted ? item.status : "Waiting to Pick up"
-    
     return (
       <TouchableOpacity onPress={() => { onPressBook(item) }}>
         <View style={{ flexDirection: "row", alignItems: "center" }}>
           <Book item={item} />
-          <Text>{displayStatus}</Text>
+          <Text>{item.status}</Text>
         </View>
       </TouchableOpacity>
     )
@@ -86,7 +84,7 @@ const BorrowingScreen = ({ navigation }) => {
   )
 }
 
-export default BorrowingScreen
+export default OwnerOrderScreen
 
 
 const styles = StyleSheet.create({

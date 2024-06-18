@@ -1,83 +1,159 @@
 import { Alert, Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import React from 'react'
 import Button from '../../components/Button';
-import { OrderCollection, UsersCollection, auth, db } from '../../firebaseConfig';
-import { doc, getDoc, updateDoc } from 'firebase/firestore';
+import { BooksCollection, OrderCollection, Orders, UsersCollection, auth, db } from '../../firebaseConfig';
+import { collection, doc, getDoc, getDocs, query, updateDoc, where } from 'firebase/firestore';
 import OrderStatus from '../../model/OrderStatus';
+import OrderType from '../../model/OrderType';
+import PendingScreen from './PendingScreen';
+import AcceptedScreen from './AcceptedScreen';
+import PickedScreen from './PickedScreen';
+import ReturnedScreen from './ReturnedScreen';
 
 const OrderDetailScreen = ({ navigation, route }) => {
 
   const { order } = route.params;
 
 
-  const onCancelPress = () => {
-    console.log(`onCancelPress orderId: ${order.orderId}`);
+  const updateOrderStatus = (updateStatus) => {
+    try {
+      const updateOrderList = []
 
-    Alert.alert('Confirm', 'Do you want to cancel order', [
-      {
-        text: 'Cancel',
-        onPress: () => console.log('Cancel Pressed'),
-        style: 'cancel',
-      },
-      {
-        text: 'Yes', onPress: () => { onYesPress() },
-        style: 'ok',
-      },
-    ]);
+      const orderDocRef = doc(db, OrderCollection, order.orderId)
+      updateOrderList.push(orderDocRef)
+
+      // Tenant
+      const userDocRef = doc(db, UsersCollection, order.borrower)
+      const userOrderDocRef = doc(userDocRef, "Orders", order.orderId);
+      updateOrderList.push(userOrderDocRef)
+
+
+      // Landlord
+      const landlordDocRef = doc(db, UsersCollection, order.owner)
+      const landlordOrderDocRef = doc(landlordDocRef, "Orders", order.orderId);
+      updateOrderList.push(landlordOrderDocRef)
+
+      updateOrderList.forEach(async (docRef) => {
+        await updateDoc(
+          docRef,
+          {
+            status: updateStatus
+          }
+        );
+      });
+    } catch (error) {
+      console.error(error);
+    }
   }
 
-  const onYesPress = () => {
+  
+  const updateBookStatus = async (updateStatus) => {
+    try {
+      const bookDocRef = doc(db, BooksCollection, order.bookId)
+      let isBorrowed = false;
 
-    console.log('Yse Pressed')
+      switch (updateStatus) {
+        case OrderStatus.Picked:
+          isBorrowed = true;
+          break;
+        case OrderStatus.Checked:
+        default:
+          isBorrowed = false;
+          break;
+      }
+
+      await updateDoc(
+        bookDocRef,
+        {
+          borrowed: isBorrowed
+        })
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+
+  const deniedOtherOrder = async () => {
+    try {
+      const denyList = []
+      const orderColRef = collection(db, OrderCollection)
+      const q = query(
+        orderColRef,
+        where('bookId', '==', order.bookId),
+        where('status', '==', OrderStatus.Pending),
+        where('borrower', '!=', order.borrower)
+      );
+      const querySnapshot = await getDocs(q)
+      querySnapshot.forEach((doc) => {
+        //deny order
+        const orderDocRef = doc(db, OrderCollection, doc.id)
+        denyList.push(orderDocRef)
+
+        //deny tenant's order
+        const tenantDocRef = doc(db, UsersCollection, doc.data().borrower)
+        const tenantOrderDocRef = doc(tenantDocRef, Orders, doc.id)
+        denyList.push(tenantOrderDocRef)
+
+        //deny landlord's order
+        const landlordDocRef = doc(db, UsersCollection, doc.data().owner)
+        const landlordOrderDocRef = doc(landlordDocRef, Orders, doc.id)
+        denyList.push(landlordOrderDocRef)
+      })
+
+      denyList.forEach(async (docRef) => {
+        await updateDoc(
+          docRef,
+          {
+            status: OrderStatus.Denied
+          }
+        )
+      })
+
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  const updateOrder = (updateStatus) => {
     const user = auth.currentUser;
 
     if (user !== null) {
-      try {
-        const updateOrderList = []
+      updateOrderStatus(updateStatus)
+      switch (updateStatus) {
+        case OrderStatus.Accepted:
+          deniedOtherOrder()
+          break;
 
-        const orderDocRef = doc(db, OrderCollection, order.orderId)
-        updateOrderList.push(orderDocRef)
-
-
-        // Tenant
-        const userDocRef = doc(db, UsersCollection, user.email)
-        const userOrderDocRef = doc(userDocRef, "Orders", order.orderId);
-        updateOrderList.push(userOrderDocRef)
-
-
-        // Landlord
-        const landlordDocRef = doc(db, UsersCollection, order.owner)
-        const landlordOrderDocRef = doc(landlordDocRef, "Orders", order.orderId);
-        updateOrderList.push(landlordOrderDocRef)
-
-        updateOrderList.forEach(async (docRef) => {
-          await updateDoc(
-            docRef,
-            {
-              status: OrderStatus.Cancelled
-            }
-          );
-        });
-        navigation.navigate("Main")
-      } catch (error) {
-        console.error(error);
+        case OrderStatus.Picked:
+        case OrderStatus.Checked:
+          updateBookStatus(updateStatus)
+          break;
       }
+
+      Alert.alert("Successfully!", `This order has been ${updateStatus}`)
+      navigation.navigate("Main")
+
     } else {
       console.log("user is not logged in");
     }
   }
 
+
+  const renderOrderDetail = () => {
+    switch (order.status) {
+      case OrderStatus.Pending:
+        return <PendingScreen order={order} updateOrder={updateOrder} />
+      case OrderStatus.Accepted:
+        return <AcceptedScreen order={order} updateOrder={updateOrder} />
+      case OrderStatus.Picked:
+        return <PickedScreen order={order} updateOrder={updateOrder} />
+      case OrderStatus.Returned:
+        return <ReturnedScreen order={order} updateOrder={updateOrder} />
+    }
+  }
   return (
     <View style={styles.container}>
-      {order.imageLinks && order.imageLinks.thumbnail && (
-        <Image source={{ uri: order.imageLinks.smallThumbnail }} style={styles.image} />
-      )}
-      <Text style={styles.title}>{order.title}</Text>
-      <Text>MapView</Text>
-      <Text>{order.status}</Text>
-      <TouchableOpacity onPress={onCancelPress}>
-        <Button buttonText="Cancel" />
-      </TouchableOpacity>
+      {renderOrderDetail()}
     </View>
   )
 }
@@ -88,17 +164,5 @@ const styles = StyleSheet.create({
   container: {
     padding: 20,
     backgroundColor: '#f8f8f8',
-  },
-  image: {
-    width: '100%',
-    height: 300,
-    resizeMode: 'contain',
-    marginBottom: 20,
-  },
-  title: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: '#333',
-    marginBottom: 10,
-  },
+  }
 })
