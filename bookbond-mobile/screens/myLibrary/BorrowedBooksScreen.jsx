@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { FlatList, Text, View, Image, StyleSheet, TouchableOpacity } from 'react-native';
 import { collection, query, where, onSnapshot, getDocs, updateDoc, doc } from 'firebase/firestore';
-import { db, auth } from '../firebaseConfig';
-import Book from '../components/Book';
+import { db, auth } from '../../firebaseConfig';
+import Book from '../../components/Book';
 
 const BorrowedBooksScreen = () => {
 

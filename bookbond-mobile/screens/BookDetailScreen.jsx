@@ -1,9 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { ScrollView, Text, Image, StyleSheet, TouchableOpacity, View, Alert } from 'react-native';
-import { BooksCollection, OwnBooks, UsersCollection, auth, db } from '../firebaseConfig';
-import { addDoc, collection, doc, getDocs, query, setDoc, where } from 'firebase/firestore';
+import { BooksCollection, Orders, OwnBooks, UsersCollection, auth, db } from '../firebaseConfig';
+import { addDoc, collection, doc, getDoc, getDocs, query, setDoc, where } from 'firebase/firestore';
+import Button from '../components/Button';
+import OrderStatus from '../model/OrderStatus';
+import OrderType from '../model/OrderType';
 
-const BookDetailsScreen = ({ route }) => {
+const BookDetailsScreen = ({ navigation, route }) => {
     const { book } = route.params;
     const [isExpanded, setIsExpanded] = useState(false);
 
@@ -63,44 +66,51 @@ const BookDetailsScreen = ({ route }) => {
         }
     }
 
+    const onBorrowPress = async () => {
+        console.log("onBorrowPress");
+
+        const user = auth.currentUser
+        if (user !== null) {
+            try {
+                const userDocRef = doc(db, UsersCollection, user.email)
+                const userOrderColRef = collection(userDocRef, Orders)
+                const q = query(userOrderColRef,
+                     where("status", "not-in", [OrderStatus.Checked, OrderStatus.Cancelled, OrderStatus.Denied]),
+                    where("orderType", "==",OrderType.In)
+                    )
+                const querySnapshot = await getDocs(q)
+                if (querySnapshot.size === 0) {
+                    navigation.navigate('Borrow Book', { book: book });
+                } else {
+                    querySnapshot.forEach((doc) => {
+                        const item = doc.data()
+                        navigation.navigate("Order Details", { order: item })
+                    })
+                }
+            } catch (error) {
+                console.error(error);
+            }
+        }
+    }
+
     const renderButtons = () => {
         if (!isOwnBook) {
             return (
                 <View style={styles.buttonContainer}>
-                    <TouchableOpacity style={styles.button} onPress={handleSubmit}>
-                        <Text style={styles.buttonText}>Borrow</Text>
+                    <TouchableOpacity onPress={onBorrowPress}>
+                        <Button buttonText={"I want borrow"} />
                     </TouchableOpacity>
-                    <TouchableOpacity style={styles.button} onPress={onOwnPress}>
-                        <Text style={styles.buttonText}>I have it</Text>
+                    <TouchableOpacity onPress={onOwnPress}>
+                        <Button buttonText={"I have it"} />
                     </TouchableOpacity>
                 </View>
             )
-        }else{
+        } else {
             return (
-                <View style={styles.buttonContainer}/>
+                <View style={styles.buttonContainer} />
             )
         }
     }
-
-    const handleSubmit = async () => {
-        const user = auth.currentUser;
-        if (user !== null) {
-            try {
-                const booksColRef = collection(db, 'borrowedBooks');
-                const bookToInsert = {
-                    borrower: user.email,
-                    ...book
-                };
-                await addDoc(booksColRef, bookToInsert);
-                Alert.alert("Listing Created", "You have borrowed the book");
-            } catch (error) {
-                console.error("Error adding document: ", error);
-                Alert.alert("Error", "There was an error borrowing the book.");
-            }
-        } else {
-            Alert.alert("Not signed in", "You must be signed in to create a listing.");
-        }
-    };
 
     const onOwnPress = async () => {
         console.log(`onOwnPress`);

@@ -35,11 +35,12 @@ const db = getFirestore(app);
 //Collections
 const UsersCollection = "UsersCollection"
 const BooksCollection = "BooksCollection"
-
+const OrderCollection = "OrderCollection"
 
 //User's SubCollection
 const OwnBooks = "OwnBooks"
 const CollectBooks = "CollectBooks"
+const Orders = "Orders"
 
 export {
   db,
@@ -47,8 +48,14 @@ export {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
   signOut,
+
+  // Collections
   UsersCollection,
   BooksCollection,
+  OrderCollection,
+
+  //User's SubCollection
   OwnBooks,
   CollectBooks,
+  Orders,
 };

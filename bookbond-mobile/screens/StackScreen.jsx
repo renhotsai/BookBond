@@ -22,6 +22,9 @@ import {
 } from "firebase/firestore";
 import { get } from "firebase/database";
 import EditProfileScreen from "./EditProfileScreen";
+import SelectOwnerScreen from "./orders/SelectOwnerScreen";
+import CreateOrderScreen from "./orders/CreateOrderScreen";
+import OrderDetailScreen from "./orders/OrderDetailScreen";
 
 const StackScreen = (props) => {
   const Stack = createNativeStackNavigator();
@@ -38,12 +41,12 @@ const StackScreen = (props) => {
     bookCollect(book);
   };
 
-    const bookCollect = async (book) => {
-        const user = auth.currentUser
-        if (user !== null) {
-            try {
-                const userDocRef = doc(db, UsersCollection, user.email);
-                const booksCollectionColRef = collection(userDocRef, CollectBooks)
+  const bookCollect = async (book) => {
+    const user = auth.currentUser
+    if (user !== null) {
+      try {
+        const userDocRef = doc(db, UsersCollection, user.email);
+        const booksCollectionColRef = collection(userDocRef, CollectBooks)
 
         const q = query(booksCollectionColRef, where("id", "==", book.id));
         const books = await getDocs(q);
@@ -79,7 +82,7 @@ const StackScreen = (props) => {
         {() => <TabScreen logout={logout} />}
       </Stack.Screen>
       <Stack.Screen
-        name="BookDetails"
+        name="Book Details"
         component={BookDetailScreen}
         options={({ navigation, route }) => ({
           headerRight: () => (
@@ -109,6 +112,18 @@ const StackScreen = (props) => {
         name="Edit Profile"
         component={EditProfileScreen}
       ></Stack.Screen>
+      <Stack.Screen
+        name="Borrow Book"
+        component={SelectOwnerScreen}
+      />
+      <Stack.Screen
+        name="Create Order"
+        component={CreateOrderScreen}
+      />
+      <Stack.Screen
+      name="Order Details"
+      component={OrderDetailScreen}
+      />
     </Stack.Navigator>
   );
 };

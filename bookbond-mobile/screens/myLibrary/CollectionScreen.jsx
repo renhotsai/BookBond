@@ -1,26 +1,29 @@
 import { FlatList, StyleSheet, Text, View } from 'react-native'
 import React, { useEffect, useState } from 'react'
-import Book from '../components/Book'
-import { OwnBooks, UsersCollection, auth, db } from '../firebaseConfig'
-import { collection, doc, onSnapshot, query } from 'firebase/firestore'
+import { collection, doc, getDocs, onSnapshot, query } from 'firebase/firestore'
+import { CollectBooks, UsersCollection, auth, db } from '../../firebaseConfig'
+import Book from '../../components/Book'
 
-const MyBooksScreen = () => {
+
+
+
+const CollectionScreen = () => {
 
   useEffect(() => {
-    getOwnBooks()
+    getBooksCollection()
   }, [])
 
-  const [ownBooks, setOwnBooks] = useState([])
+  const [booksCollection, setBooksCollection] = useState({})
 
-  const getOwnBooks = async () => {
+  const getBooksCollection = async () => {
     const user = auth.currentUser
     if (user !== null) {
       try {
         const userDocRef = doc(db, UsersCollection, user.email);
-        const ownBooksColRef = collection(userDocRef, OwnBooks)
+        const booksCollectionColRef = collection(userDocRef, CollectBooks)
 
 
-        const unsubscribe = onSnapshot(query(ownBooksColRef), (querySnapshot) => {
+        const unsubscribe = onSnapshot(query(booksCollectionColRef), (querySnapshot) => {
           const temp = []
           querySnapshot.forEach((doc) => {
             temp.push({
@@ -29,7 +32,7 @@ const MyBooksScreen = () => {
             });
           });
 
-          setOwnBooks(temp)
+          setBooksCollection(temp)
 
           return () => unsubscribe();
         });
@@ -43,19 +46,20 @@ const MyBooksScreen = () => {
     }
   }
 
+
+
   return (
     <View style={styles.container}>
       <FlatList
-        data={ownBooks}
+        data={booksCollection}
         renderItem={({ item }) => <Book item={item} />}
         keyExtractor={(item) => item.id}
-        ListEmptyComponent={<Text>No own books</Text>}
+        ListEmptyComponent={<Text>No collection books</Text>}
       />
     </View>
   )
 }
 
-export default MyBooksScreen
 
 
 const styles = StyleSheet.create({
@@ -65,3 +69,5 @@ const styles = StyleSheet.create({
     padding: 20,
   },
 });
+
+export default CollectionScreen
