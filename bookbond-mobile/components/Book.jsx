@@ -3,15 +3,29 @@ import { Text, View, Image, StyleSheet, TouchableOpacity } from 'react-native';
 
 
 
-const Book = ({ item }) => (
-        <View style={styles.bookItem} >
-            {item.imageLinks.thumbnail && <Image source={{ uri: item.imageLinks.thumbnail }} style={styles.bookImage} />}
-            <View style={styles.bookInfo}>
-                <Text style={styles.bookTitle}>{item.title}</Text>
-                <Text style={styles.bookAuthors}>{item.authors}</Text>
+const Book = ({ item }) => {
+    if (item.imageLinks !== undefined) {
+        return (
+            <View style={styles.bookItem} >
+                <Image source={{ uri: item.imageLinks.thumbnail }} style={styles.bookImage} />
+                <View style={styles.bookInfo}>
+                    <Text style={styles.bookTitle}>{item.title}</Text>
+                    <Text style={styles.bookAuthors}>{item.authors}</Text>
+                </View>
             </View>
-        </View>
-    )
+        )
+    } else {
+        return (
+            <View style={styles.bookItem} >
+                <Image style={styles.bookImage} />
+                <View style={styles.bookInfo}>
+                    <Text style={styles.bookTitle}>{item.title}</Text>
+                    <Text style={styles.bookAuthors}>{item.authors}</Text>
+                </View>
+            </View>
+        )
+    }
+}
 
 export default Book
 
