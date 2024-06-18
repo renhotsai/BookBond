@@ -12,7 +12,7 @@ const ProfileScreen = () => {
   const [userLastName, setUserLastName] = useState("");
   const [contactNumber, setContactNumber] = useState("");
 
-  const [deviceLocation, setDeviceLocation] = useState(null);
+  const [deviceLocation, setDeviceLocation] = useState("");
 
   const editProfileHandler = () => {
     navigation.navigate("Edit Profile");
@@ -88,7 +88,7 @@ const ProfileScreen = () => {
       <Text style={styles.emailStyle}>{contactNumber}</Text>
       <Text style={styles.emailStyle}>{auth.currentUser.email}</Text>
       <Text style={styles.emailStyle}>
-        {deviceLocation.lat}, {deviceLocation.lng}
+        {deviceLocation.lat} {deviceLocation.lng}
       </Text>
     </View>
   );
