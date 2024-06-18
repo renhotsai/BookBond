@@ -4,6 +4,7 @@ import { BooksCollection, Orders, OwnBooks, UsersCollection, auth, db } from '..
 import { addDoc, collection, doc, getDoc, getDocs, query, setDoc, where } from 'firebase/firestore';
 import Button from '../components/Button';
 import OrderStatus from '../model/OrderStatus';
+import OrderType from '../model/OrderType';
 
 const BookDetailsScreen = ({ navigation, route }) => {
     const { book } = route.params;
@@ -73,7 +74,10 @@ const BookDetailsScreen = ({ navigation, route }) => {
             try {
                 const userDocRef = doc(db, UsersCollection, user.email)
                 const userOrderColRef = collection(userDocRef, Orders)
-                const q = query(userOrderColRef, where("status", "not-in", [OrderStatus.Returned, OrderStatus.Cancelled, OrderStatus.Denied]))
+                const q = query(userOrderColRef,
+                     where("status", "not-in", [OrderStatus.Checked, OrderStatus.Cancelled, OrderStatus.Denied]),
+                    where("orderType", "==",OrderType.In)
+                    )
                 const querySnapshot = await getDocs(q)
                 if (querySnapshot.size === 0) {
                     navigation.navigate('Borrow Book', { book: book });

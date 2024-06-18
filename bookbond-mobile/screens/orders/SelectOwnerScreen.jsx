@@ -4,6 +4,7 @@ import { BooksCollection, Orders, UsersCollection, auth, db } from '../../fireba
 import { collection, doc, getDoc, getDocs, query, where } from 'firebase/firestore';
 import Button from '../../components/Button';
 import OrderStatus from '../../model/OrderStatus';
+import OrderType from '../../model/OrderType';
 
 const SelectOwnerScreen = ({ navigation, route }) => {
     const { book } = route.params;
@@ -23,7 +24,11 @@ const SelectOwnerScreen = ({ navigation, route }) => {
             if (user !== null) {
                 const userDocRef = doc(db, UsersCollection, user.email)
                 const userOrderColRef = collection(userDocRef, Orders)
-                const q = query(userOrderColRef,where("status","not-in",[OrderStatus.Cancelled,OrderStatus.Denied,OrderStatus.Returned]))
+                const q = query(
+                    userOrderColRef,
+                    where("status","not-in",[OrderStatus.Cancelled,OrderStatus.Denied,OrderStatus.Checked]),
+                    where("orderType","==",OrderType.In)
+                )
                 const orders = await getDocs(q)
 
                 if (orders.size !== 0) {
@@ -71,9 +76,10 @@ const SelectOwnerScreen = ({ navigation, route }) => {
     const renderOwnerWithButton = ({ item }) => {
         const orderIndex  = orders.findIndex(order => order.bookId === item.bookId)
         if (orders.length > 0){
+            console.log(JSON.stringify(orders));
             return (
                 <View style={{ flex: 1, flexDirection: "row", justifyContent: "space-around", alignItems: "center" }}>
-                    <Text>{item.address}</Text>
+                    <Text>{item.bookId}</Text>
                     <Button buttonText={orders[orderIndex].status} />
                 </View>
             )

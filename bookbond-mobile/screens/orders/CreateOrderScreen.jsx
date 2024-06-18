@@ -10,26 +10,6 @@ import OrderType from '../../model/OrderType';
 const CreateOrderScreen = ({ navigation, route }) => {
     const { book } = route.params;
 
-    // const handleSubmit = async () => {
-    //     const user = auth.currentUser;
-    //     if (user !== null) {
-    //         try {
-    //             const booksColRef = collection(db, 'borrowedBooks');
-    //             const bookToInsert = {
-    //                 borrower: user.email,
-    //                 ...book
-    //             };
-    //             await addDoc(booksColRef, bookToInsert);
-    //             Alert.alert("Listing Created", "You have borrowed the book");
-    //         } catch (error) {
-    //             console.error("Error adding document: ", error);
-    //             Alert.alert("Error", "There was an error borrowing the book.");
-    //         }
-    //     } else {
-    //         Alert.alert("Not signed in", "You must be signed in to create a listing.");
-    //     }
-    // };
-
     useEffect(() => {
         getOwner();
     }, [])
@@ -70,6 +50,7 @@ const CreateOrderScreen = ({ navigation, route }) => {
                 orderToLandlord(owner.emailAddress, order.id, orderToInsert);
                 orderToTenant(user.email, order.id, orderToInsert);
 
+                console.log(`Order Id : ${order.id}`);
                 Alert.alert("Success", "Waiting owner approval...");
             } catch (error) {
                 console.error(error);
@@ -93,7 +74,7 @@ const CreateOrderScreen = ({ navigation, route }) => {
         const userDocRef = doc(db, UsersCollection, email)
         const userOrderDocRef = doc(userDocRef, Orders, orderId);
         orderToInsert.orderId = orderId;
-        orderToInsert.orderType = OrderType.Out
+        orderToInsert.orderType = OrderType.In
         setDoc(userOrderDocRef, orderToInsert)
     }
 
