@@ -6,7 +6,7 @@ import {
   TextInput,
   TouchableOpacity,
 } from "react-native";
-import { createUserWithEmailAndPassword, auth, db } from "../firebaseConfig";
+import { createUserWithEmailAndPassword, auth, db, signInWithEmailAndPassword } from "../firebaseConfig";
 import { collection, doc, setDoc } from "firebase/firestore";
 
 const SignUpScreen = (props) => {
@@ -16,6 +16,20 @@ const SignUpScreen = (props) => {
   const [emailFromUI, setEmailFromUI] = useState("");
   const [passwordFromUI, setPasswordFromUI] = useState("");
   const [reenterPasswordFromUI, setReenterPasswordFromUI] = useState("");
+
+  const onLogin = async () => {
+    try {
+      const userCredential = await signInWithEmailAndPassword(
+        auth,
+        emailFromUI,
+        passwordFromUI
+      );
+      props.screenChange({ screenName: "Main" });
+    } catch (err) {
+      alert("Invalid Credentials");
+      console.log(err);
+    }
+  };
 
   const onRegister = async () => {
     if (
@@ -53,6 +67,7 @@ const SignUpScreen = (props) => {
 
         // Display success message
         alert("Register Successful!");
+        onLogin();
       } catch (err) {
         console.log(err);
       }
@@ -62,6 +77,8 @@ const SignUpScreen = (props) => {
       alert("Unable to Register. Please check Fields.");
     }
   };
+
+  
 
   const onLoginPress = () => {
     props.screenChange({ screenName: "Login" });
