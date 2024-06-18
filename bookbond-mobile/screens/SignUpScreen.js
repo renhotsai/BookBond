@@ -6,7 +6,12 @@ import {
   TextInput,
   TouchableOpacity,
 } from "react-native";
-import { createUserWithEmailAndPassword, auth, db, signInWithEmailAndPassword } from "../firebaseConfig";
+import {
+  createUserWithEmailAndPassword,
+  auth,
+  db,
+  signInWithEmailAndPassword,
+} from "../firebaseConfig";
 import { collection, doc, setDoc } from "firebase/firestore";
 
 const SignUpScreen = (props) => {
@@ -77,8 +82,6 @@ const SignUpScreen = (props) => {
       alert("Unable to Register. Please check Fields.");
     }
   };
-
-  
 
   const onLoginPress = () => {
     props.screenChange({ screenName: "Login" });

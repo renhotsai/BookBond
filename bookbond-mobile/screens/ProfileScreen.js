@@ -3,6 +3,7 @@ import { Text, View, TouchableOpacity, StyleSheet, Image } from "react-native";
 import { auth, db } from "../firebaseConfig";
 import { useNavigation } from "@react-navigation/native";
 import { doc, onSnapshot } from "firebase/firestore";
+import * as Location from "expo-location";
 
 const ProfileScreen = () => {
   const navigation = useNavigation();
@@ -11,12 +12,15 @@ const ProfileScreen = () => {
   const [userLastName, setUserLastName] = useState("");
   const [contactNumber, setContactNumber] = useState("");
 
+  const [deviceLocation, setDeviceLocation] = useState(null);
+
   const editProfileHandler = () => {
     navigation.navigate("Edit Profile");
   };
 
   useEffect(() => {
     getData();
+    getCurrentLocation();
   }, []);
 
   const getData = () => {
@@ -32,6 +36,34 @@ const ProfileScreen = () => {
         console.log("No such document!");
       }
     });
+  };
+
+  const getCurrentLocation = async () => {
+    try {
+      // Request permission to access location
+      const result = await Location.requestForegroundPermissionsAsync();
+      console.log(`result from permission request : ${result.status}`);
+
+      if (result.status === "granted") {
+        console.log(`Location permission granted`);
+
+        // Get current position
+        const location = await Location.getCurrentPositionAsync();
+        setDeviceLocation({
+          lat: location.coords.latitude,
+          lng: location.coords.longitude,
+        });
+        console.log({
+          lat: location.coords.latitude,
+          lng: location.coords.longitude,
+        });
+      } else {
+        console.log(`Location permission DENIED`);
+        throw new Error(`User did not grant location permission`);
+      }
+    } catch (err) {
+      console.log(err);
+    }
   };
 
   return (
@@ -55,6 +87,9 @@ const ProfileScreen = () => {
       <Text style={styles.lastNameStyle}>{userLastName}</Text>
       <Text style={styles.emailStyle}>{contactNumber}</Text>
       <Text style={styles.emailStyle}>{auth.currentUser.email}</Text>
+      <Text style={styles.emailStyle}>
+        {deviceLocation.lat}, {deviceLocation.lng}
+      </Text>
     </View>
   );
 };
