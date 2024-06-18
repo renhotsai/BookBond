@@ -42,23 +42,27 @@ const OrderDetailScreen = ({ navigation, route }) => {
         );
       });
     } catch (error) {
-      console.error(error);
+      console.error(`updateOrderStatus: ${error}`);
     }
   }
 
-  
+
   const updateBookStatus = async (updateStatus) => {
     try {
       const bookDocRef = doc(db, BooksCollection, order.bookId)
       let isBorrowed = false;
 
       switch (updateStatus) {
-        case OrderStatus.Picked:
+        case OrderStatus.Accepted:
           isBorrowed = true;
           break;
+
         case OrderStatus.Checked:
-        default:
+        case OrderStatus.Cancelled:
           isBorrowed = false;
+          break;
+
+        default:
           break;
       }
 
@@ -68,7 +72,7 @@ const OrderDetailScreen = ({ navigation, route }) => {
           borrowed: isBorrowed
         })
     } catch (error) {
-      console.error(error);
+      console.error(`updateBookStatus: ${error}`);
     }
   }
 
@@ -84,19 +88,19 @@ const OrderDetailScreen = ({ navigation, route }) => {
         where('borrower', '!=', order.borrower)
       );
       const querySnapshot = await getDocs(q)
-      querySnapshot.forEach((doc) => {
+      querySnapshot.forEach((docRef) => {
         //deny order
-        const orderDocRef = doc(db, OrderCollection, doc.id)
+        const orderDocRef = doc(db, OrderCollection, docRef.id)
         denyList.push(orderDocRef)
 
         //deny tenant's order
-        const tenantDocRef = doc(db, UsersCollection, doc.data().borrower)
-        const tenantOrderDocRef = doc(tenantDocRef, Orders, doc.id)
+        const tenantDocRef = doc(db, UsersCollection, docRef.data().borrower)
+        const tenantOrderDocRef = doc(tenantDocRef, Orders, docRef.id)
         denyList.push(tenantOrderDocRef)
 
         //deny landlord's order
-        const landlordDocRef = doc(db, UsersCollection, doc.data().owner)
-        const landlordOrderDocRef = doc(landlordDocRef, Orders, doc.id)
+        const landlordDocRef = doc(db, UsersCollection, docRef.data().owner)
+        const landlordOrderDocRef = doc(landlordDocRef, Orders, docRef.id)
         denyList.push(landlordOrderDocRef)
       })
 
@@ -110,7 +114,7 @@ const OrderDetailScreen = ({ navigation, route }) => {
       })
 
     } catch (error) {
-      console.error(error);
+      console.error(`deniedOtherOrder: ${error}`);
     }
   }
 
@@ -124,9 +128,12 @@ const OrderDetailScreen = ({ navigation, route }) => {
           deniedOtherOrder()
           break;
 
-        case OrderStatus.Picked:
+        case OrderStatus.Accepted:
+        case OrderStatus.Cancelled:
         case OrderStatus.Checked:
           updateBookStatus(updateStatus)
+          break;
+        default:
           break;
       }
 
