@@ -1,10 +1,10 @@
-import { FlatList, StyleSheet, Text, View } from 'react-native'
+import { FlatList, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import Book from '../../components/Book'
-import { OwnBooks, UsersCollection, auth, db } from '../../firebaseConfig'
-import { collection, doc, onSnapshot, query } from 'firebase/firestore'
+import { BooksCollection, OwnBooks, UsersCollection, auth, db } from '../../firebaseConfig'
+import { collection, doc, getDoc, onSnapshot, query } from 'firebase/firestore'
 
-const MyBooksScreen = () => {
+const MyBooksScreen = ({ navigation }) => {
 
   useEffect(() => {
     getOwnBooks()
@@ -24,7 +24,7 @@ const MyBooksScreen = () => {
           const temp = []
           querySnapshot.forEach((doc) => {
             temp.push({
-              id: doc.id,
+              bookId: doc.id,
               ...doc.data()
             });
           });
@@ -43,11 +43,29 @@ const MyBooksScreen = () => {
     }
   }
 
+  const onBookPress = async (item) => {
+    try {
+      const bookDocRef = doc(db, BooksCollection, item.bookId);
+      const book = await getDoc(bookDocRef)
+      navigation.navigate("Book Details", { book: book.data() })
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  const renderItem = (item) => {
+    return (
+      <TouchableOpacity onPress={() => onBookPress(item)}>
+        <Book item={item} />
+      </TouchableOpacity>
+    )
+  }
+
   return (
     <View style={styles.container}>
       <FlatList
         data={ownBooks}
-        renderItem={({ item }) => <Book item={item} />}
+        renderItem={({ item }) => renderItem(item)}
         keyExtractor={(item) => item.id}
         ListEmptyComponent={<Text>No own books</Text>}
       />

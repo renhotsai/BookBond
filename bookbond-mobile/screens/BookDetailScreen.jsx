@@ -75,9 +75,9 @@ const BookDetailsScreen = ({ navigation, route }) => {
                 const userDocRef = doc(db, UsersCollection, user.email)
                 const userOrderColRef = collection(userDocRef, Orders)
                 const q = query(userOrderColRef,
-                     where("status", "not-in", [OrderStatus.Checked, OrderStatus.Cancelled, OrderStatus.Denied]),
-                    where("orderType", "==",OrderType.In)
-                    )
+                    where("status", "not-in", [OrderStatus.Checked, OrderStatus.Cancelled, OrderStatus.Denied]),
+                    where("orderType", "==", OrderType.In)
+                )
                 const querySnapshot = await getDocs(q)
                 if (querySnapshot.size === 0) {
                     navigation.navigate('Borrow Book', { book: book });
@@ -94,7 +94,11 @@ const BookDetailsScreen = ({ navigation, route }) => {
     }
 
     const renderButtons = () => {
-        if (!isOwnBook) {
+        if (isOwnBook) {
+            return (
+                <View style={styles.buttonContainer} />
+            )
+        } else {
             return (
                 <View style={styles.buttonContainer}>
                     <TouchableOpacity onPress={onBorrowPress}>
@@ -104,10 +108,6 @@ const BookDetailsScreen = ({ navigation, route }) => {
                         <Button buttonText={"I have it"} />
                     </TouchableOpacity>
                 </View>
-            )
-        } else {
-            return (
-                <View style={styles.buttonContainer} />
             )
         }
     }
