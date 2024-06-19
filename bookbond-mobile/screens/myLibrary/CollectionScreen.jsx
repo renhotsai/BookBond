@@ -32,6 +32,7 @@ const CollectionScreen = ({ navigation }) => {
             });
           });
 
+          console.log(JSON.stringify(temp));
           setBooksCollection(temp)
 
           return () => unsubscribe();
@@ -76,7 +77,6 @@ const CollectionScreen = ({ navigation }) => {
       </TouchableOpacity>
     )
   }
-
 
 
   return (

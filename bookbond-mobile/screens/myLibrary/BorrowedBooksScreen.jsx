@@ -4,8 +4,9 @@ import { collection, query, where, onSnapshot, getDocs, updateDoc, doc } from 'f
 import { db, auth, UsersCollection, Orders } from '../../firebaseConfig';
 import Book from '../../components/Book';
 import OrderType from '../../model/OrderType';
+import OrderStatus from '../../model/OrderStatus';
 
-const BorrowedBooksScreen = () => {
+const BorrowedBooksScreen = ({navigation}) => {
 
     const [bookingsList, setBookingsList] = useState([]);
 
@@ -15,7 +16,7 @@ const BorrowedBooksScreen = () => {
         if (user !== null) {
             const userDocRef = doc(db, UsersCollection, user.email)
             const userOrderColRef = collection(userDocRef, Orders)
-            const q = query(userOrderColRef, where("orderType", "==", OrderType.In));
+            const q = query(userOrderColRef, where("orderType", "==", OrderType.In),where("status","==",OrderStatus.Checked));
 
             const unsubscribe = onSnapshot(q, (querySnapshot) => {
                 const resultsFromFirestore = [];
@@ -32,12 +33,27 @@ const BorrowedBooksScreen = () => {
     useEffect(() => {
         retrieveFromDb();
     }, []);
-    
+
+
+    const onOrderPress = (item) => {
+        console.log("onOrderPress");
+        navigation.navigate("Order Details", { order: item })
+    }
+
+    const renderItem = (item) => {
+        return (
+            <TouchableOpacity onPress={() => onOrderPress(item)}>
+                <Book item={item} />
+            </TouchableOpacity>
+        )
+    }
+
+
     return (
         <View style={styles.container}>
             <FlatList
                 data={bookingsList}
-                renderItem={({ item }) => <Book item={item} />}
+                renderItem={({ item }) => renderItem(item)}
                 keyExtractor={(item, index) => index.toString()}
                 ListEmptyComponent={<Text>No borrowed books</Text>}
             />
