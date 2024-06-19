@@ -147,6 +147,7 @@ const OrderDetailScreen = ({ navigation, route }) => {
 
 
   const renderOrderDetail = () => {
+    console.log(JSON.stringify(order.status));
     switch (order.status) {
       case OrderStatus.Pending:
         return <PendingScreen order={order} updateOrder={updateOrder} />
@@ -155,6 +156,8 @@ const OrderDetailScreen = ({ navigation, route }) => {
       case OrderStatus.Picked:
         return <PickedScreen order={order} updateOrder={updateOrder} />
       case OrderStatus.Returned:
+        return <ReturnedScreen order={order} updateOrder={updateOrder} />
+      case OrderStatus.Checked:
         return <ReturnedScreen order={order} updateOrder={updateOrder} />
     }
   }
