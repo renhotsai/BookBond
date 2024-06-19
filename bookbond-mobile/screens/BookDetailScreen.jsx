@@ -21,6 +21,7 @@ const BookDetailsScreen = ({ navigation, route }) => {
     const [isOwnBook, setIsOwnBook] = useState(false)
 
     const renderDescription = () => {
+        console.log(JSON.stringify(book));
         const description = book.description;
         if (isExpanded) {
             return (

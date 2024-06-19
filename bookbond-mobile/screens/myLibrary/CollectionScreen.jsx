@@ -1,13 +1,13 @@
-import { FlatList, StyleSheet, Text, View } from 'react-native'
+import { FlatList, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import React, { useEffect, useState } from 'react'
-import { collection, doc, getDocs, onSnapshot, query } from 'firebase/firestore'
-import { CollectBooks, UsersCollection, auth, db } from '../../firebaseConfig'
+import { collection, doc, getDocs, onSnapshot, query, where } from 'firebase/firestore'
+import { BooksCollection, CollectBooks, UsersCollection, auth, db } from '../../firebaseConfig'
 import Book from '../../components/Book'
 
 
 
 
-const CollectionScreen = () => {
+const CollectionScreen = ({ navigation }) => {
 
   useEffect(() => {
     getBooksCollection()
@@ -46,13 +46,44 @@ const CollectionScreen = () => {
     }
   }
 
+  const onBookPress = async (item) => {
+    try {
+      const book = await fetchData(item)
+      navigation.navigate("Book Details", { book: book })
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  const fetchData = async (item) => {
+    try {
+      const uri = `https://www.googleapis.com/books/v1/volumes/${item.id}`
+      const dataJson = await (await fetch(uri)).json();
+      console.log(JSON.stringify(dataJson));
+      const book = {
+        id: dataJson.id,
+        ...dataJson.volumeInfo
+      }
+      return book
+    } catch (error) {
+      console.error(error);
+    }
+  };
+  const renderItem = (item) => {
+    return (
+      <TouchableOpacity onPress={() => onBookPress(item)}>
+        <Book item={item} />
+      </TouchableOpacity>
+    )
+  }
+
 
 
   return (
     <View style={styles.container}>
       <FlatList
         data={booksCollection}
-        renderItem={({ item }) => <Book item={item} />}
+        renderItem={({ item }) => renderItem(item)}
         keyExtractor={(item) => item.id}
         ListEmptyComponent={<Text>No collection books</Text>}
       />
