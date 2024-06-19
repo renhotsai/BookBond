@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { FlatList, Text, View, Image, StyleSheet, TouchableOpacity } from 'react-native';
 import { collection, query, where, onSnapshot, getDocs, updateDoc, doc } from 'firebase/firestore';
-import { db, auth } from '../../firebaseConfig';
+import { db, auth, UsersCollection, Orders } from '../../firebaseConfig';
 import Book from '../../components/Book';
+import OrderType from '../../model/OrderType';
 
 const BorrowedBooksScreen = () => {
 
@@ -12,15 +13,14 @@ const BorrowedBooksScreen = () => {
         const user = auth.currentUser;
 
         if (user !== null) {
-            const q = query(collection(db, "borrowedBooks"), where("borrower", "==", user.email));
+            const userDocRef = doc(db, UsersCollection, user.email)
+            const userOrderColRef = collection(userDocRef, Orders)
+            const q = query(userOrderColRef, where("orderType", "==", OrderType.In));
 
             const unsubscribe = onSnapshot(q, (querySnapshot) => {
                 const resultsFromFirestore = [];
                 querySnapshot.forEach((doc) => {
-                    resultsFromFirestore.push({
-                        id: doc.id,
-                        ...doc.data()
-                    });
+                    resultsFromFirestore.push(doc.data());
                 });
 
                 setBookingsList(resultsFromFirestore);
@@ -32,18 +32,7 @@ const BorrowedBooksScreen = () => {
     useEffect(() => {
         retrieveFromDb();
     }, []);
-
-
-    const renderBookItem = ({ item }) => (
-        <View style={styles.bookItem}>
-            {item.image && <Image source={{ uri: item.image }} style={styles.bookImage} />}
-            <View style={styles.bookInfo}>
-                <Text style={styles.bookTitle}>{item.title}</Text>
-                <Text style={styles.bookAuthors}>{item.authors}</Text>
-            </View>
-        </View>
-    );
-
+    
     return (
         <View style={styles.container}>
             <FlatList
