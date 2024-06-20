@@ -8,7 +8,7 @@ import { set } from 'firebase/database';
 import OrderType from '../../model/OrderType';
 
 const CreateOrderScreen = ({ navigation, route }) => {
-    const { book } = route.params;
+    const { item } = route.params;
 
     useEffect(() => {
         getOwner();
@@ -17,7 +17,7 @@ const CreateOrderScreen = ({ navigation, route }) => {
     const [owner, setOwner] = useState({});
 
     const getOwner = async () => {
-        const userDocRef = doc(db, UsersCollection, book.owner);
+        const userDocRef = doc(db, UsersCollection, item.owner);
         const user = await getDoc(userDocRef);
         setOwner(user.data());
     }
@@ -37,14 +37,14 @@ const CreateOrderScreen = ({ navigation, route }) => {
             try {
                 const orderColRef = collection(db, OrderCollection)
                 const orderToInsert = {
-                    id:book.id,
-                    bookId: book.bookId,
+                    id:item.id,
+                    bookId: item.bookId,
                     borrower: user.email,
                     owner: owner.emailAddress,
                     status: OrderStatus.Pending,
-                    imageLinks:book.imageLinks,
-                    title: book.title,
-                    authors: book.authors,
+                    imageLinks:item.imageLinks,
+                    title: item.title,
+                    authors: item.authors,
                 }
                 const order = await addDoc(orderColRef, orderToInsert);
                 orderToLandlord(owner.emailAddress, order.id, orderToInsert);
@@ -80,10 +80,10 @@ const CreateOrderScreen = ({ navigation, route }) => {
 
     return (
         <View style={styles.container}>
-            {book.imageLinks && book.imageLinks.thumbnail && (
-                <Image source={{ uri: book.imageLinks.smallThumbnail }} style={styles.image} />
+            {item.imageLinks && item.imageLinks.thumbnail && (
+                <Image source={{ uri: item.imageLinks.smallThumbnail }} style={styles.image} />
             )}
-            <Text style={styles.title}>{book.title}</Text>
+            <Text style={styles.title}>{item.title}</Text>
             <Text>{owner.lastName}</Text>
             <Text></Text>
             <Text>MapView</Text>

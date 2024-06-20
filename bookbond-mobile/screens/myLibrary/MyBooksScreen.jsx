@@ -47,7 +47,7 @@ const MyBooksScreen = ({ navigation }) => {
     try {
       const bookDocRef = doc(db, BooksCollection, item.bookId);
       const book = await getDoc(bookDocRef)
-      navigation.navigate("Book Details", { book: book.data() })
+      navigation.navigate("Book Details", { item: book.data() })
     } catch (error) {
       console.error(error);
     }

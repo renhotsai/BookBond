@@ -31,8 +31,6 @@ const CollectionScreen = ({ navigation }) => {
               ...doc.data()
             });
           });
-
-          console.log(JSON.stringify(temp));
           setBooksCollection(temp)
 
           return () => unsubscribe();
@@ -50,7 +48,7 @@ const CollectionScreen = ({ navigation }) => {
   const onBookPress = async (item) => {
     try {
       const book = await fetchData(item)
-      navigation.navigate("Book Details", { book: book })
+      navigation.navigate("Book Details", { item: book })
     } catch (error) {
       console.error(error);
     }
@@ -60,7 +58,6 @@ const CollectionScreen = ({ navigation }) => {
     try {
       const uri = `https://www.googleapis.com/books/v1/volumes/${item.id}`
       const dataJson = await (await fetch(uri)).json();
-      console.log(JSON.stringify(dataJson));
       const book = {
         id: dataJson.id,
         ...dataJson.volumeInfo
