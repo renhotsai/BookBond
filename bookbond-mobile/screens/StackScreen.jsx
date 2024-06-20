@@ -35,33 +35,33 @@ const StackScreen = (props) => {
     props.screenChange({ screenName: "Login" });
   };
 
-  const onHeartPress = (item) => {
+  const onHeartPress = (route) => {
     console.log(`onHeartPress`);
-    const { book } = item.params;
-    bookCollect(book);
+    const { item } = route.params;
+    bookCollect(item);
   };
 
-  const bookCollect = async (book) => {
+  const bookCollect = async (item) => {
     const user = auth.currentUser
     if (user !== null) {
       try {
         const userDocRef = doc(db, UsersCollection, user.email);
         const booksCollectionColRef = collection(userDocRef, CollectBooks)
 
-        const q = query(booksCollectionColRef, where("id", "==", book.id));
+        const q = query(booksCollectionColRef, where("id", "==", item.id));
         const books = await getDocs(q);
         if (books.size !== 0) {
-          await deleteDoc(doc(booksCollectionColRef, book.id));
+          await deleteDoc(doc(booksCollectionColRef, item.id));
           Alert.alert("Success", `You remove this book from your collection`);
         } else {
 
           const bookToInsert = {
-            id: book.id,
-            title: book.title ?? "No title",
-            authors: book.authors?.join(", ") ?? "No authors",
-            imageLinks: book.imageLinks ?? "No Image",
+            id: item.id,
+            title: item.title ?? "No title",
+            authors: item.authors?.join(", ") ?? "No authors",
+            imageLinks: item.imageLinks ?? "No Image",
           };
-          await setDoc(doc(booksCollectionColRef, book.id), bookToInsert);
+          await setDoc(doc(booksCollectionColRef, item.id), bookToInsert);
           Alert.alert("Success", `You have collected this book`);
         }
       } catch (error) {
@@ -77,27 +77,10 @@ const StackScreen = (props) => {
   };
 
   return (
-    <Stack.Navigator>
+    <Stack.Navigator screenOptions={{ headerBackTitle: "Back" }}>
       <Stack.Screen name="Main" options={{ headerShown: false }}>
         {() => <TabScreen logout={logout} />}
       </Stack.Screen>
-      <Stack.Screen
-        name="Book Details"
-        component={BookDetailScreen}
-        options={({ navigation, route }) => ({
-          headerRight: () => (
-            <TouchableOpacity
-              onPress={() => {
-                onHeartPress(route);
-              }}
-              title="Info"
-              color="#000"
-            >
-              <AntDesign name="heart" size={24} color="black" />
-            </TouchableOpacity>
-          ),
-        })}
-      />
       <Stack.Screen
         name="Profile"
         options={{
@@ -112,17 +95,47 @@ const StackScreen = (props) => {
         name="Edit Profile"
         component={EditProfileScreen}
       ></Stack.Screen>
+
+
+
+      <Stack.Screen
+        name="Book Details"
+        component={BookDetailScreen}
+        options={({ route }) => ({
+          title: route.params.item.title,
+          headerRight: () => (
+            <TouchableOpacity
+              onPress={() => {
+                onHeartPress(route);
+              }}
+              title="Info"
+              color="#000"
+            >
+              <AntDesign name="heart" size={24} color="black" />
+            </TouchableOpacity>
+          ),
+        })}
+      />
       <Stack.Screen
         name="Borrow Book"
         component={SelectOwnerScreen}
+        options={({ route }) => ({
+          title: route.params.item.title,
+        })}
       />
       <Stack.Screen
         name="Create Order"
         component={CreateOrderScreen}
+        options={({ route }) => ({
+          title: route.params.item.title,
+        })}
       />
       <Stack.Screen
-      name="Order Details"
-      component={OrderDetailScreen}
+        name="Order Details"
+        component={OrderDetailScreen}
+        options={({ route }) => ({
+          title: route.params.item.title,
+        })}
       />
     </Stack.Navigator>
   );

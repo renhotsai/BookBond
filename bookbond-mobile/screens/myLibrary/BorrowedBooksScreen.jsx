@@ -37,7 +37,7 @@ const BorrowedBooksScreen = ({navigation}) => {
 
     const onOrderPress = (item) => {
         console.log("onOrderPress");
-        navigation.navigate("Order Details", { order: item })
+        navigation.navigate("Order Details", { item: item })
     }
 
     const renderItem = (item) => {

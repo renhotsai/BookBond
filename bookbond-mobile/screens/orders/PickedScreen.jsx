@@ -5,15 +5,15 @@ import Button from '../../components/Button'
 import OrderStatus from '../../model/OrderStatus'
 import OrderType from '../../model/OrderType'
 
-const PickedScreen = ({ order, updateOrder }) => {
+const PickedScreen = ({ item, updateOrder }) => {
   const onReturnPress = () => {
-    console.log(`onReturnPress orderId ${order.orderId}`);
+    console.log(`onReturnPress orderId ${item.orderId}`);
     updateOrder(OrderStatus.Returned)
   }
-  if (order.orderType === OrderType.In) {
+  if (item.orderType === OrderType.In) {
     return (
       <View>
-        <OrderBaseScreen order={order} />
+        <OrderBaseScreen item={item} />
         <TouchableOpacity onPress={onReturnPress}>
           <Button buttonText={"Return"} />
         </TouchableOpacity>
@@ -21,7 +21,7 @@ const PickedScreen = ({ order, updateOrder }) => {
     )
   } else {
     return (
-      <OrderBaseScreen order={order} />
+      <OrderBaseScreen item={item} />
     )
   }
 }

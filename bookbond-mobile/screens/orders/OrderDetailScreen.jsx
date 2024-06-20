@@ -12,25 +12,25 @@ import ReturnedScreen from './ReturnedScreen';
 
 const OrderDetailScreen = ({ navigation, route }) => {
 
-  const { order } = route.params;
+  const { item } = route.params;
 
 
   const updateOrderStatus = (updateStatus) => {
     try {
       const updateOrderList = []
 
-      const orderDocRef = doc(db, OrderCollection, order.orderId)
+      const orderDocRef = doc(db, OrderCollection, item.orderId)
       updateOrderList.push(orderDocRef)
 
       // Tenant
-      const userDocRef = doc(db, UsersCollection, order.borrower)
-      const userOrderDocRef = doc(userDocRef, "Orders", order.orderId);
+      const userDocRef = doc(db, UsersCollection, item.borrower)
+      const userOrderDocRef = doc(userDocRef, "Orders", item.orderId);
       updateOrderList.push(userOrderDocRef)
 
 
       // Landlord
-      const landlordDocRef = doc(db, UsersCollection, order.owner)
-      const landlordOrderDocRef = doc(landlordDocRef, "Orders", order.orderId);
+      const landlordDocRef = doc(db, UsersCollection, item.owner)
+      const landlordOrderDocRef = doc(landlordDocRef, "Orders", item.orderId);
       updateOrderList.push(landlordOrderDocRef)
 
       updateOrderList.forEach(async (docRef) => {
@@ -49,7 +49,7 @@ const OrderDetailScreen = ({ navigation, route }) => {
 
   const updateBookStatus = async (updateStatus) => {
     try {
-      const bookDocRef = doc(db, BooksCollection, order.bookId)
+      const bookDocRef = doc(db, BooksCollection, item.bookId)
       let isBorrowed = false;
 
       switch (updateStatus) {
@@ -83,9 +83,9 @@ const OrderDetailScreen = ({ navigation, route }) => {
       const orderColRef = collection(db, OrderCollection)
       const q = query(
         orderColRef,
-        where('bookId', '==', order.bookId),
+        where('bookId', '==', item.bookId),
         where('status', '==', OrderStatus.Pending),
-        where('borrower', '!=', order.borrower)
+        where('borrower', '!=', item.borrower)
       );
       const querySnapshot = await getDocs(q)
       querySnapshot.forEach((docRef) => {
@@ -147,18 +147,17 @@ const OrderDetailScreen = ({ navigation, route }) => {
 
 
   const renderOrderDetail = () => {
-    console.log(JSON.stringify(order.status));
-    switch (order.status) {
+    switch (item.status) {
       case OrderStatus.Pending:
-        return <PendingScreen order={order} updateOrder={updateOrder} />
+        return <PendingScreen item={item} updateOrder={updateOrder} />
       case OrderStatus.Accepted:
-        return <AcceptedScreen order={order} updateOrder={updateOrder} />
+        return <AcceptedScreen item={item} updateOrder={updateOrder} />
       case OrderStatus.Picked:
-        return <PickedScreen order={order} updateOrder={updateOrder} />
+        return <PickedScreen item={item} updateOrder={updateOrder} />
       case OrderStatus.Returned:
-        return <ReturnedScreen order={order} updateOrder={updateOrder} />
+        return <ReturnedScreen item={item} updateOrder={updateOrder} />
       case OrderStatus.Checked:
-        return <ReturnedScreen order={order} updateOrder={updateOrder} />
+        return <ReturnedScreen item={item} updateOrder={updateOrder} />
     }
   }
   return (

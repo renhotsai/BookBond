@@ -5,16 +5,16 @@ import OrderType from '../../model/OrderType'
 import OrderBaseScreen from './OrderBaseScreen'
 import Button from '../../components/Button'
 
-const ReturnedScreen = ({ order, updateOrder }) => {
+const ReturnedScreen = ({ item, updateOrder }) => {
     const onCheckedPress = () => {
-        console.log(`onCheckedPress orderId ${order.orderId}`);
+        console.log(`onCheckedPress orderId ${item.orderId}`);
         updateOrder(OrderStatus.Checked)
     }
 
-    if (order.orderType === OrderType.Out) {
+    if (item.orderType === OrderType.Out) {
         return (
             <View>
-                <OrderBaseScreen order={order} />
+                <OrderBaseScreen item={item} />
                 <TouchableOpacity onPress={onCheckedPress}>
                     <Button buttonText={"Checked"} />
                 </TouchableOpacity>
@@ -22,7 +22,7 @@ const ReturnedScreen = ({ order, updateOrder }) => {
         )
     } else {
         return (
-            <OrderBaseScreen order={order} />
+            <OrderBaseScreen item={item} />
         )
     }
 }

@@ -41,7 +41,7 @@ const OwnerOrderScreen = ({ navigation }) => {
 
   const onPressBook = (item) => {
     console.log("onPressBook");
-    navigation.navigate("Order Details", { order: item })
+    navigation.navigate("Order Details", { item: item })
   }
 
 

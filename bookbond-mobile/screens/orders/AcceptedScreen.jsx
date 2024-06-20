@@ -7,21 +7,21 @@ import Button from '../../components/Button'
 import OrderStatus from '../../model/OrderStatus'
 
 
-const AcceptedScreen = ({ order, updateOrder }) => {
+const AcceptedScreen = ({ item, updateOrder }) => {
   const onPickPress = () => {
-    console.log(`onPickPress orderId ${order.orderId}`);
+    console.log(`onPickPress orderId ${item.orderId}`);
     updateOrder(OrderStatus.Picked)
   }
 
   const onCancel = () => {
-    console.log(`onCancelPress orderId ${order.orderId}`);
+    console.log(`onCancelPress orderId ${item.orderId}`);
     updateOrder(OrderStatus.Cancelled)
   }
    
-  if (order.orderType === OrderType.In) {
+  if (item.orderType === OrderType.In) {
     return (
       <View>
-        <OrderBaseScreen order={order} />
+        <OrderBaseScreen item={item} />
         <TouchableOpacity onPress={onPickPress}>
           <Button buttonText={"Picked"} />
         </TouchableOpacity>
@@ -32,7 +32,7 @@ const AcceptedScreen = ({ order, updateOrder }) => {
     )
   } else {
     return (
-      <OrderBaseScreen order={order} />
+      <OrderBaseScreen item={item} />
     )
   }
 }

@@ -7,7 +7,7 @@ import OrderStatus from '../../model/OrderStatus';
 import OrderType from '../../model/OrderType';
 
 const SelectOwnerScreen = ({ navigation, route }) => {
-    const { book } = route.params;
+    const { item } = route.params;
 
     useEffect(() => {
         getBooks()
@@ -47,7 +47,7 @@ const SelectOwnerScreen = ({ navigation, route }) => {
     const getBooks = async () => {
         try {
             const booksColRef = collection(db, BooksCollection);
-            const q = query(booksColRef, where('id', '==', book.id), where('borrowed', '==', false));
+            const q = query(booksColRef, where('id', '==', item.id), where('borrowed', '==', false));
             const querySnapshot = await getDocs(q);
 
             if (querySnapshot.size !== 0) {
@@ -70,13 +70,12 @@ const SelectOwnerScreen = ({ navigation, route }) => {
 
     const onBorrowPress = (item) => {
         console.log("onBorrowPress");
-        navigation.navigate('Create Order', { book: item });
+        navigation.navigate('Create Order', { item: item });
     }
 
     const renderOwnerWithButton = ({ item }) => {
         const orderIndex  = orders.findIndex(order => order.bookId === item.bookId)
         if (orders.length > 0){
-            console.log(JSON.stringify(orders));
             return (
                 <View style={{ flex: 1, flexDirection: "row", justifyContent: "space-around", alignItems: "center" }}>
                     <Text>{item.bookId}</Text>
@@ -118,10 +117,10 @@ const SelectOwnerScreen = ({ navigation, route }) => {
 
     return (
         <View style={styles.container}>
-            {book.imageLinks && book.imageLinks.thumbnail && (
-                <Image source={{ uri: book.imageLinks.smallThumbnail }} style={styles.image} />
+            {item.imageLinks && item.imageLinks.thumbnail && (
+                <Image source={{ uri: item.imageLinks.smallThumbnail }} style={styles.image} />
             )}
-            <Text style={styles.title}>{book.title}</Text>
+            <Text style={styles.title}>{item.title}</Text>
             {renderOwnerList()}
         </View>
     )

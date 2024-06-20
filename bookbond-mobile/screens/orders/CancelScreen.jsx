@@ -4,10 +4,10 @@ import Button from '../../components/Button'
 import OrderStatus from '../../model/OrderStatus'
 import OrderBaseScreen from './OrderBaseScreen'
 
-const CancelScreen = ({ order, updateOrder }) => {
+const CancelScreen = ({ item, updateOrder }) => {
 
   const onCancelPress = () => {
-    console.log(`onCancelPress orderId: ${order.orderId}`);
+    console.log(`onCancelPress orderId: ${item.orderId}`);
 
     Alert.alert('Confirm', 'Do you want to cancel order', [
       {
@@ -24,7 +24,7 @@ const CancelScreen = ({ order, updateOrder }) => {
 
   return (
     <View>
-      <OrderBaseScreen order={order} />
+      <OrderBaseScreen item={item} />
       <TouchableOpacity onPress={onCancelPress}>
         <Button buttonText="Cancel" />
       </TouchableOpacity>

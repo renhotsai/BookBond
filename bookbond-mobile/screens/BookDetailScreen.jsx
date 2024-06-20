@@ -7,7 +7,7 @@ import OrderStatus from '../model/OrderStatus';
 import OrderType from '../model/OrderType';
 
 const BookDetailsScreen = ({ navigation, route }) => {
-    const { book } = route.params;
+    const { item } = route.params;
     const [isExpanded, setIsExpanded] = useState(false);
 
     const toggleDescription = () => {
@@ -21,8 +21,7 @@ const BookDetailsScreen = ({ navigation, route }) => {
     const [isOwnBook, setIsOwnBook] = useState(false)
 
     const renderDescription = () => {
-        console.log(JSON.stringify(book));
-        const description = book.description;
+        const description = item.description;
         if (isExpanded) {
             return (
                 <>
@@ -53,7 +52,7 @@ const BookDetailsScreen = ({ navigation, route }) => {
             try {
                 const userDocRef = doc(db, UsersCollection, user.email)
                 const ownBooksColRef = collection(userDocRef, OwnBooks)
-                const q = query(ownBooksColRef, where("id", "==", book.id));
+                const q = query(ownBooksColRef, where("id", "==", item.id));
                 const querySnapshot = await getDocs(q)
 
                 if (querySnapshot.size !== 0) {
@@ -81,11 +80,11 @@ const BookDetailsScreen = ({ navigation, route }) => {
                 )
                 const querySnapshot = await getDocs(q)
                 if (querySnapshot.size === 0) {
-                    navigation.navigate('Borrow Book', { book: book });
+                    navigation.navigate('Borrow Book', { item: item });
                 } else {
                     querySnapshot.forEach((doc) => {
                         const item = doc.data()
-                        navigation.navigate("Order Details", { order: item })
+                        navigation.navigate("Order Details", { item: item })
                     })
                 }
             } catch (error) {
@@ -122,16 +121,16 @@ const BookDetailsScreen = ({ navigation, route }) => {
                 const bookToInsert = {
                     borrowed: false,
                     owner: user.email,
-                    ...book
+                    ...item
                 };
                 const docRef = await addDoc(booksColRef, bookToInsert);
                 const userRef = doc(db, UsersCollection, user.email);
                 const userOwnColRef = collection(userRef, OwnBooks);
                 const bookToUser = {
-                    id: book.id,
-                    title: book.title,
-                    authors: book.authors,
-                    imageLinks: book.imageLinks
+                    id: item.id,
+                    title: item.title,
+                    authors: item.authors,
+                    imageLinks: item.imageLinks
                 }
                 await setDoc(doc(userOwnColRef, docRef.id), bookToUser);
                 setIsOwnBook(true)
@@ -145,11 +144,11 @@ const BookDetailsScreen = ({ navigation, route }) => {
 
     return (
         <ScrollView style={styles.container}>
-            {book.imageLinks && book.imageLinks.thumbnail && (
-                <Image source={{ uri: book.imageLinks.thumbnail }} style={styles.image} />
+            {item.imageLinks && item.imageLinks.thumbnail && (
+                <Image source={{ uri: item.imageLinks.thumbnail }} style={styles.image} />
             )}
-            <Text style={styles.title}>{book.title}</Text>
-            <Text style={styles.authors}>{book.authors?.join(', ')}</Text>
+            <Text style={styles.title}>{item.title}</Text>
+            <Text style={styles.authors}>{item.authors?.join(', ')}</Text>
             {renderDescription()}
 
             {renderButtons()}
