@@ -21,28 +21,36 @@ const BookDetailsScreen = ({ navigation, route }) => {
     const [isOwnBook, setIsOwnBook] = useState(false)
 
     const renderDescription = () => {
-        const description = item.description;
-        if (isExpanded) {
-            return (
-                <>
-                    <Text style={styles.description}>{description}</Text>
-                    <TouchableOpacity onPress={toggleDescription}>
-                        <Text style={styles.readMoreText}>Read Less</Text>
-                    </TouchableOpacity>
-                </>
-            );
-        } else {
-            const shortDescription = description.length > 200 ? description.substring(0, 200) + '...' : description;
-            return (
-                <>
-                    <Text style={styles.description}>{shortDescription}</Text>
-                    {description.length > 200 && (
+        if(item.description){
+            const description = item.description;
+            if (isExpanded) {
+                return (
+                    <>
+                        <Text style={styles.description}>{description}</Text>
                         <TouchableOpacity onPress={toggleDescription}>
-                            <Text style={styles.readMoreText}>Read More</Text>
+                            <Text style={styles.readMoreText}>Read Less</Text>
                         </TouchableOpacity>
-                    )}
+                    </>
+                );
+            } else {
+                const shortDescription = description.length > 200 ? description.substring(0, 200) + '...' : description;
+                return (
+                    <>
+                        <Text style={styles.description}>{shortDescription}</Text>
+                        {description.length > 200 && (
+                            <TouchableOpacity onPress={toggleDescription}>
+                                <Text style={styles.readMoreText}>Read More</Text>
+                            </TouchableOpacity>
+                        )}
+                    </>
+                );
+            }
+        }else{
+            return (
+                <>
+                    <Text style={styles.description}>No description</Text>
                 </>
-            );
+            )
         }
     };
 

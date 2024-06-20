@@ -28,13 +28,18 @@ const HomeScreen = ({ navigation }) => {
         const tempLanguages = new Set();
 
         for (const item of dataJson.items) {
-            const book = {
-                id: item.id,
-                ...item.volumeInfo,
-                language: item.volumeInfo.language || "No specified"
-            };
-            tempBooks.push(book);
-            tempLanguages.add(book.language);
+            if (item.volumeInfo) {
+                const book = {
+                    id: item.id,
+                    title: item.volumeInfo.title || "No Title",
+                    authors: item.volumeInfo.authors || ["Unknown Author"],
+                    publishedDate: item.volumeInfo.publishedDate || "No Date",
+                    language: item.volumeInfo.language || "No specified",
+                    ...item.volumeInfo
+                };
+                tempBooks.push(book);
+                tempLanguages.add(book.language);
+            }
         }
         setBooksFromAPI(tempBooks);
         setLanguages([...tempLanguages]);
@@ -44,7 +49,7 @@ const HomeScreen = ({ navigation }) => {
         const filtered = booksFromAPI.filter(book => {
             const matchesSearchText = book.title.toLowerCase().includes(searchText.toLowerCase());
             const matchesLanguage = selectedLanguage ? book.language === selectedLanguage : true;
-            const publishedYear = new Date(book.publishedDate).getFullYear();
+            const publishedYear = book.publishedDate ? new Date(book.publishedDate).getFullYear() : 0;
             const matchesYearRange = publishedYear >= startYear && publishedYear <= endYear;
             return matchesSearchText && matchesLanguage && matchesYearRange;
         });
@@ -52,7 +57,8 @@ const HomeScreen = ({ navigation }) => {
     };
 
     const onBookPress = (item) => {
-        navigation.navigate("Book Details", { book: item });
+        console.log(item)
+        navigation.navigate("Book Details", { item: item });
     };
 
     const navigateToProfile = () => {
@@ -88,7 +94,7 @@ const HomeScreen = ({ navigation }) => {
             </View>
             <View style={styles.filterBar}>
                 <View style={styles.languagePicker}>
-                    <Text style={styles.filterLabel}>Book language</Text>
+                    <Text style={styles.filterLabel}>Select Language</Text>
                     <ModalDropdown
                         options={['All', ...languages]}
                         defaultValue="All"
@@ -99,7 +105,7 @@ const HomeScreen = ({ navigation }) => {
                     />
                 </View>
                 <View style={styles.sliderContainer}>
-                    <Text style={styles.filterLabel}>Published Year</Text>
+                    <Text style={styles.filterLabel}>Select Year Range</Text>
                     <Text>Start Year: {startYear}</Text>
                     <Slider
                         value={startYear}
