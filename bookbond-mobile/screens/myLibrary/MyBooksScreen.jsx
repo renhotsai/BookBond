@@ -1,7 +1,7 @@
 import { FlatList, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import Book from '../../components/Book'
-import { BooksCollection, OwnBooks, UsersCollection, auth, db } from '../../firebaseConfig'
+import { BooksCollection, OwnBooks, UsersCollection, auth, db } from '../../controller/firebaseConfig'
 import { collection, doc, getDoc, onSnapshot, query } from 'firebase/firestore'
 
 const MyBooksScreen = ({ navigation }) => {

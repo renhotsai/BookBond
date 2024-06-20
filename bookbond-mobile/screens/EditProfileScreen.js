@@ -1,5 +1,4 @@
 import { getDoc, setDoc, doc } from "firebase/firestore";
-import { auth, db } from "../firebaseConfig";
 import { useState } from "react";
 import {
   Text,
@@ -8,6 +7,7 @@ import {
   TextInput,
   TouchableOpacity,
 } from "react-native";
+import  { auth, db } from "../controller/firebaseConfig";
 
 const EditProfileScreen = () => {
   const [firstNameFromUI, setFirstNameFromUI] = useState("");

@@ -1,11 +1,11 @@
 import { Alert, FlatList, Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import React, { useEffect, useState } from 'react'
-import { OrderCollection, Orders, UsersCollection, auth, db } from '../../firebaseConfig';
 import { addDoc, collection, doc, getDoc, getDocs, query, setDoc, where } from 'firebase/firestore';
 import Button from '../../components/Button';
 import OrderStatus from '../../model/OrderStatus';
 import { set } from 'firebase/database';
 import OrderType from '../../model/OrderType';
+import { OrderCollection, Orders, UsersCollection, auth, db } from '../../controller/firebaseConfig';
 
 const CreateOrderScreen = ({ navigation, route }) => {
     const { item } = route.params;
