@@ -1,10 +1,11 @@
 import { FlatList, Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import React, { useEffect, useState } from 'react'
-import { BooksCollection, Orders, UsersCollection, auth, db } from '../../firebaseConfig';
 import { collection, doc, getDoc, getDocs, query, where } from 'firebase/firestore';
 import Button from '../../components/Button';
 import OrderStatus from '../../model/OrderStatus';
 import OrderType from '../../model/OrderType';
+import MapWithMarker from '../../components/MapWithMarker';
+import { BooksCollection, Orders, UsersCollection, auth, db } from '../../controller/firebaseConfig';
 
 const SelectOwnerScreen = ({ navigation, route }) => {
     const { item } = route.params;
@@ -26,8 +27,8 @@ const SelectOwnerScreen = ({ navigation, route }) => {
                 const userOrderColRef = collection(userDocRef, Orders)
                 const q = query(
                     userOrderColRef,
-                    where("status","not-in",[OrderStatus.Cancelled,OrderStatus.Denied,OrderStatus.Checked]),
-                    where("orderType","==",OrderType.In)
+                    where("status", "not-in", [OrderStatus.Cancelled, OrderStatus.Denied, OrderStatus.Checked]),
+                    where("orderType", "==", OrderType.In)
                 )
                 const orders = await getDocs(q)
 
@@ -74,8 +75,8 @@ const SelectOwnerScreen = ({ navigation, route }) => {
     }
 
     const renderOwnerWithButton = ({ item }) => {
-        const orderIndex  = orders.findIndex(order => order.bookId === item.bookId)
-        if (orders.length > 0){
+        const orderIndex = orders.findIndex(order => order.bookId === item.bookId)
+        if (orders.length > 0) {
             return (
                 <View style={{ flex: 1, flexDirection: "row", justifyContent: "space-around", alignItems: "center" }}>
                     <Text>{item.bookId}</Text>
@@ -85,7 +86,7 @@ const SelectOwnerScreen = ({ navigation, route }) => {
         } else {
             return (
                 <View style={{ flex: 1, flexDirection: "row", justifyContent: "space-around", alignItems: "center" }}>
-                    <Text>{item.bookId}</Text>
+                    <Text>{item.location.latitude}</Text>
                     <TouchableOpacity onPress={() => onBorrowPress(item)}>
                         <Button buttonText="Borrow" />
                     </TouchableOpacity>
@@ -98,7 +99,7 @@ const SelectOwnerScreen = ({ navigation, route }) => {
         if (books.length !== 0) {
             return (
                 <View>
-                    <Text>MapView</Text>
+                    <MapWithMarker books={books}/>
                     <FlatList
                         data={books}
                         renderItem={renderOwnerWithButton}
@@ -117,10 +118,6 @@ const SelectOwnerScreen = ({ navigation, route }) => {
 
     return (
         <View style={styles.container}>
-            {item.imageLinks && item.imageLinks.thumbnail && (
-                <Image source={{ uri: item.imageLinks.smallThumbnail }} style={styles.image} />
-            )}
-            <Text style={styles.title}>{item.title}</Text>
             {renderOwnerList()}
         </View>
     )
@@ -130,19 +127,6 @@ export default SelectOwnerScreen
 
 const styles = StyleSheet.create({
     container: {
-        padding: 20,
         backgroundColor: '#f8f8f8',
-    },
-    image: {
-        width: '100%',
-        height: 300,
-        resizeMode: 'contain',
-        marginBottom: 20,
-    },
-    title: {
-        fontSize: 24,
-        fontWeight: 'bold',
-        color: '#333',
-        marginBottom: 10,
     },
 })
