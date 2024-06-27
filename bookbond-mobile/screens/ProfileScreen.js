@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Text, View, TouchableOpacity, StyleSheet, Image } from "react-native";
-import { auth, db } from "../firebaseConfig";
+import { auth, db } from "../controller/firebaseConfig";
 import { useNavigation } from "@react-navigation/native";
 import { doc, onSnapshot } from "firebase/firestore";
 import * as Location from "expo-location";

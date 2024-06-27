@@ -6,13 +6,13 @@ import {
   TextInput,
   TouchableOpacity,
 } from "react-native";
+import { collection, doc, setDoc } from "firebase/firestore";
 import {
   createUserWithEmailAndPassword,
   auth,
   db,
   signInWithEmailAndPassword,
-} from "../firebaseConfig";
-import { collection, doc, setDoc } from "firebase/firestore";
+} from "../controller/firebaseConfig";
 
 const SignUpScreen = (props) => {
   const [firstNameFromUI, setFirstNameFromUI] = useState("");

@@ -1,6 +1,6 @@
 import { FlatList, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import React, { useEffect, useState } from 'react'
-import { Orders, UsersCollection, auth, db } from '../../firebaseConfig'
+import { Orders, UsersCollection, auth, db } from '../../controller/firebaseConfig'
 import { collection, doc, onSnapshot, or, query, where } from 'firebase/firestore'
 import OrderType from '../../model/OrderType'
 import OrderStatus from '../../model/OrderStatus'

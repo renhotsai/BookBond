@@ -14,7 +14,7 @@ import {
   signInWithEmailAndPassword,
   signOut,
   createUserWithEmailAndPassword,
-} from "../firebaseConfig";
+} from "../controller/firebaseConfig";
 
 const LoginScreen = (props) => {
   const [emailFromUI, setEmailFromUI] = useState("user@email.com");

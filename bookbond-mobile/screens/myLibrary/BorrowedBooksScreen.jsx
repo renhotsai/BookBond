@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { FlatList, Text, View, Image, StyleSheet, TouchableOpacity } from 'react-native';
 import { collection, query, where, onSnapshot, getDocs, updateDoc, doc } from 'firebase/firestore';
-import { db, auth, UsersCollection, Orders } from '../../firebaseConfig';
+import { db, auth, UsersCollection, Orders } from '../../controller/firebaseConfig';
 import Book from '../../components/Book';
 import OrderType from '../../model/OrderType';
 import OrderStatus from '../../model/OrderStatus';

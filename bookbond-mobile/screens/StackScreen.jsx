@@ -6,7 +6,6 @@ import TabScreen from "./TabScreen";
 import BookDetailScreen from "./BookDetailScreen";
 import { ScreenStackHeaderSearchBarView } from "react-native-screens";
 import { Ionicons } from "@expo/vector-icons";
-import { CollectBooks, UsersCollection, auth, db } from "../firebaseConfig";
 import ProfileScreen from "./ProfileScreen";
 import { AntDesign } from "@expo/vector-icons";
 import {
@@ -25,6 +24,7 @@ import EditProfileScreen from "./EditProfileScreen";
 import SelectOwnerScreen from "./orders/SelectOwnerScreen";
 import CreateOrderScreen from "./orders/CreateOrderScreen";
 import OrderDetailScreen from "./orders/OrderDetailScreen";
+import{ CollectBooks, UsersCollection, auth, db } from "../controller/firebaseConfig";
 
 const StackScreen = (props) => {
   const Stack = createNativeStackNavigator();
