@@ -6,6 +6,7 @@ import OrderStatus from '../../model/OrderStatus';
 import { set } from 'firebase/database';
 import OrderType from '../../model/OrderType';
 import { OrderCollection, Orders, UsersCollection, auth, db } from '../../controller/firebaseConfig';
+import MapWithMarker from '../../components/MapWithMarker';
 
 const CreateOrderScreen = ({ navigation, route }) => {
     const { item } = route.params;
@@ -45,6 +46,7 @@ const CreateOrderScreen = ({ navigation, route }) => {
                     imageLinks:item.imageLinks,
                     title: item.title,
                     authors: item.authors,
+                    location: item.location,
                 }
                 const order = await addDoc(orderColRef, orderToInsert);
                 orderToLandlord(owner.emailAddress, order.id, orderToInsert);
@@ -80,13 +82,7 @@ const CreateOrderScreen = ({ navigation, route }) => {
 
     return (
         <View style={styles.container}>
-            {item.imageLinks && item.imageLinks.thumbnail && (
-                <Image source={{ uri: item.imageLinks.smallThumbnail }} style={styles.image} />
-            )}
-            <Text style={styles.title}>{item.title}</Text>
-            <Text>{owner.lastName}</Text>
-            <Text></Text>
-            <Text>MapView</Text>
+            <MapWithMarker item={item}/>
             <TouchableOpacity onPress={onBorrowPress}>
                 <Button buttonText="Borrow" />
             </TouchableOpacity>
