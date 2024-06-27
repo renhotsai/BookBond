@@ -45,7 +45,8 @@ const MapWithMarker = ({ books }) => {
         }
     }
 
-    return (<View>
+    return (
+    <View>
 
         <MapView
             style={{ width: Dimensions.get('window').width, height: 500 }}

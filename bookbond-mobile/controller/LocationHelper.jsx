@@ -21,6 +21,24 @@ const getCurrentLocation = async () => {
     }
 };
 
+const reverseGeoCoding = async (coords) => {
+    try {
+        const result = await Location.reverseGeocodeAsync(coords)
+
+        if (result.length !== 0) {
+            //using only first object from result
+            const matchedLocation = result[0];
+            const address = `${matchedLocation.streetNumber} ${matchedLocation.street}`
+            return address;
+        } else {
+            console.error(`No address found for the given coords`);
+            throw null
+        }
+    } catch (error) {
+        console.error(`Unable to perform reverse geocoding : ${error}`);
+    }
+}
+
 export {
-    getCurrentLocation
+    getCurrentLocation, reverseGeoCoding
 }
