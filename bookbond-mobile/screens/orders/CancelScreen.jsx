@@ -1,11 +1,22 @@
 import { Alert, Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import Button from '../../components/Button'
 import OrderStatus from '../../model/OrderStatus'
 import OrderBaseScreen from './OrderBaseScreen'
+import { reverseGeoCoding } from '../../controller/LocationHelper'
 
 const CancelScreen = ({ item, updateOrder }) => {
 
+  useEffect(() => {
+    getAddress()
+  },[])
+
+  const [address,setAddress] = useState("")
+
+  const getAddress = async() => {
+    const address = await reverseGeoCoding(item.location)
+    setAddress(address)
+  }
   const onCancelPress = () => {
     console.log(`onCancelPress orderId: ${item.orderId}`);
 
@@ -25,6 +36,7 @@ const CancelScreen = ({ item, updateOrder }) => {
   return (
     <View>
       <OrderBaseScreen item={item} />
+      <Text>{address}</Text>
       <TouchableOpacity onPress={onCancelPress}>
         <Button buttonText="Cancel" />
       </TouchableOpacity>

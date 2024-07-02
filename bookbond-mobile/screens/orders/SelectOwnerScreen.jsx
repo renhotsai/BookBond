@@ -144,6 +144,7 @@ const SelectOwnerScreen = ({ navigation, route }) => {
     //button actions
     const onBorrowPress = (item) => {
         console.log("onBorrowPress");
+        console.log(JSON.stringify(item));
         navigation.navigate('Create Order', { item: item });
     }
 
@@ -181,9 +182,9 @@ const SelectOwnerScreen = ({ navigation, route }) => {
     return (
         <View style={styles.container}>
             {books.length !== 0 ? (
-                <View>
+                <View style={styles.container}>
                     <MapView
-                        style={{ width: Dimensions.get('window').width, height: 500 }}
+                        style={{ height: 500 }}
                         initialRegion={currRegion}
                         onRegionChangeComplete={mapMoved}
                         ref={mapRef}
@@ -212,6 +213,6 @@ export default SelectOwnerScreen
 
 const styles = StyleSheet.create({
     container: {
-        backgroundColor: '#f8f8f8',
+        gap:20
     },
 })

@@ -5,13 +5,26 @@ import OrderType from '../../model/OrderType'
 import MapWithMarker from '../../components/MapWithMarker'
 
 const OrderBaseScreen = ({ item }) => {
-    const displayStatus = item.orderType !== OrderType.In ? item.status  : item.status !== OrderStatus.Accepted ? item.status : "Waiting to Pick up"
-    return (
-        <View>
-            <MapWithMarker item={item}/>
-            <Text>{displayStatus}</Text>
-        </View>
-    )
+    const displayStatus = item.orderType !== OrderType.In ? item.status : item.status !== OrderStatus.Accepted ? item.status : "Waiting to Pick up"
+
+    if (item.orderType === OrderType.Out) {
+        return (
+            <View>
+                {item.imageLinks && item.imageLinks.thumbnail && (
+                    <Image source={{ uri: item.imageLinks.thumbnail }} style={styles.image} />
+                )}
+                <Text>{item.borrower}</Text>
+                <Text>{displayStatus}</Text>
+            </View>
+        )
+    } else {
+        return (
+            <View>
+                <MapWithMarker item={item} />
+                <Text>{displayStatus}</Text>
+            </View>
+        )
+    }
 }
 
 export default OrderBaseScreen

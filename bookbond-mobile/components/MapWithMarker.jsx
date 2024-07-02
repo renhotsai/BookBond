@@ -5,27 +5,10 @@ import { Entypo } from '@expo/vector-icons';
 
 const MapWithMarker = ({ item }) => {
 
-    // useEffect(() => {
-    //     moveToBookLocation()
-    // }, [])
-
-    //a variable to programmatically access the MapView element
     const mapRef = useRef(null);
-
-    // const moveToBookLocation = async () => {
-    //     try {
-    //         const location = item.location
-    //         const coords = { latitude: location.latitude, longitude: location.longitude };
-    //         mapRef.current.animateCamera({ center: coords }, 2000);
-    //     } catch (error) {
-    //         console.error(error);
-    //     }
-    // }
-
     return (
-        <View>
             <MapView
-                style={{ width: Dimensions.get('window').width, height: 500 }}
+                style={{ height: 250 }}
                 initialRegion={{
                     latitude: item.location.latitude,
                     longitude: item.location.longitude,
@@ -45,7 +28,6 @@ const MapWithMarker = ({ item }) => {
                 </Marker>
 
             </MapView>
-        </View>
     );
 }
 
