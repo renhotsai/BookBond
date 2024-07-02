@@ -57,7 +57,6 @@ const HomeScreen = ({ navigation }) => {
     };
 
     const onBookPress = (item) => {
-        console.log(item)
         navigation.navigate("Book Details", { item: item });
     };
 
