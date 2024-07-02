@@ -30,7 +30,6 @@ const LoginScreen = (props) => {
         emailFromUI,
         passwordFromUI
       );
-      alert("Login Successful!");
       setUserLoggedIn(emailFromUI);
       props.screenChange({ screenName: "Main" })
       

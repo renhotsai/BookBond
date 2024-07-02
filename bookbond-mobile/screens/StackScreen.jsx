@@ -1,37 +1,35 @@
 import { View, Text, TouchableOpacity, Alert, Button } from "react-native";
 import React from "react";
-import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import TabScreen from "./TabScreen";
 import BookDetailScreen from "./BookDetailScreen";
-import { ScreenStackHeaderSearchBarView } from "react-native-screens";
-import { Ionicons } from "@expo/vector-icons";
 import ProfileScreen from "./ProfileScreen";
 import { AntDesign } from "@expo/vector-icons";
 import {
-  addDoc,
   collection,
   deleteDoc,
   doc,
-  getDoc,
   getDocs,
   query,
   setDoc,
   where,
 } from "firebase/firestore";
-import { get } from "firebase/database";
 import EditProfileScreen from "./EditProfileScreen";
 import SelectOwnerScreen from "./orders/SelectOwnerScreen";
 import CreateOrderScreen from "./orders/CreateOrderScreen";
 import OrderDetailScreen from "./orders/OrderDetailScreen";
-import{ CollectBooks, UsersCollection, auth, db } from "../controller/firebaseConfig";
+import {
+  CollectBooks,
+  UsersCollection,
+  auth,
+  db,
+} from "../controller/firebaseConfig";
 
 const StackScreen = (props) => {
   const Stack = createNativeStackNavigator();
 
   const logout = () => {
     auth.signOut();
-    alert(`Logged Out!`);
     props.screenChange({ screenName: "Login" });
   };
 
@@ -42,11 +40,11 @@ const StackScreen = (props) => {
   };
 
   const bookCollect = async (item) => {
-    const user = auth.currentUser
+    const user = auth.currentUser;
     if (user !== null) {
       try {
         const userDocRef = doc(db, UsersCollection, user.email);
-        const booksCollectionColRef = collection(userDocRef, CollectBooks)
+        const booksCollectionColRef = collection(userDocRef, CollectBooks);
 
         const q = query(booksCollectionColRef, where("id", "==", item.id));
         const books = await getDocs(q);
@@ -54,7 +52,6 @@ const StackScreen = (props) => {
           await deleteDoc(doc(booksCollectionColRef, item.id));
           Alert.alert("Success", `You remove this book from your collection`);
         } else {
-
           const bookToInsert = {
             id: item.id,
             title: item.title ?? "No title",
@@ -95,8 +92,6 @@ const StackScreen = (props) => {
         name="Edit Profile"
         component={EditProfileScreen}
       ></Stack.Screen>
-
-
 
       <Stack.Screen
         name="Book Details"
