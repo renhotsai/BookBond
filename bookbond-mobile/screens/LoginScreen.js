@@ -15,6 +15,7 @@ import {
   signOut,
   createUserWithEmailAndPassword,
 } from "../controller/firebaseConfig";
+import { ScrollView } from "react-native-gesture-handler";
 
 const LoginScreen = (props) => {
   const [emailFromUI, setEmailFromUI] = useState("user@email.com");
@@ -31,8 +32,7 @@ const LoginScreen = (props) => {
         passwordFromUI
       );
       setUserLoggedIn(emailFromUI);
-      props.screenChange({ screenName: "Main" })
-      
+      props.screenChange({ screenName: "Main" });
     } catch (err) {
       alert("Invalid Credentials");
       console.log(err);
@@ -48,7 +48,6 @@ const LoginScreen = (props) => {
         await signOut(auth);
         setUserLoggedIn("");
         setIsLoggedIn(false);
-        
       }
     } catch (err) {
       console.log(err);
@@ -56,7 +55,7 @@ const LoginScreen = (props) => {
   };
 
   const signUp = () => {
-    props.screenChange({ screenName: "SignUp" })
+    props.screenChange({ screenName: "SignUp" });
   };
 
   return (
@@ -120,7 +119,7 @@ export default LoginScreen;
 
 const styles = StyleSheet.create({
   container: {
-    padding: 40,
+    padding: 20,
     flex: 1,
     width: "100%",
     justifyContent: "center",
@@ -139,11 +138,12 @@ const styles = StyleSheet.create({
     backgroundColor: "white",
     borderRadius: 10,
     padding: 20,
-    justifyContent: "space-evenly",
+    justifyContent: 'flex-start',
     borderColor: "#151515",
   },
 
   button: {
+    margin: 10,
     padding: 10,
     backgroundColor: "#A91D3A",
     borderRadius: 10,
@@ -164,9 +164,12 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     paddingVertical: 8,
     fontSize: 16,
+    margin: 10,
   },
 
   signUpContainer: {
+    marginHorizontal: 10,
+    marginVertical: 20,
     flexDirection: "row",
     alignItems: "center",
   },
