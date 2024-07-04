@@ -77,7 +77,6 @@ const BookDetailsScreen = ({ navigation, route }) => {
 
     const onBorrowPress = async () => {
         console.log("onBorrowPress");
-
         const user = auth.currentUser
         if (user !== null) {
             try {
@@ -85,7 +84,8 @@ const BookDetailsScreen = ({ navigation, route }) => {
                 const userOrderColRef = collection(userDocRef, Orders)
                 const q = query(userOrderColRef,
                     where("status", "not-in", [OrderStatus.Checked, OrderStatus.Cancelled, OrderStatus.Denied]),
-                    where("orderType", "==", OrderType.In)
+                    where("orderType", "==", OrderType.In),
+                    where("bookId", "==", item.id)
                 )
                 const querySnapshot = await getDocs(q)
                 if (querySnapshot.size === 0) {
