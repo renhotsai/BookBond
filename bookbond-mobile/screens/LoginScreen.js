@@ -138,7 +138,7 @@ const styles = StyleSheet.create({
     backgroundColor: "white",
     borderRadius: 10,
     padding: 20,
-    justifyContent: 'flex-start',
+    justifyContent: "flex-start",
     borderColor: "#151515",
   },
 

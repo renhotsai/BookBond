@@ -47,14 +47,9 @@ const EditProfileScreen = ({ navigation }) => {
       firstNameFromUI == "" ||
       lastNameFromUI == "" ||
       addressFromUI == "" ||
-      phoneNumberFromUI == "" ||
-      passwordFromUI == "" ||
-      reenterPasswordFromUI == ""
+      phoneNumberFromUI == ""
     ) {
       alert("Fields cannot be empty");
-      return;
-    } else if (passwordFromUI !== reenterPasswordFromUI) {
-      alert("Password doesn't match.");
       return;
     }
 
