@@ -3,4 +3,4 @@ const OrderType = {
     Out: "out"
 }
 
-export default OrderType
+export { OrderType }

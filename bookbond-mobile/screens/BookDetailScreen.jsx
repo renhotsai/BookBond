@@ -3,8 +3,8 @@ import { ScrollView, Text, Image, StyleSheet, TouchableOpacity, View, Alert } fr
 
 import { addDoc, collection, doc, getDoc, getDocs, query, setDoc, where } from 'firebase/firestore';
 import Button from '../components/Button';
-import OrderStatus from '../model/OrderStatus';
-import OrderType from '../model/OrderType';
+import {OrderStatus} from '../model/OrderStatus';
+import {OrderType} from '../model/OrderType';
 import { BooksCollection, Orders, OwnBooks, UsersCollection, auth, db } from '../controller/firebaseConfig';
 
 const BookDetailsScreen = ({ navigation, route }) => {

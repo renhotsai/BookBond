@@ -2,9 +2,9 @@ import { Alert, FlatList, Image, StyleSheet, Text, TouchableOpacity, View } from
 import React, { useEffect, useState } from 'react'
 import { addDoc, collection, doc, getDoc, getDocs, query, setDoc, where } from 'firebase/firestore';
 import Button from '../../components/Button';
-import OrderStatus from '../../model/OrderStatus';
+import {OrderStatus} from '../../model/OrderStatus';
 import { set } from 'firebase/database';
-import OrderType from '../../model/OrderType';
+import {OrderType} from '../../model/OrderType';
 import { OrderCollection, Orders, UsersCollection, auth, db } from '../../controller/firebaseConfig';
 import MapWithMarker from '../../components/MapWithMarker';
 

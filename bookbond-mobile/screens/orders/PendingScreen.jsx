@@ -1,10 +1,10 @@
 import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import React from 'react'
 import CancelScreen from './CancelScreen'
-import OrderType from '../../model/OrderType'
+import {OrderType} from '../../model/OrderType'
 import Button from '../../components/Button'
 import OrderBaseScreen from './OrderBaseScreen'
-import OrderStatus from '../../model/OrderStatus'
+import {OrderStatus} from '../../model/OrderStatus'
 
 const PendingScreen = ({ item, updateOrder }) => {
 

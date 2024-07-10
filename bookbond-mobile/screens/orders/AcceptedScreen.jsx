@@ -2,9 +2,9 @@ import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import CancelScreen from './CancelScreen'
 import OrderBaseScreen from './OrderBaseScreen'
-import OrderType from '../../model/OrderType'
+import {OrderType} from '../../model/OrderType'
 import Button from '../../components/Button'
-import OrderStatus from '../../model/OrderStatus'
+import {OrderStatus} from '../../model/OrderStatus'
 import { reverseGeoCoding } from '../../controller/LocationHelper'
 
 

@@ -2,8 +2,8 @@ import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import React from 'react'
 import OrderBaseScreen from './OrderBaseScreen'
 import Button from '../../components/Button'
-import OrderStatus from '../../model/OrderStatus'
-import OrderType from '../../model/OrderType'
+import {OrderStatus} from '../../model/OrderStatus'
+import {OrderType} from '../../model/OrderType'
 
 const PickedScreen = ({ item, updateOrder }) => {
   const onReturnPress = () => {

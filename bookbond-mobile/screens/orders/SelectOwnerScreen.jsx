@@ -2,8 +2,8 @@ import { FlatList, Dimensions, StyleSheet, Text, TouchableOpacity, View } from '
 import React, { useEffect, useRef, useState } from 'react'
 import { collection, doc, getDocs, query, where } from 'firebase/firestore';
 import Button from '../../components/Button';
-import OrderStatus from '../../model/OrderStatus';
-import OrderType from '../../model/OrderType';
+import {OrderStatus} from '../../model/OrderStatus';
+import {OrderType} from '../../model/OrderType';
 import { BooksCollection, Orders, UsersCollection, auth, db } from '../../controller/firebaseConfig';
 import MapView, { Marker } from 'react-native-maps';
 import { MaterialIcons } from '@expo/vector-icons';

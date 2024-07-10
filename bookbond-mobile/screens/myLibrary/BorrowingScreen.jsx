@@ -3,8 +3,9 @@ import React, { useEffect, useState } from 'react'
 import { collection, doc, getDocs, onSnapshot, query, where } from 'firebase/firestore'
 import { Orders, UsersCollection, auth, db } from '../../controller/firebaseConfig'
 import Book from '../../components/Book'
-import OrderStatus from '../../model/OrderStatus'
-import OrderType from '../../model/OrderType'
+import {OrderStatus, statusColors} from '../../model/OrderStatus'
+import {OrderType} from '../../model/OrderType'
+import BookWithStatus from '../../components/BookWithStatus'
 
 const BorrowingScreen = ({ navigation }) => {
 
@@ -44,16 +45,11 @@ const BorrowingScreen = ({ navigation }) => {
     navigation.navigate("Order Details", { item: item })
   }
 
-
   const renderBook = ({ item }) => {
-    const displayStatus = item.orderType !== OrderType.In ? item.status  : item.status !== OrderStatus.Accepted ? item.status : "Waiting to Pick up"
-    
+
     return (
       <TouchableOpacity onPress={() => { onPressBook(item) }}>
-        <View style={{ flexDirection: "row", alignItems: "center" }}>
-          <Book item={item} />
-          <Text>{displayStatus}</Text>
-        </View>
+        <BookWithStatus item={item}/>
       </TouchableOpacity>
     )
   }

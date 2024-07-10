@@ -8,4 +8,17 @@ const OrderStatus = {
     Checked: 'Checked', // only landlord can check
 }
 
-export default OrderStatus;
+const statusColors = {
+    Pending: 'orange',
+    Cancelled: 'red',
+    Accepted: 'green',
+    Denied: 'gray',
+    Picked: 'blue',
+    Returned: 'purple',
+    Checked: 'brown',
+};
+
+export {
+    OrderStatus,
+    statusColors
+};

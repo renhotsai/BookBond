@@ -1,7 +1,7 @@
 import { Image, StyleSheet, Text, View } from 'react-native'
 import React from 'react'
-import OrderStatus from '../../model/OrderStatus'
-import OrderType from '../../model/OrderType'
+import {OrderStatus} from '../../model/OrderStatus'
+import {OrderType} from '../../model/OrderType'
 import MapWithMarker from '../../components/MapWithMarker'
 
 const OrderBaseScreen = ({ item }) => {
