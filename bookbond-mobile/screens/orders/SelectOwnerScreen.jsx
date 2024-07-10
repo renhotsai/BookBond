@@ -1,4 +1,4 @@
-import { FlatList, Dimensions, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
+import { FlatList, Dimensions, StyleSheet, Text, TouchableOpacity, View ,LogBox} from 'react-native'
 import React, { useEffect, useRef, useState } from 'react'
 import { collection, doc, getDocs, query, where } from 'firebase/firestore';
 import Button from '../../components/Button';
@@ -9,6 +9,8 @@ import MapView, { Marker } from 'react-native-maps';
 import { MaterialIcons } from '@expo/vector-icons';
 import { getCurrentLocation, reverseGeoCoding } from '../../controller/LocationHelper';
 import { Entypo } from '@expo/vector-icons';
+
+LogBox.ignoreLogs(['Encountered two children with the same key']);
 
 const SelectOwnerScreen = ({ navigation, route }) => {
     const { item } = route.params;
@@ -144,7 +146,6 @@ const SelectOwnerScreen = ({ navigation, route }) => {
     //button actions
     const onBorrowPress = (item) => {
         console.log("onBorrowPress");
-        console.log(JSON.stringify(item));
         navigation.navigate('Create Order', { item: item });
     }
 
@@ -165,7 +166,6 @@ const SelectOwnerScreen = ({ navigation, route }) => {
                 </View>
             )
         } else {
-            // const address = reverseGeoCoding(item.location)
             return (
                 <View style={{ flex: 1, flexDirection: "row", justifyContent: "space-around", alignItems: "center" }}>
                     <TouchableOpacity onPress={() => onBookPress(item)}>
