@@ -2,9 +2,10 @@ import { FlatList, StyleSheet, Text, TouchableOpacity, View } from 'react-native
 import React, { useEffect, useState } from 'react'
 import { Orders, UsersCollection, auth, db } from '../../controller/firebaseConfig'
 import { collection, doc, onSnapshot, or, query, where } from 'firebase/firestore'
-import {OrderType} from '../../model/OrderType'
-import {OrderStatus} from '../../model/OrderStatus'
+import { OrderType } from '../../model/OrderType'
+import { OrderStatus } from '../../model/OrderStatus'
 import Book from '../../components/Book'
+import BookWithStatus from '../../components/BookWithStatus'
 
 const OwnerOrderScreen = ({ navigation }) => {
 
@@ -22,8 +23,8 @@ const OwnerOrderScreen = ({ navigation }) => {
         const orderColRef = collection(userDocRef, Orders)
         const q = query(
           orderColRef,
-            where("orderType", "==", OrderType.Out),
-            where("status", "not-in", [OrderStatus.Cancelled, OrderStatus.Checked, OrderStatus.Denied])
+          where("orderType", "==", OrderType.Out),
+          where("status", "not-in", [OrderStatus.Cancelled, OrderStatus.Checked, OrderStatus.Denied])
         )
         const unsubscribe = onSnapshot(q, (querySnapshot) => {
           const temp = []
@@ -48,10 +49,7 @@ const OwnerOrderScreen = ({ navigation }) => {
   const renderBook = ({ item }) => {
     return (
       <TouchableOpacity onPress={() => { onPressBook(item) }}>
-        <View style={{ flexDirection: "row", alignItems: "center" }}>
-          <Book item={item} />
-          <Text>{item.status}</Text>
-        </View>
+        <BookWithStatus item={item} />
       </TouchableOpacity>
     )
   }
