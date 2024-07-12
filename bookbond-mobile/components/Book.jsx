@@ -4,10 +4,17 @@ import { Text, View, Image, StyleSheet, TouchableOpacity } from 'react-native';
 
 
 const Book = ({ item }) => {
+
+    const convertToHttps = (url) => {
+        if (!url) return url;
+        return url.startsWith('http://') ? url.replace('http://', 'https://') : url;
+    };
+
     if (item.imageLinks !== undefined) {
+        const imgUrl = convertToHttps(item.imageLinks.thumbnail)
         return (
             <View style={styles.bookItem} >
-                <Image source={{ uri: item.imageLinks.thumbnail }} style={styles.bookImage} />
+                <Image source={{ uri: imgUrl }} style={styles.bookImage} />
                 <View style={styles.bookInfo}>
                     <Text style={styles.bookTitle}>{item.title}</Text>
                     <Text style={styles.bookAuthors}>{item.authors}</Text>
