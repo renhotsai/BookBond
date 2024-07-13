@@ -7,7 +7,6 @@ import { set } from 'firebase/database';
 import { OrderType } from '../../model/OrderType';
 import { OrderCollection, Orders, UsersCollection, auth, db } from '../../controller/firebaseConfig';
 import MapWithMarker from '../../components/MapWithMarker';
-import DatePickerWithShown from '../../components/DatePicker';
 import OrderDate from '../../components/OrderDate';
 
 const CreateOrderScreen = ({ navigation, route }) => {

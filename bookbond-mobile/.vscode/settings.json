@@ -6,6 +6,8 @@
         "Coord",
         "coords",
         "Curr",
+        "datepicker",
+        "dayjs",
         "Entypo",
         "Firestore",
         "hearto",

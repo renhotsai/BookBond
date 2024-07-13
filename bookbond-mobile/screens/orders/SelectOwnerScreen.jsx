@@ -10,44 +10,30 @@ import { MaterialIcons } from '@expo/vector-icons';
 import { getCurrentLocation, reverseGeoCoding } from '../../controller/LocationHelper';
 import { Entypo } from '@expo/vector-icons';
 import DatePickerWithShown from '../../components/DatePicker';
+import { Dialog } from 'react-native-simple-dialogs';
+import dayjs from 'dayjs';
 
 LogBox.ignoreLogs(['Encountered two children with the same key']);
 
 const SelectOwnerScreen = ({ navigation, route }) => {
     const { item } = route.params;
 
-    //a variable to programmatically access the MapView element
+
+    //map
     const mapRef = useRef(null);
     const [markers, setMarkers] = useState([])
-    const [borrowDate, setBorrowDate] = useState(new Date())
-    const [returnDate, setReturnDate] = useState(new Date());
-    const [borrowOpen, setBorrowOpen] = useState(false)
-    const [returnOpen, setReturnOpen] = useState(false)
-    const [books, setBooks] = useState([])
     const [currCoord, setCurrCoord] = useState({});
+
+    //date picker
+    const [borrowDate, setBorrowDate] = useState(dayjs().add(1, 'day').toDate())
+    const [returnDate, setReturnDate] = useState(dayjs().add(2, 'days').toDate())
+    const [open, setOpen] = useState(false)
+
+    const [books, setBooks] = useState([])
 
     useEffect(() => {
         getBooks()
-        resetReturnDate()
     }, [])
-
-    useEffect(() => {
-        if (borrowDate > returnDate) {
-            resetReturnDate()
-        }
-    }, [borrowDate])
-
-    useEffect(() => {
-
-    }, [
-        borrowDate, returnDate
-    ])
-
-    const resetReturnDate = () => {
-        const result = new Date(borrowDate)
-        result.setDate(result.getDate() + 1);
-        setReturnDate(result);
-    }
 
     const [currRegion, setCurrRegion] = useState({
         latitude: 43.6790048,
@@ -167,7 +153,7 @@ const SelectOwnerScreen = ({ navigation, route }) => {
             {books.length !== 0 ? (
                 <View style={styles.container}>
                     <MapView
-                        style={{ height: 500 }}
+                        style={{ height: 300 }}
                         initialRegion={currRegion}
                         onRegionChangeComplete={mapMoved}
                         ref={mapRef}
@@ -182,9 +168,23 @@ const SelectOwnerScreen = ({ navigation, route }) => {
 
                     </MapView>
                     <View style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-around' }}>
-                        <DatePickerWithShown open={borrowOpen} date={borrowDate} setDate={setBorrowDate} setOpen={setBorrowOpen} />
-                        <Text> - </Text>
-                        <DatePickerWithShown open={returnOpen} date={returnDate} setDate={setReturnDate} setOpen={setReturnOpen} />
+                        <TouchableOpacity onPress={() => setOpen(true)} style={{ display: 'flex', flexDirection: "row", gap: 10 }}>
+                            <Text>{borrowDate.toDateString()}</Text>
+                            <Text> - </Text>
+                            <Text>{returnDate.toDateString()}</Text>
+                        </TouchableOpacity>
+                        <Dialog
+                            visible={open}
+                            onTouchOutside={() => { setOpen(false) }} >
+                            <DatePickerWithShown
+                                borrowDate={borrowDate} setBorrowDate={setBorrowDate}
+                                returnDate={returnDate} setReturnDate={setReturnDate} />
+                            <TouchableOpacity onPress={() => { setOpen(false) }}>
+                                <Text>Done</Text>
+                            </TouchableOpacity>
+                        </Dialog>
+
+
                     </View>
 
                     <FlatList
