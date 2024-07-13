@@ -1,11 +1,14 @@
 import { Image, StyleSheet, Text, View } from 'react-native'
-import React from 'react'
-import {OrderStatus} from '../../model/OrderStatus'
-import {OrderType} from '../../model/OrderType'
+import React, { useState } from 'react'
+import { OrderStatus } from '../../model/OrderStatus'
+import { OrderType } from '../../model/OrderType'
 import MapWithMarker from '../../components/MapWithMarker'
+import { DateTimeConvert } from '../../utitlies /dateTimeConvert'
+import OrderDate from '../../components/OrderDate'
 
 const OrderBaseScreen = ({ item }) => {
     const displayStatus = item.orderType !== OrderType.In ? item.status : item.status !== OrderStatus.Accepted ? item.status : "Waiting to Pick up"
+
 
     if (item.orderType === OrderType.Out) {
         return (
@@ -15,6 +18,7 @@ const OrderBaseScreen = ({ item }) => {
                 )}
                 <Text>{item.borrower}</Text>
                 <Text>{displayStatus}</Text>
+                {OrderDate(item)}
             </View>
         )
     } else {
@@ -22,6 +26,7 @@ const OrderBaseScreen = ({ item }) => {
             <View>
                 <MapWithMarker item={item} />
                 <Text>{displayStatus}</Text>
+                {OrderDate(item)}
             </View>
         )
     }

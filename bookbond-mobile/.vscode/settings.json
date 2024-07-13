@@ -11,6 +11,7 @@
         "hearto",
         "Ionicons",
         "params",
-        "stringify"
+        "stringify",
+        "typeof"
     ]
 }
