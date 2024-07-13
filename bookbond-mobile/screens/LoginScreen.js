@@ -18,8 +18,8 @@ import {
 import { ScrollView } from "react-native-gesture-handler";
 
 const LoginScreen = (props) => {
-  const [emailFromUI, setEmailFromUI] = useState("user@email.com");
-  const [passwordFromUI, setPasswordFromUI] = useState("123456");
+  const [emailFromUI, setEmailFromUI] = useState("jeremy@gmail.com");
+  const [passwordFromUI, setPasswordFromUI] = useState("jeremy");
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   const [userLoggedIn, setUserLoggedIn] = useState("");

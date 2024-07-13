@@ -1,14 +1,10 @@
 import React, { useEffect } from 'react'
 import { Text, View, Image, StyleSheet, TouchableOpacity } from 'react-native';
+import { convertToHttps } from '../utitlies /urlConvert';
 
 
 
 const Book = ({ item }) => {
-
-    const convertToHttps = (url) => {
-        if (!url) return url;
-        return url.startsWith('http://') ? url.replace('http://', 'https://') : url;
-    };
 
     if (item.imageLinks !== undefined) {
         const imgUrl = convertToHttps(item.imageLinks.thumbnail)

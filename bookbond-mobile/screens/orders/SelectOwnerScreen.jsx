@@ -21,7 +21,6 @@ const SelectOwnerScreen = ({ navigation, route }) => {
 
     useEffect(() => {
         getBooks()
-        getUserOrders()
     }, [])
 
 
@@ -34,7 +33,6 @@ const SelectOwnerScreen = ({ navigation, route }) => {
     });
 
     const [books, setBooks] = useState([])
-    const [orders, setOrders] = useState([])
     const [currCoord, setCurrCoord] = useState({});
 
 
@@ -66,33 +64,6 @@ const SelectOwnerScreen = ({ navigation, route }) => {
     const moveToBookLocation = (item) => {
         const bookCoord = item.location;
         mapRef.current.animateCamera({ center: bookCoord }, 2000);
-    }
-
-    //list
-    const getUserOrders = async () => {
-        try {
-            const user = auth.currentUser;
-            if (user !== null) {
-                const userDocRef = doc(db, UsersCollection, user.email)
-                const userOrderColRef = collection(userDocRef, Orders)
-                const q = query(
-                    userOrderColRef,
-                    where("status", "not-in", [OrderStatus.Cancelled, OrderStatus.Denied, OrderStatus.Checked]),
-                    where("orderType", "==", OrderType.In)
-                )
-                const orders = await getDocs(q)
-
-                if (orders.size !== 0) {
-                    const temp = []
-                    orders.forEach((doc) => {
-                        temp.push(doc.data())
-                    })
-                    setOrders(temp)
-                }
-            }
-        } catch (error) {
-            console.error(error);
-        }
     }
 
     const createBookMarker = async (books) => {
@@ -157,15 +128,6 @@ const SelectOwnerScreen = ({ navigation, route }) => {
 
     //renderItem
     const renderOwnerWithButton = ({ item }) => {
-        const orderIndex = orders.findIndex(order => order.bookId === item.bookId)
-        if (orders.length > 0) {
-            return (
-                <View style={{ flex: 1, flexDirection: "row", justifyContent: "space-around", alignItems: "center" }}>
-                    <Text>{item.bookId}</Text>
-                    <Button buttonText={orders[orderIndex].status} />
-                </View>
-            )
-        } else {
             return (
                 <View style={{ flex: 1, flexDirection: "row", justifyContent: "space-around", alignItems: "center" }}>
                     <TouchableOpacity onPress={() => onBookPress(item)}>
@@ -176,7 +138,6 @@ const SelectOwnerScreen = ({ navigation, route }) => {
                     </TouchableOpacity>
                 </View>
             )
-        }
     }
 
     return (
