@@ -50,16 +50,27 @@ const OrderDetailScreen = ({ navigation, route }) => {
   const updateBookStatus = async (updateStatus) => {
     try {
       const bookDocRef = doc(db, BooksCollection, item.bookId)
-      let isBorrowed = false;
-
+      let dataToUpdate = {
+        borrowed: false,
+        from: null,
+        to: null
+      }
       switch (updateStatus) {
         case OrderStatus.Accepted:
-          isBorrowed = true;
+          dataToUpdate = {
+            borrowed: true,
+            from: item.from,
+            to: item.to,
+          }
           break;
 
         case OrderStatus.Checked:
         case OrderStatus.Cancelled:
-          isBorrowed = false;
+          dataToUpdate = {
+            borrowed: false,
+            from: null,
+            to: null
+          }
           break;
 
         default:
@@ -67,10 +78,8 @@ const OrderDetailScreen = ({ navigation, route }) => {
       }
 
       await updateDoc(
-        bookDocRef,
-        {
-          borrowed: isBorrowed
-        })
+        bookDocRef, dataToUpdate
+      )
     } catch (error) {
       console.error(`updateBookStatus: ${error}`);
     }
