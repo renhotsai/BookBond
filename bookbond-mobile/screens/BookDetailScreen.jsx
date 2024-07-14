@@ -7,6 +7,7 @@ import { OrderStatus } from '../model/OrderStatus';
 import { OrderType } from '../model/OrderType';
 import { BooksCollection, Orders, OwnBooks, UsersCollection, auth, db } from '../controller/firebaseConfig';
 import { convertToHttps } from '../utitlies /urlConvert';
+import { geocoding } from '../controller/LocationHelper';
 
 const BookDetailsScreen = ({ navigation, route }) => {
     const { item } = route.params;
@@ -129,14 +130,18 @@ const BookDetailsScreen = ({ navigation, route }) => {
         const user = auth.currentUser;
         if (user !== null) {
             try {
+                const userRef = doc(db, UsersCollection, user.email);
+                const userFromDB = (await getDoc(userRef)).data()
+
+                const location = await geocoding(userFromDB.address)
                 const booksColRef = collection(db, BooksCollection);
                 const bookToInsert = {
                     borrowed: false,
                     owner: user.email,
+                    location:location,
                     ...item
                 };
                 const docRef = await addDoc(booksColRef, bookToInsert);
-                const userRef = doc(db, UsersCollection, user.email);
                 const userOwnColRef = collection(userRef, OwnBooks);
                 const bookToUser = {
                     id: item.id,

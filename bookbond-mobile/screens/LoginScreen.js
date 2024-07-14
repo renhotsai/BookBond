@@ -15,11 +15,10 @@ import {
   signOut,
   createUserWithEmailAndPassword,
 } from "../controller/firebaseConfig";
-import { ScrollView } from "react-native-gesture-handler";
 
 const LoginScreen = (props) => {
-  const [emailFromUI, setEmailFromUI] = useState("jeremy@gmail.com");
-  const [passwordFromUI, setPasswordFromUI] = useState("jeremy");
+  const [emailFromUI, setEmailFromUI] = useState("test@email.com");
+  const [passwordFromUI, setPasswordFromUI] = useState("123456");
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   const [userLoggedIn, setUserLoggedIn] = useState("");
