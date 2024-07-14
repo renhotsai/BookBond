@@ -1,9 +1,8 @@
 import { Text, View } from "react-native"
-import { DateTimeConvert } from "../utitlies /dateTimeConvert"
 
 const OrderDate = (order) => {
-    const borrowDate = new Date(DateTimeConvert(order.from))
-    const returnDate = new Date(DateTimeConvert(order.to))
+    const borrowDate = order.from.toDate()
+    const returnDate = order.to.toDate()
     return (
         <View style={{ display:'flex',flexDirection: 'row',justifyContent:'space-between'}}>
             <Text>{borrowDate.toDateString()}</Text>

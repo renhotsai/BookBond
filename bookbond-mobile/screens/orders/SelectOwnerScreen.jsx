@@ -1,6 +1,6 @@
 import { FlatList, StyleSheet, Text, TouchableOpacity, View, LogBox } from 'react-native'
 import React, { useEffect, useRef, useState } from 'react'
-import { collection, doc, getDocs, query, where } from 'firebase/firestore';
+import { and, collection, doc, getDocs, or, query, where } from 'firebase/firestore';
 import Button from '../../components/Button';
 import { BooksCollection, Orders, UsersCollection, auth, db } from '../../controller/firebaseConfig';
 import MapView, { Marker } from 'react-native-maps';
@@ -32,6 +32,10 @@ const SelectOwnerScreen = ({ navigation, route }) => {
     useEffect(() => {
         getBooks()
     }, [])
+    useEffect(() => {
+        console.log(`renew book list`);
+        getBooks()
+    }, [returnDate])
 
     const [currRegion, setCurrRegion] = useState({
         latitude: 43.6790048,
@@ -90,22 +94,41 @@ const SelectOwnerScreen = ({ navigation, route }) => {
         }
         setMarkers(temp);
     };
+    const checkAvailableBook = (book) => {
+        if (book.borrowed === false) {
+            return true;
+        }
 
+        if (book.borrowed === true) {
+            const bookTo = book.to.toDate()
+            const bookFrom = book.from.toDate()
+            if (book.borrowed === true) {
+                const isSelectedDateInRange = bookFrom < borrowDate && returnDate < bookTo;
+                const isBookFromInRange = borrowDate < bookFrom && bookFrom < returnDate;
+                const isBookToInRange = borrowDate < bookTo && bookTo < returnDate;
+                return !(isBookFromInRange || isBookToInRange || isSelectedDateInRange);
+            }
+        }
+    }
     const getBooks = async () => {
         try {
             const booksColRef = collection(db, BooksCollection);
-            const q = query(booksColRef, where('id', '==', item.id), where('borrowed', '==', false));
+            const q = query(booksColRef, where('id', '==', item.id));
+
             const querySnapshot = await getDocs(q);
             if (querySnapshot.size !== 0) {
                 const temp = []
                 for (const doc of querySnapshot.docs) {
-                    const address = await reverseGeoCoding(doc.data().location);
-                    const bookDetail = {
-                        bookId: doc.id,
-                        address: address,
-                        ...doc.data()
-                    };
-                    temp.push(bookDetail);
+                    const book = doc.data()
+                    if (checkAvailableBook(book)) {
+                        const address = await reverseGeoCoding(book.location);
+                        const bookDetail = {
+                            bookId: doc.id,
+                            address: address,
+                            ...book
+                        };
+                        temp.push(bookDetail);
+                    }
                 }
                 setBooks(temp);
                 moveToDeviceLocation()
@@ -148,50 +171,49 @@ const SelectOwnerScreen = ({ navigation, route }) => {
 
     return (
         <View style={styles.container}>
-            {books.length !== 0 ? (
-                <View style={styles.container}>
-                    <MapView
-                        style={{ height: 300 }}
-                        initialRegion={currRegion}
-                        onRegionChangeComplete={mapMoved}
-                        ref={mapRef}
-                    >
-                        {markers}
-                        <Marker
-                            coordinate={currCoord}
-                            title="1 Main Street, Toronto"
-                            description='Center of Toronto'>
-                            <MaterialIcons name="person-pin-circle" size={60} color="red" />
-                        </Marker>
+            <View style={styles.container}>
+                <MapView
+                    style={{ height: 300 }}
+                    initialRegion={currRegion}
+                    onRegionChangeComplete={mapMoved}
+                    ref={mapRef}
+                >
+                    {markers}
+                    <Marker
+                        coordinate={currCoord}
+                        title="1 Main Street, Toronto"
+                        description='Center of Toronto'>
+                        <MaterialIcons name="person-pin-circle" size={60} color="red" />
+                    </Marker>
 
-                    </MapView>
-                    <View style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-around' }}>
-                        <TouchableOpacity onPress={() => setOpen(true)} style={{ display: 'flex', flexDirection: "row", gap: 10 }}>
-                            <Text>{borrowDate.toDateString()}</Text>
-                            <Text> - </Text>
-                            <Text>{returnDate.toDateString()}</Text>
+                </MapView>
+                <View style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-around' }}>
+                    <TouchableOpacity onPress={() => setOpen(true)} style={{ display: 'flex', flexDirection: "row", gap: 10 }}>
+                        <Text>{borrowDate.toDateString()}</Text>
+                        <Text> - </Text>
+                        <Text>{returnDate.toDateString()}</Text>
+                    </TouchableOpacity>
+                    <Dialog
+                        visible={open}
+                        onTouchOutside={() => { setOpen(false) }} >
+                        <DatePickerWithShown
+                            borrowDate={borrowDate} setBorrowDate={setBorrowDate}
+                            returnDate={returnDate} setReturnDate={setReturnDate} />
+                        <TouchableOpacity onPress={() => { setOpen(false) }}>
+                            <Text>Done</Text>
                         </TouchableOpacity>
-                        <Dialog
-                            visible={open}
-                            onTouchOutside={() => { setOpen(false) }} >
-                            <DatePickerWithShown
-                                borrowDate={borrowDate} setBorrowDate={setBorrowDate}
-                                returnDate={returnDate} setReturnDate={setReturnDate} />
-                            <TouchableOpacity onPress={() => { setOpen(false) }}>
-                                <Text>Done</Text>
-                            </TouchableOpacity>
-                        </Dialog>
+                    </Dialog>
 
 
-                    </View>
-
-                    <FlatList
-                        data={books}
-                        renderItem={renderOwnerWithButton}
-                    />
                 </View>
-            ) : <Text>No books can be borrowed</Text>
-            }
+
+                <FlatList
+                    data={books}
+                    key={(item) => { item.bookId }}
+                    renderItem={renderOwnerWithButton}
+                />
+            </View>
+
         </View>
     )
 }

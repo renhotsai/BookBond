@@ -3,7 +3,6 @@ import React, { useState } from 'react'
 import { OrderStatus } from '../../model/OrderStatus'
 import { OrderType } from '../../model/OrderType'
 import MapWithMarker from '../../components/MapWithMarker'
-import { DateTimeConvert } from '../../utitlies /dateTimeConvert'
 import OrderDate from '../../components/OrderDate'
 
 const OrderBaseScreen = ({ item }) => {
