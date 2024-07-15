@@ -51,16 +51,12 @@ const OrderDetailScreen = ({ navigation, route }) => {
     try {
       const bookDocRef = doc(db, BooksCollection, item.id)
       let dataToUpdate = {
-        borrowed: false,
-        from: null,
-        to: null
+        borrowed: false
       }
       switch (updateStatus) {
         case OrderStatus.Accepted:
           dataToUpdate = {
-            borrowed: true,
-            from: item.from,
-            to: item.to,
+            borrowed: true
           }
           break;
 
@@ -68,8 +64,6 @@ const OrderDetailScreen = ({ navigation, route }) => {
         case OrderStatus.Cancelled:
           dataToUpdate = {
             borrowed: false,
-            from: null,
-            to: null
           }
           break;
 

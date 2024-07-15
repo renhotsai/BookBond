@@ -65,7 +65,7 @@ const OwnerOrderScreen = ({ navigation }) => {
           <FlatList
             data={ordersList}
             renderItem={renderBook}
-            keyExtractor={(item) => item.id}
+            keyExtractor={(item) => item.orderId}
           />
         </View>
       )
