@@ -37,11 +37,9 @@ const CreateOrderScreen = ({ navigation, route }) => {
                     title: item.title,
                     authors: item.authors,
                     location: item.location,
-                    from: dayjs(item.dates.borrowDate).toDate(),
-                    to: dayjs(item.dates.returnDate).toDate(),
+                    from: dayjs(item.dates.from).toDate(),
+                    to: dayjs(item.dates.to).toDate(),
                 }
-
-                console.log(JSON.stringify(orderToInsert));
                 const order = await addDoc(orderColRef, orderToInsert);
                 orderToLandlord(item.owner, order.id, orderToInsert);
                 orderToTenant(user.email, order.id, orderToInsert);
