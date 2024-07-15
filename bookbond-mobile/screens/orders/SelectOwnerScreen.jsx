@@ -2,7 +2,7 @@ import { FlatList, StyleSheet, Text, TouchableOpacity, View, LogBox } from 'reac
 import React, { useEffect, useRef, useState } from 'react'
 import { and, collection, doc, getDocs, or, query, where } from 'firebase/firestore';
 import Button from '../../components/Button';
-import { BooksCollection, Orders, UsersCollection, auth, db } from '../../controller/firebaseConfig';
+import { BooksCollection, OrderCollection, Orders, UsersCollection, auth, db } from '../../controller/firebaseConfig';
 import MapView, { Marker } from 'react-native-maps';
 import { MaterialIcons } from '@expo/vector-icons';
 import { getCurrentLocation, reverseGeoCoding } from '../../controller/LocationHelper';
@@ -10,6 +10,7 @@ import { Entypo } from '@expo/vector-icons';
 import DatePickerWithShown from '../../components/DatePicker';
 import { Dialog } from 'react-native-simple-dialogs';
 import dayjs from 'dayjs';
+import { OrderStatus } from '../../model/OrderStatus';
 
 LogBox.ignoreLogs(['Encountered two children with the same key']);
 
@@ -28,14 +29,16 @@ const SelectOwnerScreen = ({ navigation, route }) => {
     const [open, setOpen] = useState(false)
 
     const [books, setBooks] = useState([])
+    const [orders, setOrders] = useState([])
+    const [visibleBooks, setVisibleBooks] = useState([])
 
     useEffect(() => {
         getBooks()
+        getOrders()
     }, [])
     useEffect(() => {
-        console.log(`renew book list`);
-        getBooks()
-    }, [returnDate])
+        showSelectedDateBooks()
+    }, [returnDate,books,orders])
 
     const [currRegion, setCurrRegion] = useState({
         latitude: 43.6790048,
@@ -94,21 +97,36 @@ const SelectOwnerScreen = ({ navigation, route }) => {
         }
         setMarkers(temp);
     };
-    const checkAvailableBook = (book) => {
-        if (book.borrowed === false) {
-            return true;
-        }
 
-        if (book.borrowed === true) {
-            const bookTo = book.to.toDate()
-            const bookFrom = book.from.toDate()
-            if (book.borrowed === true) {
-                const isBorrowDateInRange = bookFrom < borrowDate && borrowDate < bookTo
-                const isReturnDateInRange = bookFrom < returnDate && returnDate < bookTo
-                return !(isBorrowDateInRange || isReturnDateInRange)
+    //TODO: find books and check orders where status in Accepted, Picked, Returned
+
+    const getOrders = async () => {
+        try {
+            const ordersColRef = collection(db, OrderCollection);
+            const q = query(ordersColRef,
+                where('bookId', '==', item.bookId),
+                where("status", "in", [OrderStatus.Accepted, OrderStatus.Picked, OrderStatus.Returned]))
+
+            const querySnapshot = await getDocs(q);
+            if (querySnapshot.size !== 0) {
+                const temp = []
+                for (const doc of querySnapshot.docs) {
+                    const bookDetail = {
+                        id: doc.id,
+                        ...doc.data()
+                    };
+                    temp.push(bookDetail);
+                }
+                setOrders(temp);
+            } else {
+                console.log(`No book order`);
             }
+        } catch (error) {
+            console.error(error);
         }
     }
+
+
     const getBooks = async () => {
         try {
             const booksColRef = collection(db, BooksCollection);
@@ -119,25 +137,55 @@ const SelectOwnerScreen = ({ navigation, route }) => {
                 const temp = []
                 for (const doc of querySnapshot.docs) {
                     const book = doc.data()
-                    if (checkAvailableBook(book)) {
-                        const address = await reverseGeoCoding(book.location);
-                        const bookDetail = {
-                            id: doc.id,
-                            address: address,
-                            ...book
-                        };
-                        temp.push(bookDetail);
-                    }
+                    const address = await reverseGeoCoding(book.location);
+                    const bookDetail = {
+                        id: doc.id,
+                        address: address,
+                        ...book
+                    };
+                    temp.push(bookDetail);
                 }
                 setBooks(temp);
-                moveToDeviceLocation()
-                createBookMarker(temp)
             } else {
                 console.log(`No book can borrow.`);
             }
         } catch (error) {
             console.error(error);
         }
+    }
+
+    const showSelectedDateBooks = () => {
+        console.log(`renew List`);
+        console.log(`orders : ${orders.length}`);
+        console.log(`books : ${books.length}`);
+        const temp = []
+        books.forEach(book => {
+            const bookOrders = orders.filter(order => order.id === book.id);
+            if (bookOrders.length === 0) {
+                temp.push(book)
+                console.log(book.id);
+            } else {
+                let isAvailable = true
+                for (const order of bookOrders) {
+                    const orderTo = order.to.toDate()
+                    const orderFrom = order.from.toDate()
+
+                    const isBorrowDateInRange = orderFrom <= borrowDate && borrowDate <= orderTo
+                    const isReturnDateInRange = orderFrom <= returnDate && returnDate <= orderTo
+                    if (isBorrowDateInRange || isReturnDateInRange) {
+                        isAvailable = false
+                        break
+                    }
+                }
+                if (isAvailable) {
+                    temp.push(book)
+                    console.log(book.id);
+                }
+            }
+        })
+        setVisibleBooks(temp)
+        moveToDeviceLocation()
+        createBookMarker(temp)
     }
 
     //button actions
@@ -205,9 +253,8 @@ const SelectOwnerScreen = ({ navigation, route }) => {
 
 
                 </View>
-
                 <FlatList
-                    data={books}
+                    data={visibleBooks}
                     key={(item) => item.id}
                     renderItem={renderOwnerWithButton}
                 />
