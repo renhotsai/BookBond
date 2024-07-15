@@ -3,11 +3,12 @@ import React, { useState } from 'react'
 import { OrderStatus } from '../../model/OrderStatus'
 import { OrderType } from '../../model/OrderType'
 import MapWithMarker from '../../components/MapWithMarker'
-import OrderDate from '../../components/OrderDate'
+import { OrderDate } from '../../components/OrderDate'
 
 const OrderBaseScreen = ({ item }) => {
     const displayStatus = item.orderType !== OrderType.In ? item.status : item.status !== OrderStatus.Accepted ? item.status : "Waiting to Pick up"
 
+    console.log(`item : ${JSON.stringify(item.from.toDate().toDateString())}`);
 
     if (item.orderType === OrderType.Out) {
         return (
@@ -16,16 +17,15 @@ const OrderBaseScreen = ({ item }) => {
                     <Image source={{ uri: item.imageLinks.thumbnail }} style={styles.image} />
                 )}
                 <Text>{item.borrower}</Text>
-                <Text>{displayStatus}</Text>
-                {OrderDate(item)}
+                <OrderDate from={item.from.toDate().toDateString()} to={item.to.toDate().toDateString()} />
             </View>
         )
     } else {
         return (
             <View>
                 <MapWithMarker item={item} />
+                <OrderDate from={item.from.toDate().toDateString()} to={item.to.toDate().toDateString()} />
                 <Text>{displayStatus}</Text>
-                {OrderDate(item)}
             </View>
         )
     }

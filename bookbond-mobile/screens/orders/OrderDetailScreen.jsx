@@ -49,7 +49,7 @@ const OrderDetailScreen = ({ navigation, route }) => {
 
   const updateBookStatus = async (updateStatus) => {
     try {
-      const bookDocRef = doc(db, BooksCollection, item.bookId)
+      const bookDocRef = doc(db, BooksCollection, item.id)
       let dataToUpdate = {
         borrowed: false,
         from: null,

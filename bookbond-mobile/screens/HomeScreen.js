@@ -30,7 +30,7 @@ const HomeScreen = ({ navigation }) => {
         for (const item of dataJson.items) {
             if (item.volumeInfo) {
                 const book = {
-                    id: item.id,
+                    bookId: item.id,
                     title: item.volumeInfo.title || "No Title",
                     authors: item.volumeInfo.authors || ["Unknown Author"],
                     publishedDate: item.volumeInfo.publishedDate || "No Date",
@@ -91,50 +91,10 @@ const HomeScreen = ({ navigation }) => {
                     <AntDesign name="search1" size={24} color="black" />
                 </TouchableOpacity>
             </View>
-            <View style={styles.filterBar}>
-                <View style={styles.languagePicker}>
-                    <Text style={styles.filterLabel}>Select Language</Text>
-                    <ModalDropdown
-                        options={['All', ...languages]}
-                        defaultValue="All"
-                        onSelect={(index, value) => setSelectedLanguage(value === 'All' ? '' : value)}
-                        style={styles.dropdown}
-                        textStyle={styles.dropdownText}
-                        dropdownStyle={styles.dropdownMenu}
-                    />
-                </View>
-                <View style={styles.sliderContainer}>
-                    <Text style={styles.filterLabel}>Select Year Range</Text>
-                    <Text>Start Year: {startYear}</Text>
-                    <Slider
-                        value={startYear}
-                        onValueChange={setStartYear}
-                        minimumValue={1000}
-                        maximumValue={new Date().getFullYear()}
-                        step={1}
-                        trackStyle={styles.track}
-                        thumbStyle={styles.thumb}
-                        minimumTrackTintColor="#3F51B5"
-                        maximumTrackTintColor="#D3D3D3"
-                    />
-                    <Text>End Year: {endYear}</Text>
-                    <Slider
-                        value={endYear}
-                        onValueChange={setEndYear}
-                        minimumValue={startYear}
-                        maximumValue={new Date().getFullYear()}
-                        step={1}
-                        trackStyle={styles.track}
-                        thumbStyle={styles.thumb}
-                        minimumTrackTintColor="#3F51B5"
-                        maximumTrackTintColor="#D3D3D3"
-                    />
-                </View>
-            </View>
             <FlatList
                 data={filteredBooks}
                 renderItem={renderBookItem}
-                keyExtractor={(item) => item.id}
+                keyExtractor={(item) => item.bookId}
                 contentContainerStyle={styles.bookList}
             />
         </View>

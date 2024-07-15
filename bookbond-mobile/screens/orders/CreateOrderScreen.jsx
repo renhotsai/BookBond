@@ -7,13 +7,11 @@ import { set } from 'firebase/database';
 import { OrderType } from '../../model/OrderType';
 import { OrderCollection, Orders, UsersCollection, auth, db } from '../../controller/firebaseConfig';
 import MapWithMarker from '../../components/MapWithMarker';
-import OrderDate from '../../components/OrderDate';
+import dayjs from 'dayjs';
+import { OrderDate } from '../../components/OrderDate';
 
 const CreateOrderScreen = ({ navigation, route }) => {
     const { item } = route.params;
-
-    const [borrowDate, setBorrowDate] = useState(new Date(item.dates.borrowDate));
-    const [returnDate, setReturnDate] = useState(new Date(item.dates.returnDate));
 
     const onBorrowPress = () => {
         console.log("onBorrowPress");
@@ -39,8 +37,8 @@ const CreateOrderScreen = ({ navigation, route }) => {
                     title: item.title,
                     authors: item.authors,
                     location: item.location,
-                    from: borrowDate,
-                    to: returnDate,
+                    from: dayjs(item.dates.borrowDate).toDate(),
+                    to: dayjs(item.dates.returnDate).toDate(),
                 }
 
                 console.log(JSON.stringify(orderToInsert));
@@ -80,7 +78,7 @@ const CreateOrderScreen = ({ navigation, route }) => {
         <View style={styles.container}>
             <MapWithMarker item={item} />
             <Text> {item.address}</Text>
-            {OrderDate({ from: borrowDate, to: returnDate })}
+           <OrderDate from={item.dates.from} to={item.dates.to} />
             <TouchableOpacity onPress={onBorrowPress}>
                 <Button buttonText="Borrow" />
             </TouchableOpacity>

@@ -81,11 +81,11 @@ const SelectOwnerScreen = ({ navigation, route }) => {
             const address = await reverseGeoCoding(bookCoord);
             const marker = (
                 <Marker
-                    key={book.bookId}
+                    key={book.id}
                     coordinate={bookCoord}
                     title={book.title}
                     description={address}
-                    ref={(ref) => (temp[book.bookId] = ref)}
+                    ref={(ref) => (temp[book.id] = ref)}
                 >
                     <Entypo name="book" size={24} color="blue" />
                 </Marker>
@@ -113,7 +113,7 @@ const SelectOwnerScreen = ({ navigation, route }) => {
     const getBooks = async () => {
         try {
             const booksColRef = collection(db, BooksCollection);
-            const q = query(booksColRef, where('id', '==', item.id));
+            const q = query(booksColRef, where('bookId', '==', item.bookId));
 
             const querySnapshot = await getDocs(q);
             if (querySnapshot.size !== 0) {
@@ -123,7 +123,7 @@ const SelectOwnerScreen = ({ navigation, route }) => {
                     if (checkAvailableBook(book)) {
                         const address = await reverseGeoCoding(book.location);
                         const bookDetail = {
-                            bookId: doc.id,
+                            id: doc.id,
                             address: address,
                             ...book
                         };
@@ -144,15 +144,15 @@ const SelectOwnerScreen = ({ navigation, route }) => {
     //button actions
     const onBorrowPress = (item) => {
         console.log("onBorrowPress");
-        const dates = { borrowDate: borrowDate.toISOString(), returnDate: returnDate.toDateString() };
+        const dates = { from: borrowDate.toDateString(), to: returnDate.toDateString() };
         item.dates = dates;
         navigation.navigate('Create Order', { item: item });
     }
 
     const onBookPress = (item) => {
-        console.log(`onBookPress :${item.bookId}`);
+        console.log(`onBookPress :${item.id}`);
         moveToBookLocation(item)
-        markers[item.bookId].showCallout()
+        markers[item.id].showCallout()
     }
 
     //renderItem
@@ -209,7 +209,7 @@ const SelectOwnerScreen = ({ navigation, route }) => {
 
                 <FlatList
                     data={books}
-                    key={(item) => { item.bookId }}
+                    key={(item) => item.id}
                     renderItem={renderOwnerWithButton}
                 />
             </View>

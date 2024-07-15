@@ -24,7 +24,7 @@ const MyBooksScreen = ({ navigation }) => {
           const temp = []
           querySnapshot.forEach((doc) => {
             temp.push({
-              bookId: doc.id,
+              id: doc.id,
               ...doc.data()
             });
           });
@@ -45,7 +45,7 @@ const MyBooksScreen = ({ navigation }) => {
 
   const onBookPress = async (item) => {
     try {
-      const bookDocRef = doc(db, BooksCollection, item.bookId);
+      const bookDocRef = doc(db, BooksCollection, item.id);
       const book = await getDoc(bookDocRef)
       navigation.navigate("Book Details", { item: book.data() })
     } catch (error) {

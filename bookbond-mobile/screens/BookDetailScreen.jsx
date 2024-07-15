@@ -63,7 +63,7 @@ const BookDetailsScreen = ({ navigation, route }) => {
             try {
                 const userDocRef = doc(db, UsersCollection, user.email)
                 const ownBooksColRef = collection(userDocRef, OwnBooks)
-                const q = query(ownBooksColRef, where("id", "==", item.id));
+                const q = query(ownBooksColRef, where("bookId", "==", item.bookId));
                 const querySnapshot = await getDocs(q)
 
                 if (querySnapshot.size !== 0) {
@@ -78,7 +78,7 @@ const BookDetailsScreen = ({ navigation, route }) => {
     }
 
     const onBorrowPress = async () => {
-        console.log("onBorrowPress : ",item.id);
+        console.log("onBorrowPress : ",item.bookId);
         const user = auth.currentUser
         if (user !== null) {
             try {
@@ -87,7 +87,7 @@ const BookDetailsScreen = ({ navigation, route }) => {
                 const q = query(userOrderColRef,
                     where("status", "not-in", [OrderStatus.Checked, OrderStatus.Cancelled, OrderStatus.Denied]),
                     where("orderType", "==", OrderType.In),
-                    where("id", "==", item.id)
+                    where("bookId", "==", item.bookId)
                 )
                 const querySnapshot = await getDocs(q)
                 if (querySnapshot.size === 0) {
@@ -144,7 +144,7 @@ const BookDetailsScreen = ({ navigation, route }) => {
                 const docRef = await addDoc(booksColRef, bookToInsert);
                 const userOwnColRef = collection(userRef, OwnBooks);
                 const bookToUser = {
-                    id: item.id,
+                    bookId: item.bookId,
                     title: item.title,
                     authors: item.authors,
                     imageLinks: item.imageLinks

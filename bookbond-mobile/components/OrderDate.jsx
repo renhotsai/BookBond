@@ -1,14 +1,12 @@
 import { Text, View } from "react-native"
 
-const OrderDate = (order) => {
-    const borrowDate = order.from.toDate()
-    const returnDate = order.to.toDate()
+const OrderDate = ({ from, to }) => {
     return (
-        <View style={{ display:'flex',flexDirection: 'row',justifyContent:'space-between'}}>
-            <Text>{borrowDate.toDateString()}</Text>
+        <View style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
+            <Text>{from}</Text>
             <Text>-</Text>
-            <Text>{returnDate.toDateString()}</Text>
+            <Text>{to}</Text>
         </View>
     )
 }
-export default OrderDate
+export { OrderDate }
