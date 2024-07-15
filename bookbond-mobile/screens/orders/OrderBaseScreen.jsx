@@ -8,8 +8,6 @@ import { OrderDate } from '../../components/OrderDate'
 const OrderBaseScreen = ({ item }) => {
     const displayStatus = item.orderType !== OrderType.In ? item.status : item.status !== OrderStatus.Accepted ? item.status : "Waiting to Pick up"
 
-    console.log(`item : ${JSON.stringify(item.from.toDate().toDateString())}`);
-
     if (item.orderType === OrderType.Out) {
         return (
             <View>
