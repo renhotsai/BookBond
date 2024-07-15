@@ -6,11 +6,14 @@
         "Coord",
         "coords",
         "Curr",
+        "datepicker",
+        "dayjs",
         "Entypo",
         "Firestore",
         "hearto",
         "Ionicons",
         "params",
-        "stringify"
+        "stringify",
+        "typeof"
     ]
 }

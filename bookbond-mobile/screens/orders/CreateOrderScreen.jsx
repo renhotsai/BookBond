@@ -7,31 +7,11 @@ import { set } from 'firebase/database';
 import { OrderType } from '../../model/OrderType';
 import { OrderCollection, Orders, UsersCollection, auth, db } from '../../controller/firebaseConfig';
 import MapWithMarker from '../../components/MapWithMarker';
-import DatePickerWithShown from '../../components/DatePicker';
+import dayjs from 'dayjs';
+import { OrderDate } from '../../components/OrderDate';
 
 const CreateOrderScreen = ({ navigation, route }) => {
     const { item } = route.params;
-    const [borrowDate, setBorrowDate] = useState(new Date())
-    const [returnDate, setReturnDate] = useState(new Date());
-    const [borrowOpen, setBorrowOpen] = useState(false)
-    const [returnOpen, setReturnOpen] = useState(false)
-
-
-    useEffect(() => {
-        resetReturnDate()
-    }, [])
-
-    const resetReturnDate = () => {
-        const result = new Date(borrowDate)
-        result.setDate(result.getDate() + 1);
-        setReturnDate(result);
-    }
-
-    useEffect(() => {
-        if (borrowDate > returnDate) {
-            resetReturnDate()
-        }
-    }, [borrowDate])
 
     const onBorrowPress = () => {
         console.log("onBorrowPress");
@@ -57,11 +37,9 @@ const CreateOrderScreen = ({ navigation, route }) => {
                     title: item.title,
                     authors: item.authors,
                     location: item.location,
-                    // from: borrowDate,
-                    // to:returnDate,
+                    from: dayjs(item.dates.from).toDate(),
+                    to: dayjs(item.dates.to).toDate(),
                 }
-
-                console.log(JSON.stringify(orderToInsert));
                 const order = await addDoc(orderColRef, orderToInsert);
                 orderToLandlord(item.owner, order.id, orderToInsert);
                 orderToTenant(user.email, order.id, orderToInsert);
@@ -98,11 +76,7 @@ const CreateOrderScreen = ({ navigation, route }) => {
         <View style={styles.container}>
             <MapWithMarker item={item} />
             <Text> {item.address}</Text>
-            <View style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-around' }}>
-                <DatePickerWithShown open={borrowOpen} date={borrowDate} setDate={setBorrowDate} setOpen={setBorrowOpen} />
-                <Text> - </Text>
-                <DatePickerWithShown open={returnOpen} date={returnDate} setDate={setReturnDate} setOpen={setReturnOpen} />
-            </View>
+           <OrderDate from={item.dates.from} to={item.dates.to} />
             <TouchableOpacity onPress={onBorrowPress}>
                 <Button buttonText="Borrow" />
             </TouchableOpacity>

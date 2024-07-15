@@ -21,7 +21,11 @@ const BorrowedBooksScreen = ({navigation}) => {
             const unsubscribe = onSnapshot(q, (querySnapshot) => {
                 const resultsFromFirestore = [];
                 querySnapshot.forEach((doc) => {
-                    resultsFromFirestore.push(doc.data());
+                    const dataToPush = {
+                        id: doc.id,
+                       ...doc.data(),
+                    }
+                    resultsFromFirestore.push(dataToPush);
                 });
 
                 setBookingsList(resultsFromFirestore);
@@ -54,7 +58,7 @@ const BorrowedBooksScreen = ({navigation}) => {
             <FlatList
                 data={bookingsList}
                 renderItem={({ item }) => renderItem(item)}
-                keyExtractor={(item, index) => index.toString()}
+                keyExtractor={(item)=>item.id}
                 ListEmptyComponent={<Text>No borrowed books</Text>}
             />
         </View>

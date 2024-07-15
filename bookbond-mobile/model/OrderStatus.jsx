@@ -9,13 +9,14 @@ const OrderStatus = {
 }
 
 const statusColors = {
-    Pending: 'orange',
-    Cancelled: 'red',
-    Accepted: 'green',
+    Pending: 'blue',
+    Cancelled: 'cyan',
+    Accepted: 'purple',
     Denied: 'gray',
-    Picked: 'blue',
-    Returned: 'purple',
-    Checked: 'brown',
+    Picked: 'orange',
+    Returned: 'green',
+    Checked: 'cyan',
+    'Waiting to Pick up': 'purple'    
 };
 
 export {

@@ -1,28 +1,34 @@
-import React, { useState } from 'react'
-import { Text, TouchableOpacity, View } from 'react-native'
-import DatePicker from 'react-native-date-picker'
+import React, { useEffect, useState } from 'react'
+import { View } from 'react-native'
+import DateTimePicker from 'react-native-ui-datepicker';
+import dayjs from 'dayjs';
 
-const DatePickerWithShown = ({ open, date, setOpen, setDate }) => {
+
+const DatePickerWithShown = ({ borrowDate, returnDate, setBorrowDate, setReturnDate }) => {
+
+    const [startDate, setStartDate] = useState(borrowDate)
+    const [endDate, setEndDate] = useState(returnDate)
+
+    useEffect(() => {
+        setBorrowDate(dayjs(startDate).toDate())
+        setReturnDate(dayjs(endDate).toDate())
+    }, [endDate])
+
+
     return (
-        <View>
-            <TouchableOpacity onPress={() => setOpen(true)} >
-                <Text>{date.toDateString()}</Text>
-            </TouchableOpacity>
-            <DatePicker
-                modal
-                open={open}
-                date={date}
-                mode='date'
-                onConfirm={(date) => {
-                    setOpen(false)
-                    setDate(date)
-                }}
-                onCancel={() => {
-                    setOpen(false)
+        <View >
+            <DateTimePicker
+                mode='range'
+                minDate={new Date()}
+                startDate={startDate}
+                endDate={endDate}
+                onChange={({ startDate, endDate }) => {
+                    setStartDate(startDate)
+                    setEndDate(endDate)
                 }}
             />
         </View>
-    )
+    );
 }
 
 export default DatePickerWithShown

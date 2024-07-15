@@ -39,6 +39,19 @@ const reverseGeoCoding = async (coords) => {
     }
 }
 
+const geocoding = async (address) => {
+    try {
+        const location = await Location.geocodeAsync(address)
+        return {
+            latitude: location[0].latitude,
+            longitude: location[0].longitude,
+        }
+    } catch (error) {
+        console.error(error);
+    }
+}
+
+
 export {
-    getCurrentLocation, reverseGeoCoding
+    getCurrentLocation, reverseGeoCoding, geocoding
 }

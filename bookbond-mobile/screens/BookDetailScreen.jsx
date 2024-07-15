@@ -3,9 +3,11 @@ import { ScrollView, Text, Image, StyleSheet, TouchableOpacity, View, Alert } fr
 
 import { addDoc, collection, doc, getDoc, getDocs, query, setDoc, where } from 'firebase/firestore';
 import Button from '../components/Button';
-import {OrderStatus} from '../model/OrderStatus';
-import {OrderType} from '../model/OrderType';
+import { OrderStatus } from '../model/OrderStatus';
+import { OrderType } from '../model/OrderType';
 import { BooksCollection, Orders, OwnBooks, UsersCollection, auth, db } from '../controller/firebaseConfig';
+import { convertToHttps } from '../utitlies /urlConvert';
+import { geocoding } from '../controller/LocationHelper';
 
 const BookDetailsScreen = ({ navigation, route }) => {
     const { item } = route.params;
@@ -22,7 +24,7 @@ const BookDetailsScreen = ({ navigation, route }) => {
     const [isOwnBook, setIsOwnBook] = useState(false)
 
     const renderDescription = () => {
-        if(item.description){
+        if (item.description) {
             const description = item.description;
             if (isExpanded) {
                 return (
@@ -46,7 +48,7 @@ const BookDetailsScreen = ({ navigation, route }) => {
                     </>
                 );
             }
-        }else{
+        } else {
             return (
                 <>
                     <Text style={styles.description}>No description</Text>
@@ -61,7 +63,7 @@ const BookDetailsScreen = ({ navigation, route }) => {
             try {
                 const userDocRef = doc(db, UsersCollection, user.email)
                 const ownBooksColRef = collection(userDocRef, OwnBooks)
-                const q = query(ownBooksColRef, where("id", "==", item.id));
+                const q = query(ownBooksColRef, where("bookId", "==", item.bookId));
                 const querySnapshot = await getDocs(q)
 
                 if (querySnapshot.size !== 0) {
@@ -76,7 +78,7 @@ const BookDetailsScreen = ({ navigation, route }) => {
     }
 
     const onBorrowPress = async () => {
-        console.log("onBorrowPress");
+        console.log("onBorrowPress : ",item.bookId);
         const user = auth.currentUser
         if (user !== null) {
             try {
@@ -85,12 +87,14 @@ const BookDetailsScreen = ({ navigation, route }) => {
                 const q = query(userOrderColRef,
                     where("status", "not-in", [OrderStatus.Checked, OrderStatus.Cancelled, OrderStatus.Denied]),
                     where("orderType", "==", OrderType.In),
-                    where("bookId", "==", item.id)
+                    where("bookId", "==", item.bookId)
                 )
                 const querySnapshot = await getDocs(q)
                 if (querySnapshot.size === 0) {
+                    console.log(`borrow book`);
                     navigation.navigate('Borrow Book', { item: item });
                 } else {
+                    console.log(`Order Details`);
                     querySnapshot.forEach((doc) => {
                         const item = doc.data()
                         navigation.navigate("Order Details", { item: item })
@@ -126,17 +130,21 @@ const BookDetailsScreen = ({ navigation, route }) => {
         const user = auth.currentUser;
         if (user !== null) {
             try {
+                const userRef = doc(db, UsersCollection, user.email);
+                const userFromDB = (await getDoc(userRef)).data()
+
+                const location = await geocoding(userFromDB.address)
                 const booksColRef = collection(db, BooksCollection);
                 const bookToInsert = {
                     borrowed: false,
                     owner: user.email,
+                    location:location,
                     ...item
                 };
                 const docRef = await addDoc(booksColRef, bookToInsert);
-                const userRef = doc(db, UsersCollection, user.email);
                 const userOwnColRef = collection(userRef, OwnBooks);
                 const bookToUser = {
-                    id: item.id,
+                    bookId: item.bookId,
                     title: item.title,
                     authors: item.authors,
                     imageLinks: item.imageLinks
@@ -150,11 +158,12 @@ const BookDetailsScreen = ({ navigation, route }) => {
             Alert.alert("Not signed in", "You must be signed in to create a listing.");
         }
     }
+    const imgUrl = convertToHttps(item.imageLinks.thumbnail)
 
     return (
         <ScrollView style={styles.container}>
             {item.imageLinks && item.imageLinks.thumbnail && (
-                <Image source={{ uri: item.imageLinks.thumbnail }} style={styles.image} />
+                <Image source={{ uri: imgUrl }} style={styles.image} />
             )}
             <Text style={styles.title}>{item.title}</Text>
             <Text style={styles.authors}>{item.authors?.join(', ')}</Text>

@@ -2,8 +2,8 @@ import { Alert, Image, StyleSheet, Text, TouchableOpacity, View } from 'react-na
 import React from 'react'
 import Button from '../../components/Button';
 import { collection, doc, getDoc, getDocs, query, updateDoc, where } from 'firebase/firestore';
-import {OrderStatus} from '../../model/OrderStatus';
-import {OrderType} from '../../model/OrderType';
+import { OrderStatus } from '../../model/OrderStatus';
+import { OrderType } from '../../model/OrderType';
 import PendingScreen from './PendingScreen';
 import AcceptedScreen from './AcceptedScreen';
 import PickedScreen from './PickedScreen';
@@ -49,17 +49,22 @@ const OrderDetailScreen = ({ navigation, route }) => {
 
   const updateBookStatus = async (updateStatus) => {
     try {
-      const bookDocRef = doc(db, BooksCollection, item.bookId)
-      let isBorrowed = false;
-
+      const bookDocRef = doc(db, BooksCollection, item.id)
+      let dataToUpdate = {
+        borrowed: false
+      }
       switch (updateStatus) {
         case OrderStatus.Accepted:
-          isBorrowed = true;
+          dataToUpdate = {
+            borrowed: true
+          }
           break;
 
         case OrderStatus.Checked:
         case OrderStatus.Cancelled:
-          isBorrowed = false;
+          dataToUpdate = {
+            borrowed: false,
+          }
           break;
 
         default:
@@ -67,10 +72,8 @@ const OrderDetailScreen = ({ navigation, route }) => {
       }
 
       await updateDoc(
-        bookDocRef,
-        {
-          borrowed: isBorrowed
-        })
+        bookDocRef, dataToUpdate
+      )
     } catch (error) {
       console.error(`updateBookStatus: ${error}`);
     }
@@ -126,9 +129,10 @@ const OrderDetailScreen = ({ navigation, route }) => {
       switch (updateStatus) {
         case OrderStatus.Accepted:
           deniedOtherOrder()
+          updateBookStatus(updateStatus)
           break;
 
-        case OrderStatus.Accepted:
+
         case OrderStatus.Cancelled:
         case OrderStatus.Checked:
           updateBookStatus(updateStatus)

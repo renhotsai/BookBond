@@ -29,7 +29,11 @@ const OwnerOrderScreen = ({ navigation }) => {
         const unsubscribe = onSnapshot(q, (querySnapshot) => {
           const temp = []
           querySnapshot.forEach((doc) => {
-            temp.push(doc.data());
+            const dataToPush = {
+              id: doc.id,
+             ...doc.data(),
+            }
+            temp.push(dataToPush);
           });
           setOrdersList(temp)
         })
