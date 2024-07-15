@@ -103,10 +103,9 @@ const SelectOwnerScreen = ({ navigation, route }) => {
             const bookTo = book.to.toDate()
             const bookFrom = book.from.toDate()
             if (book.borrowed === true) {
-                const isSelectedDateInRange = bookFrom < borrowDate && returnDate < bookTo;
-                const isBookFromInRange = borrowDate < bookFrom && bookFrom < returnDate;
-                const isBookToInRange = borrowDate < bookTo && bookTo < returnDate;
-                return !(isBookFromInRange || isBookToInRange || isSelectedDateInRange);
+                const isBorrowDateInRange = bookFrom < borrowDate && borrowDate < bookTo
+                const isReturnDateInRange = bookFrom < returnDate && returnDate < bookTo
+                return !(isBorrowDateInRange || isReturnDateInRange)
             }
         }
     }
