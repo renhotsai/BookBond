@@ -1,5 +1,5 @@
 import { View, Text, TouchableOpacity, Alert, Button } from "react-native";
-import React from "react";
+import React, { useState } from "react";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import TabScreen from "./TabScreen";
 import BookDetailScreen from "./BookDetailScreen";
@@ -39,26 +39,48 @@ const StackScreen = (props) => {
     bookCollect(item);
   };
 
+  const checkIsFavourite = async (route) => {
+    const { item } = route.params
+    const user = auth.currentUser;
+    if (user) {
+      const userDocRef = doc(db, UsersCollection, user.email);
+      const collectBooksColRef = collection(userDocRef, CollectBooks);
+      const dataFromDB = await getDocs(collectBooksColRef)
+      dataFromDB.forEach((doc) => {
+        if (doc.data().bookId === item.bookId) {
+          setIsFavourite(true)
+          return;
+        } else {
+          setIsFavourite(false)
+          return;
+        }
+      })
+    }
+  }
+
+  const [isFavourite, setIsFavourite] = useState(false)
+
   const bookCollect = async (item) => {
     const user = auth.currentUser;
     if (user !== null) {
       try {
         const userDocRef = doc(db, UsersCollection, user.email);
         const booksCollectionColRef = collection(userDocRef, CollectBooks);
-
-        const q = query(booksCollectionColRef, where("id", "==", item.id));
+        const q = query(booksCollectionColRef, where("bookId", "==", item.bookId));
         const books = await getDocs(q);
         if (books.size !== 0) {
-          await deleteDoc(doc(booksCollectionColRef, item.id));
+          await deleteDoc(doc(booksCollectionColRef, item.bookId));
+          setIsFavourite(false)
           Alert.alert("Success", `You remove this book from your collection`);
         } else {
           const bookToInsert = {
-            id: item.id,
+            bookId: item.bookId,
             title: item.title ?? "No title",
             authors: item.authors?.join(", ") ?? "No authors",
             imageLinks: item.imageLinks ?? "No Image",
           };
-          await setDoc(doc(booksCollectionColRef, item.id), bookToInsert);
+          await setDoc(doc(booksCollectionColRef, item.bookId), bookToInsert);
+          setIsFavourite(true)
           Alert.alert("Success", `You have collected this book`);
         }
       } catch (error) {
@@ -98,17 +120,20 @@ const StackScreen = (props) => {
         component={BookDetailScreen}
         options={({ route }) => ({
           title: route.params.item.title,
-          headerRight: () => (
-            <TouchableOpacity
-              onPress={() => {
-                onHeartPress(route);
-              }}
-              title="Info"
-              color="#000"
-            >
-              <AntDesign name="heart" size={24} color="black" />
-            </TouchableOpacity>
-          ),
+          headerRight: () => {
+            checkIsFavourite(route)
+            return (
+              <TouchableOpacity
+                onPress={() => {
+                  onHeartPress(route);
+                }}
+                title="Info"
+                color="#000"
+              >
+                <AntDesign name="heart" size={24} color={isFavourite ? "red" : "gray"} />
+              </TouchableOpacity>
+            )
+          },
         })}
       />
       <Stack.Screen
