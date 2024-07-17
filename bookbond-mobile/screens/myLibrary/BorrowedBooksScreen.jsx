@@ -4,9 +4,8 @@ import { collection, query, where, onSnapshot, getDocs, updateDoc, doc, getDoc }
 import { db, auth, UsersCollection, Orders, BooksCollection } from '../../controller/firebaseConfig';
 import Book from '../../components/Book';
 import { OrderType } from '../../model/OrderType';
-import { OrderStatus } from '../../model/OrderStatus';
+import { OrderStatus, statusColors } from '../../model/OrderStatus';
 import { EmptyList } from '../../components/EmptyList';
-import { FontAwesome6 } from '@expo/vector-icons';
 
 const BorrowedBooksScreen = ({ navigation }) => {
     const [containerHeight, setContainerHeight] = useState(0);
@@ -45,9 +44,9 @@ const BorrowedBooksScreen = ({ navigation }) => {
         console.log("onOrderPress");
         console.log(JSON.stringify(item));
         const book = await getBook(item.id)
-        if(book){
-            navigation.navigate("Book Details", { item: book,isHistory: true });
-        }else{
+        if (book) {
+            navigation.navigate("Book Details", { item: book, isHistory: true });
+        } else {
             console.log('Book not found!');
         }
     }
@@ -65,9 +64,21 @@ const BorrowedBooksScreen = ({ navigation }) => {
     }
 
     const renderItem = (item) => {
+        const from = item.from.toDate().toDateString()
+
+        const to = item.to.toDate().toDateString()
         return (
             <TouchableOpacity onPress={() => onOrderPress(item)}>
-                <Book item={item} />
+                <View style={{ display: 'flex' }}>
+                    <View style={{ width: '95%' }}>
+                        <Book item={item} />
+                    </View>
+                    <View style={{
+                        backgroundColor: statusColors["Checked"], zIndex: -1, position: 'absolute', bottom: 0, height: '100%', width: '100%', borderRadius: 20, alignItems: 'flex-end', justifyContent: 'flex-end'
+                    }}>
+                        <Text style={{ marginEnd: '5%', color: 'white', fontStyle: 'italic', fontWeight: 'bold' }}>{`${from} - ${to} `}</Text>
+                    </View>
+                </View>
             </TouchableOpacity>
         )
     }
