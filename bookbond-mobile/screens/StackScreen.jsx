@@ -20,6 +20,7 @@ import CreateOrderScreen from "./orders/CreateOrderScreen";
 import OrderDetailScreen from "./orders/OrderDetailScreen";
 import {
   CollectBooks,
+  OwnBooks,
   UsersCollection,
   auth,
   db,
@@ -59,6 +60,30 @@ const StackScreen = (props) => {
   }
 
   const [isFavourite, setIsFavourite] = useState(false)
+
+  const [isOwnBook, setIsOwnBook] = useState(false)
+
+  const checkOwnBook = async (route) => {
+    const { item } = route.params
+    const user = auth.currentUser
+    if (user !== null) {
+      try {
+        const userDocRef = doc(db, UsersCollection, user.email)
+        const ownBooksColRef = collection(userDocRef, OwnBooks)
+        const q = query(ownBooksColRef, where("bookId", "==", item.bookId));
+        const querySnapshot = await getDocs(q)
+
+        if (querySnapshot.size !== 0) {
+          setIsOwnBook(true)
+        } else {
+          setIsOwnBook(false)
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    }
+  }
+
 
   const bookCollect = async (item) => {
     const user = auth.currentUser;
@@ -122,6 +147,7 @@ const StackScreen = (props) => {
           title: route.params.item.title,
           headerRight: () => {
             checkIsFavourite(route)
+            checkOwnBook(route)
             return (
               <TouchableOpacity
                 onPress={() => {
@@ -129,8 +155,11 @@ const StackScreen = (props) => {
                 }}
                 title="Info"
                 color="#000"
-              >
-                <AntDesign name="heart" size={24} color={isFavourite ? "red" : "gray"} />
+              >{
+                  isOwnBook ?
+                    <></> :
+                    <AntDesign name="heart" size={24} color={isFavourite ? "red" : "gray"} />
+                }
               </TouchableOpacity>
             )
           },
