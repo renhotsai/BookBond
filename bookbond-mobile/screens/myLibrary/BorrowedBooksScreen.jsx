@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { FlatList, Text, View, Image, StyleSheet, TouchableOpacity, Dimensions } from 'react-native';
-import { collection, query, where, onSnapshot, getDocs, updateDoc, doc } from 'firebase/firestore';
-import { db, auth, UsersCollection, Orders } from '../../controller/firebaseConfig';
+import { collection, query, where, onSnapshot, getDocs, updateDoc, doc, getDoc } from 'firebase/firestore';
+import { db, auth, UsersCollection, Orders, BooksCollection } from '../../controller/firebaseConfig';
 import Book from '../../components/Book';
 import { OrderType } from '../../model/OrderType';
 import { OrderStatus } from '../../model/OrderStatus';
@@ -41,9 +41,27 @@ const BorrowedBooksScreen = ({ navigation }) => {
     }, []);
 
 
-    const onOrderPress = (item) => {
+    const onOrderPress = async (item) => {
         console.log("onOrderPress");
-        navigation.navigate("Order Details", { item: item })
+        console.log(JSON.stringify(item));
+        const book = await getBook(item.id)
+        if(book){
+            navigation.navigate("Book Details", { item: book,isHistory: true });
+        }else{
+            console.log('Book not found!');
+        }
+    }
+
+    const getBook = async (id) => {
+        const bookRef = doc(db, BooksCollection, id);
+        const docSnap = await getDoc(bookRef);
+        if (!docSnap.exists()) {
+            console.log('No such document!');
+            return null;
+        } else {
+            const bookData = docSnap.data();
+            return bookData;
+        }
     }
 
     const renderItem = (item) => {
@@ -66,7 +84,7 @@ const BorrowedBooksScreen = ({ navigation }) => {
                 renderItem={({ item }) => renderItem(item)}
                 keyExtractor={(item) => item.id}
                 ListEmptyComponent={
-                    <EmptyList containerHeight={containerHeight}/>}
+                    <EmptyList containerHeight={containerHeight} />}
             />
         </View>
     );
