@@ -59,26 +59,6 @@ const OwnerOrderScreen = ({ navigation }) => {
     )
   }
 
-  const renderOrders = () => {
-    if (ordersList.length > 0) {
-      return (
-        <View>
-          <FlatList
-            data={ordersList}
-            renderItem={renderBook}
-            keyExtractor={(item) => item.orderId}
-          />
-        </View>
-      )
-    } else {
-      return (
-        <View>
-          <Text>No Borrowing</Text>
-        </View>
-      )
-    }
-  }
-
   const [containerHeight, setContainerHeight] = useState(0);
 
   return (
