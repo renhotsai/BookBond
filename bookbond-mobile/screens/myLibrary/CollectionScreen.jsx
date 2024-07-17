@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react'
 import { collection, doc, getDocs, onSnapshot, query, where } from 'firebase/firestore'
 import { BooksCollection, CollectBooks, UsersCollection, auth, db } from '../../controller/firebaseConfig'
 import Book from '../../components/Book'
+import { EmptyList } from '../../components/EmptyList'
 
 
 
@@ -75,14 +76,18 @@ const CollectionScreen = ({ navigation }) => {
     )
   }
 
+  const [containerHeight, setContainerHeight] = useState(0);
 
   return (
-    <View style={styles.container}>
+    <View style={styles.container} onLayout={(event) => {
+      const { height } = event.nativeEvent.layout;
+      setContainerHeight(height);
+    }}>
       <FlatList
         data={booksCollection}
         renderItem={({ item }) => renderItem(item)}
         keyExtractor={(item) => item.id}
-        ListEmptyComponent={<Text>No collection books</Text>}
+        ListEmptyComponent={<EmptyList containerHeight={containerHeight} />}
       />
     </View>
   )

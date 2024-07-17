@@ -6,6 +6,7 @@ import { OrderType } from '../../model/OrderType'
 import { OrderStatus } from '../../model/OrderStatus'
 import Book from '../../components/Book'
 import BookWithStatus from '../../components/BookWithStatus'
+import { EmptyList } from '../../components/EmptyList'
 
 const OwnerOrderScreen = ({ navigation }) => {
 
@@ -31,7 +32,7 @@ const OwnerOrderScreen = ({ navigation }) => {
           querySnapshot.forEach((doc) => {
             const dataToPush = {
               id: doc.id,
-             ...doc.data(),
+              ...doc.data(),
             }
             temp.push(dataToPush);
           });
@@ -78,10 +79,19 @@ const OwnerOrderScreen = ({ navigation }) => {
     }
   }
 
+  const [containerHeight, setContainerHeight] = useState(0);
 
   return (
-    <View style={styles.container}>
-      {renderOrders()}
+    <View style={styles.container} onLayout={(event) => {
+      const { height } = event.nativeEvent.layout;
+      setContainerHeight(height);
+    }}>
+      <FlatList
+        data={ordersList}
+        renderItem={renderBook}
+        keyExtractor={(item) => item.orderId}
+        ListEmptyComponent={<EmptyList containerHeight={containerHeight} />}
+      />
     </View>
   )
 }

@@ -1,29 +1,31 @@
 import React, { useEffect, useState } from 'react';
-import { FlatList, Text, View, Image, StyleSheet, TouchableOpacity } from 'react-native';
+import { FlatList, Text, View, Image, StyleSheet, TouchableOpacity, Dimensions } from 'react-native';
 import { collection, query, where, onSnapshot, getDocs, updateDoc, doc } from 'firebase/firestore';
 import { db, auth, UsersCollection, Orders } from '../../controller/firebaseConfig';
 import Book from '../../components/Book';
-import {OrderType} from '../../model/OrderType';
-import {OrderStatus} from '../../model/OrderStatus';
+import { OrderType } from '../../model/OrderType';
+import { OrderStatus } from '../../model/OrderStatus';
+import { EmptyList } from '../../components/EmptyList';
+import { FontAwesome6 } from '@expo/vector-icons';
 
-const BorrowedBooksScreen = ({navigation}) => {
+const BorrowedBooksScreen = ({ navigation }) => {
+    const [containerHeight, setContainerHeight] = useState(0);
 
     const [bookingsList, setBookingsList] = useState([]);
-
     const retrieveFromDb = () => {
         const user = auth.currentUser;
 
         if (user !== null) {
             const userDocRef = doc(db, UsersCollection, user.email)
             const userOrderColRef = collection(userDocRef, Orders)
-            const q = query(userOrderColRef, where("orderType", "==", OrderType.In),where("status","==",OrderStatus.Checked));
+            const q = query(userOrderColRef, where("orderType", "==", OrderType.In), where("status", "==", OrderStatus.Checked));
 
             const unsubscribe = onSnapshot(q, (querySnapshot) => {
                 const resultsFromFirestore = [];
                 querySnapshot.forEach((doc) => {
                     const dataToPush = {
                         id: doc.id,
-                       ...doc.data(),
+                        ...doc.data(),
                     }
                     resultsFromFirestore.push(dataToPush);
                 });
@@ -54,12 +56,17 @@ const BorrowedBooksScreen = ({navigation}) => {
 
 
     return (
-        <View style={styles.container}>
+        <View style={styles.container}
+            onLayout={(event) => {
+                const { height } = event.nativeEvent.layout;
+                setContainerHeight(height);
+            }}>
             <FlatList
                 data={bookingsList}
                 renderItem={({ item }) => renderItem(item)}
-                keyExtractor={(item)=>item.id}
-                ListEmptyComponent={<Text>No borrowed books</Text>}
+                keyExtractor={(item) => item.id}
+                ListEmptyComponent={
+                    <EmptyList containerHeight={containerHeight}/>}
             />
         </View>
     );
