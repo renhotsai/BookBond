@@ -17,8 +17,8 @@ import {
 } from "../controller/firebaseConfig";
 
 const LoginScreen = (props) => {
-  const [emailFromUI, setEmailFromUI] = useState("test3@email.com");
-  const [passwordFromUI, setPasswordFromUI] = useState("123456");
+  const [emailFromUI, setEmailFromUI] = useState("jeremy@gmail.com");
+  const [passwordFromUI, setPasswordFromUI] = useState("jeremy");
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   const [userLoggedIn, setUserLoggedIn] = useState("");

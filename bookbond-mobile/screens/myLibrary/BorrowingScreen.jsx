@@ -3,9 +3,10 @@ import React, { useEffect, useState } from 'react'
 import { collection, doc, getDocs, onSnapshot, query, where } from 'firebase/firestore'
 import { Orders, UsersCollection, auth, db } from '../../controller/firebaseConfig'
 import Book from '../../components/Book'
-import {OrderStatus, statusColors} from '../../model/OrderStatus'
-import {OrderType} from '../../model/OrderType'
+import { OrderStatus, statusColors } from '../../model/OrderStatus'
+import { OrderType } from '../../model/OrderType'
 import BookWithStatus from '../../components/BookWithStatus'
+import { EmptyList } from '../../components/EmptyList'
 
 const BorrowingScreen = ({ navigation }) => {
 
@@ -31,7 +32,7 @@ const BorrowingScreen = ({ navigation }) => {
           querySnapshot.forEach((doc) => {
             const dataToPush = {
               id: doc.id,
-             ...doc.data(),
+              ...doc.data(),
             }
             temp.push(dataToPush);
           });
@@ -53,35 +54,26 @@ const BorrowingScreen = ({ navigation }) => {
 
     return (
       <TouchableOpacity onPress={() => { onPressBook(item) }}>
-        <BookWithStatus item={item}/>
+        <BookWithStatus item={item} />
       </TouchableOpacity>
     )
   }
 
-  const renderOrders = () => {
-    if (ordersList.length > 0) {
-      return (
-        <View>
-          <FlatList
-            data={ordersList}
-            renderItem={renderBook}
-            keyExtractor={(item) => item.id}
-          />
-        </View>
-      )
-    } else {
-      return (
-        <View>
-          <Text>No Borrowing</Text>
-        </View>
-      )
-    }
-  }
 
+
+  const [containerHeight, setContainerHeight] = useState(0);
 
   return (
-    <View style={styles.container}>
-      {renderOrders()}
+    <View style={styles.container} onLayout={(event) => {
+      const { height } = event.nativeEvent.layout;
+      setContainerHeight(height);
+    }}>
+      <FlatList
+        data={ordersList}
+        renderItem={renderBook}
+        keyExtractor={(item) => item.id}
+        ListEmptyComponent={<EmptyList containerHeight={containerHeight} />}
+      />
     </View>
   )
 }
@@ -95,4 +87,4 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 20,
   },
-});
+})

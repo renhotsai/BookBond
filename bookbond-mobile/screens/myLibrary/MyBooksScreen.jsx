@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react'
 import Book from '../../components/Book'
 import { BooksCollection, OwnBooks, UsersCollection, auth, db } from '../../controller/firebaseConfig'
 import { collection, doc, getDoc, onSnapshot, query } from 'firebase/firestore'
+import { EmptyList } from '../../components/EmptyList'
 
 const MyBooksScreen = ({ navigation }) => {
 
@@ -60,14 +61,18 @@ const MyBooksScreen = ({ navigation }) => {
       </TouchableOpacity>
     )
   }
+  const [containerHeight, setContainerHeight] = useState(0);
 
   return (
-    <View style={styles.container}>
+    <View style={styles.container} onLayout={(event) => {
+      const { height } = event.nativeEvent.layout;
+      setContainerHeight(height);
+    }}>
       <FlatList
         data={ownBooks}
         renderItem={({ item }) => renderItem(item)}
         keyExtractor={(item) => item.id}
-        ListEmptyComponent={<Text>No own books</Text>}
+        ListEmptyComponent={<EmptyList containerHeight={containerHeight} />}
       />
     </View>
   )
