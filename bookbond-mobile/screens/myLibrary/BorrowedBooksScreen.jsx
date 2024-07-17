@@ -1,12 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { FlatList, Text, View, Image, StyleSheet, TouchableOpacity, Dimensions } from 'react-native';
-import { collection, query, where, onSnapshot, getDocs, updateDoc, doc } from 'firebase/firestore';
-import { db, auth, UsersCollection, Orders } from '../../controller/firebaseConfig';
+import { collection, query, where, onSnapshot, getDocs, updateDoc, doc, getDoc } from 'firebase/firestore';
+import { db, auth, UsersCollection, Orders, BooksCollection } from '../../controller/firebaseConfig';
 import Book from '../../components/Book';
 import { OrderType } from '../../model/OrderType';
-import { OrderStatus } from '../../model/OrderStatus';
+import { OrderStatus, statusColors } from '../../model/OrderStatus';
 import { EmptyList } from '../../components/EmptyList';
-import { FontAwesome6 } from '@expo/vector-icons';
 
 const BorrowedBooksScreen = ({ navigation }) => {
     const [containerHeight, setContainerHeight] = useState(0);
@@ -41,15 +40,45 @@ const BorrowedBooksScreen = ({ navigation }) => {
     }, []);
 
 
-    const onOrderPress = (item) => {
+    const onOrderPress = async (item) => {
         console.log("onOrderPress");
-        navigation.navigate("Order Details", { item: item })
+        console.log(JSON.stringify(item));
+        const book = await getBook(item.id)
+        if (book) {
+            navigation.navigate("Book Details", { item: book, isHistory: true });
+        } else {
+            console.log('Book not found!');
+        }
+    }
+
+    const getBook = async (id) => {
+        const bookRef = doc(db, BooksCollection, id);
+        const docSnap = await getDoc(bookRef);
+        if (!docSnap.exists()) {
+            console.log('No such document!');
+            return null;
+        } else {
+            const bookData = docSnap.data();
+            return bookData;
+        }
     }
 
     const renderItem = (item) => {
+        const from = item.from.toDate().toDateString()
+
+        const to = item.to.toDate().toDateString()
         return (
             <TouchableOpacity onPress={() => onOrderPress(item)}>
-                <Book item={item} />
+                <View style={{ display: 'flex' }}>
+                    <View style={{ width: '95%' }}>
+                        <Book item={item} />
+                    </View>
+                    <View style={{
+                        backgroundColor: statusColors["Checked"], zIndex: -1, position: 'absolute', bottom: 0, height: '100%', width: '100%', borderRadius: 20, alignItems: 'flex-end', justifyContent: 'flex-end'
+                    }}>
+                        <Text style={{ marginEnd: '5%', color: 'white', fontStyle: 'italic', fontWeight: 'bold' }}>{`${from} - ${to} `}</Text>
+                    </View>
+                </View>
             </TouchableOpacity>
         )
     }
@@ -66,7 +95,7 @@ const BorrowedBooksScreen = ({ navigation }) => {
                 renderItem={({ item }) => renderItem(item)}
                 keyExtractor={(item) => item.id}
                 ListEmptyComponent={
-                    <EmptyList containerHeight={containerHeight}/>}
+                    <EmptyList containerHeight={containerHeight} />}
             />
         </View>
     );

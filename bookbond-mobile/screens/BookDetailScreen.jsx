@@ -10,8 +10,9 @@ import { convertToHttps } from '../utitlies /urlConvert';
 import { geocoding } from '../controller/LocationHelper';
 
 const BookDetailsScreen = ({ navigation, route }) => {
-    const { item } = route.params;
+    const { item, isHistory = false } = route.params;
     const [isExpanded, setIsExpanded] = useState(false);
+
 
     const toggleDescription = () => {
         setIsExpanded(!isExpanded);
@@ -78,7 +79,7 @@ const BookDetailsScreen = ({ navigation, route }) => {
     }
 
     const onBorrowPress = async () => {
-        console.log("onBorrowPress : ",item.bookId);
+        console.log("onBorrowPress : ", item.bookId);
         const user = auth.currentUser
         if (user !== null) {
             try {
@@ -111,7 +112,16 @@ const BookDetailsScreen = ({ navigation, route }) => {
             return (
                 <View style={styles.buttonContainer} />
             )
-        } else {
+        } else if (isHistory) {
+            return (
+                <View style={styles.buttonContainer}>
+                    <TouchableOpacity onPress={onBorrowPress}>
+                        <Button buttonText={"Borrow Again"} />
+                    </TouchableOpacity>
+                </View>
+            )
+        }
+        else {
             return (
                 <View style={styles.buttonContainer}>
                     <TouchableOpacity onPress={onBorrowPress}>
@@ -138,7 +148,7 @@ const BookDetailsScreen = ({ navigation, route }) => {
                 const bookToInsert = {
                     borrowed: false,
                     owner: user.email,
-                    location:location,
+                    location: location,
                     ...item
                 };
                 const docRef = await addDoc(booksColRef, bookToInsert);

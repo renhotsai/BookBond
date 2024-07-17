@@ -57,10 +57,10 @@ const CollectionScreen = ({ navigation }) => {
 
   const fetchData = async (item) => {
     try {
-      const uri = `https://www.googleapis.com/books/v1/volumes/${item.id}`
+      const uri = `https://www.googleapis.com/books/v1/volumes/${item.bookId}`
       const dataJson = await (await fetch(uri)).json();
       const book = {
-        id: dataJson.id,
+        bookId: dataJson.id,
         ...dataJson.volumeInfo
       }
       return book
