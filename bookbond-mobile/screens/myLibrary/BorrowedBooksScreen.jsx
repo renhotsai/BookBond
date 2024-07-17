@@ -69,7 +69,7 @@ const BorrowedBooksScreen = ({ navigation }) => {
         const to = item.to.toDate().toDateString()
         return (
             <TouchableOpacity onPress={() => onOrderPress(item)}>
-                <View style={{ display: 'flex' }}>
+                <View style={{ display: 'flex',marginVertical:5 }}>
                     <View style={{ width: '95%' }}>
                         <Book item={item} />
                     </View>

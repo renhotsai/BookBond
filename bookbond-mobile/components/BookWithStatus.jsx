@@ -8,7 +8,7 @@ const BookWithStatus = ({item}) => {
     const displayStatus = item.orderType !== OrderType.In ? item.status : item.status !== OrderStatus.Accepted ? item.status : "Waiting to Pick up"
 
     return (
-        <View style={{ display: 'flex' }}>
+        <View style={{ display: 'flex',marginVertical:5}}>
             <View style={{ width: '95%' }}>
                 <Book item={item} />
             </View>
