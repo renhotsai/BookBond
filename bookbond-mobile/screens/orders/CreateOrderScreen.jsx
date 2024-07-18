@@ -73,11 +73,23 @@ const CreateOrderScreen = ({ navigation, route }) => {
     }
 
     return (
-        <View style={styles.container}>
-            <MapWithMarker item={item} />
-            <Text> {item.address}</Text>
-           <OrderDate from={item.dates.from} to={item.dates.to} />
-            <TouchableOpacity onPress={onBorrowPress}>
+        <View style={{ margin: 10, height: '95%', justifyContent: 'space-between' }}>
+            <View style={{ gap: 10 }} >
+                <MapWithMarker item={item} />
+                <OrderDate from={item.dates.from} to={item.dates.to} />
+                <View style={{flexDirection:'row',justifyContent:'space-between'}}>
+                    <Text style={{ fontWeight: 'bold', fontSize: '16vm' }}>Pick Up Address:</Text>
+                    <Text style={{ fontWeight: 'bold', fontSize: '16vm' }}>
+                        {item.address}</Text>
+                </View>
+
+                <View style={{flexDirection:'row',justifyContent:'space-between'}}>
+                <Text style={{ fontWeight: 'bold', fontSize: '16vm' }}>Owner:</Text>
+                <Text style={{ fontWeight: 'bold', fontSize: '16vm' }}>{item.owner}</Text>
+                </View>
+            </View>
+            <TouchableOpacity onPress={onBorrowPress} style={{
+            }}>
                 <Button buttonText="Borrow" />
             </TouchableOpacity>
         </View>
@@ -85,11 +97,3 @@ const CreateOrderScreen = ({ navigation, route }) => {
 }
 
 export default CreateOrderScreen
-
-const styles = StyleSheet.create({
-    container: {
-        padding: 20,
-        backgroundColor: '#f8f8f8',
-        gap: 10,
-    },
-})

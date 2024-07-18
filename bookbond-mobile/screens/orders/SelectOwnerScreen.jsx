@@ -12,8 +12,6 @@ import { Dialog } from 'react-native-simple-dialogs';
 import dayjs from 'dayjs';
 import { OrderStatus } from '../../model/OrderStatus';
 
-LogBox.ignoreLogs(['Encountered two children with the same key']);
-
 const SelectOwnerScreen = ({ navigation, route }) => {
     const { item } = route.params;
 
@@ -38,7 +36,7 @@ const SelectOwnerScreen = ({ navigation, route }) => {
     }, [])
     useEffect(() => {
         showSelectedDateBooks()
-    }, [returnDate,books,orders])
+    }, [returnDate, books, orders])
 
     const [currRegion, setCurrRegion] = useState({
         latitude: 43.6790048,
@@ -155,15 +153,11 @@ const SelectOwnerScreen = ({ navigation, route }) => {
     }
 
     const showSelectedDateBooks = () => {
-        console.log(`renew List`);
-        console.log(`orders : ${orders.length}`);
-        console.log(`books : ${books.length}`);
         const temp = []
         books.forEach(book => {
             const bookOrders = orders.filter(order => order.id === book.id);
             if (bookOrders.length === 0) {
                 temp.push(book)
-                console.log(book.id);
             } else {
                 let isAvailable = true
                 for (const order of bookOrders) {
@@ -179,7 +173,6 @@ const SelectOwnerScreen = ({ navigation, route }) => {
                 }
                 if (isAvailable) {
                     temp.push(book)
-                    console.log(book.id);
                 }
             }
         })
@@ -205,9 +198,23 @@ const SelectOwnerScreen = ({ navigation, route }) => {
     //renderItem
     const renderOwnerWithButton = ({ item }) => {
         return (
-            <View style={{ display: 'flex', flexDirection: "row", justifyContent: 'space-between', alignItems: "center", margin: 10 }}>
+            <View style={{
+                flex: 1,
+                flexDirection: 'row',
+                margin: 10,
+                backgroundColor: '#fff',
+                padding: 5,
+                borderRadius: 5,
+                shadowColor: '#000',
+                shadowOffset: { width: 0, height: 2 },
+                shadowOpacity: 0.2,
+                shadowRadius: 2,
+                elevation: 2,
+                justifyContent: 'space-between',
+                alignItems: 'center'
+            }}>
                 <TouchableOpacity onPress={() => onBookPress(item)}>
-                    <Text>{item.address}</Text>
+                    <Text style={{ fontWeight: 'bold', fontSize: '16vm' }}>{item.address}</Text>
                 </TouchableOpacity>
                 <TouchableOpacity onPress={() => onBorrowPress(item)}>
                     <Button buttonText="Borrow" />
@@ -217,8 +224,25 @@ const SelectOwnerScreen = ({ navigation, route }) => {
     }
 
     return (
-        <View style={styles.container}>
-            <View style={styles.container}>
+        <View style={{ margin: 10, gap: 10 }}>
+            <View style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-around' }}>
+                <TouchableOpacity onPress={() => setOpen(true)} style={{ display: 'flex', flexDirection: "row", gap: 10, padding: 15 }}>
+                    <Text style={styles.dateTimeTxt}>{borrowDate.toDateString()}</Text>
+                    <Text style={styles.dateTimeTxt}> - </Text>
+                    <Text style={styles.dateTimeTxt}>{returnDate.toDateString()}</Text>
+                </TouchableOpacity>
+                <Dialog
+                    visible={open}
+                    onTouchOutside={() => { setOpen(false) }} >
+                    <DatePickerWithShown
+                        borrowDate={borrowDate} setBorrowDate={setBorrowDate}
+                        returnDate={returnDate} setReturnDate={setReturnDate} />
+                    <TouchableOpacity onPress={() => { setOpen(false) }}>
+                        <Text>Done</Text>
+                    </TouchableOpacity>
+                </Dialog>
+            </View>
+          
                 <MapView
                     style={{ height: 300 }}
                     initialRegion={currRegion}
@@ -234,32 +258,12 @@ const SelectOwnerScreen = ({ navigation, route }) => {
                     </Marker>
 
                 </MapView>
-                <View style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-around' }}>
-                    <TouchableOpacity onPress={() => setOpen(true)} style={{ display: 'flex', flexDirection: "row", gap: 10 }}>
-                        <Text>{borrowDate.toDateString()}</Text>
-                        <Text> - </Text>
-                        <Text>{returnDate.toDateString()}</Text>
-                    </TouchableOpacity>
-                    <Dialog
-                        visible={open}
-                        onTouchOutside={() => { setOpen(false) }} >
-                        <DatePickerWithShown
-                            borrowDate={borrowDate} setBorrowDate={setBorrowDate}
-                            returnDate={returnDate} setReturnDate={setReturnDate} />
-                        <TouchableOpacity onPress={() => { setOpen(false) }}>
-                            <Text>Done</Text>
-                        </TouchableOpacity>
-                    </Dialog>
 
-
-                </View>
-                <FlatList
-                    data={visibleBooks}
-                    key={(item) => item.id}
-                    renderItem={renderOwnerWithButton}
-                />
-            </View>
-
+            <FlatList
+                data={visibleBooks}
+                key={(item) => item.id}
+                renderItem={renderOwnerWithButton}
+            />
         </View>
     )
 }
@@ -267,7 +271,7 @@ const SelectOwnerScreen = ({ navigation, route }) => {
 export default SelectOwnerScreen
 
 const styles = StyleSheet.create({
-    container: {
-        gap: 20
-    },
+    dateTimeTxt: {
+        fontWeight: 'bold', fontSize: '20vm',
+    }
 })
