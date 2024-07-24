@@ -65,9 +65,9 @@ const LoginScreen = (props) => {
         <View style={styles.container}>
           <Image
             style={{
-              height: 250,
-                width: 250,
-              borderRadius: 200,
+              height: 275,
+                width: 275,
+              borderRadius: 125,
                 objectFit: "contain",
             }}
             source={require("../assets/AppLogo.png")}
