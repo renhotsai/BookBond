@@ -65,15 +65,16 @@ const LoginScreen = (props) => {
         <View style={styles.container}>
           <Image
             style={{
-              height: 200,
-              width: 400,
-              objectFit: "contain",
+              height: 250,
+                width: 250,
+              borderRadius: 200,
+                objectFit: "contain",
             }}
-            source={require("../assets/icon.png")}
+            source={require("../assets/AppLogo.png")}
           />
-          <View style={{ justifyContent: "center", alignItems: "center" }}>
+          {/* <View style={{ justifyContent: "center", alignItems: "center" }}>
             <Text style={styles.title}>Login Screen</Text>
-          </View>
+          </View> */}
 
           <View style={styles.form}>
             <TextInput
