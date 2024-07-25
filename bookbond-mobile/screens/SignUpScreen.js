@@ -21,6 +21,7 @@ const SignUpScreen = (props) => {
   const [emailFromUI, setEmailFromUI] = useState("");
   const [passwordFromUI, setPasswordFromUI] = useState("");
   const [reenterPasswordFromUI, setReenterPasswordFromUI] = useState("");
+  const [addressFromUI, setAddressFromUI] = useState("");
 
   const onLogin = async () => {
     try {
@@ -42,7 +43,8 @@ const SignUpScreen = (props) => {
       firstNameFromUI !== "" &&
       lastNameFromUI !== "" &&
       phoneNumberFromUI !== "" &&
-      emailFromUI !== ""
+      emailFromUI !== "" &&
+      addressFromUI !== ""
     ) {
       console.log(
         firstNameFromUI,
@@ -68,6 +70,7 @@ const SignUpScreen = (props) => {
           contactNumber: phoneNumberFromUI,
           emailAddress: emailFromUI,
           userPassword: passwordFromUI,
+          address: addressFromUI
         });
 
         // Display success message
@@ -110,6 +113,13 @@ const SignUpScreen = (props) => {
           onChangeText={setPhoneNumberFromUI}
           value={phoneNumberFromUI}
           keyboardType="decimal-pad"
+        />
+
+        <TextInput
+          style={styles.textInputStyles}
+          placeholder="Address"
+          onChangeText={setAddressFromUI}
+          value={addressFromUI}
         />
 
         <TextInput
