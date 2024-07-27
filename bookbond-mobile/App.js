@@ -5,6 +5,7 @@ import SignUpScreen from "./screens/SignUpScreen";
 import { useState } from "react";
 import { NavigationContainer } from "@react-navigation/native";
 import StackScreen from "./screens/StackScreen";
+import NotificationContextProvider from "./context/notification";
 
 const App = () => {
   const Stack = createNativeStackNavigator();
@@ -33,9 +34,11 @@ const App = () => {
 
   return (
     <SafeAreaView style={{ flex: 1 }}>
+      <NotificationContextProvider>
       <NavigationContainer>
         {renderScreen()}
       </NavigationContainer>
+      </NotificationContextProvider>
     </SafeAreaView>
   );
 };
