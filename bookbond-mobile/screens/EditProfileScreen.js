@@ -10,6 +10,7 @@ import {
 import { auth, db } from "../controller/firebaseConfig";
 import { MaterialIcons } from "@expo/vector-icons";
 import * as Location from "expo-location";
+import { useNotification } from "../context/notification";
 
 const EditProfileScreen = ({ navigation }) => {
   const [firstNameFromUI, setFirstNameFromUI] = useState("");
@@ -22,6 +23,7 @@ const EditProfileScreen = ({ navigation }) => {
   const [deviceLocation, setDeviceLocation] = useState("");
   const [currAddress, setCurrAddress] = useState(null);
 
+  const { expoPushToken} = useNotification()
   useEffect(() => {
     getData();
   }, []);
@@ -62,6 +64,7 @@ const EditProfileScreen = ({ navigation }) => {
         lastName: lastNameFromUI,
         contactNumber: phoneNumberFromUI,
         address: addressFromUI,
+        expoPushToken: expoPushToken,
       });
       alert("Update Successful");
       navigation.goBack();

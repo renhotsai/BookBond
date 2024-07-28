@@ -5,13 +5,20 @@ import * as Notifications from 'expo-notifications';
 import Constants from 'expo-constants';
 
 const NotificationContext = createContext<NotificationContextType | null>(null)
-
+Notifications.setNotificationHandler({
+  handleNotification: async () => ({
+    shouldShowAlert: true,
+    shouldPlaySound: false,
+    shouldSetBadge: true,
+  }),
+});
 type NotificationContextType = {
-  expoPushToken: string
+  expoPushToken: string,
 }
 
 type NotificationContextProviderProps = {
-  children: React.ReactNode
+  children: React.ReactNode,
+  navigationRef: React.MutableRefObject<any>,
 }
 
 const useNotification = () => {
@@ -21,7 +28,7 @@ const useNotification = () => {
   } return context;
 }
 
-const NotificationContextProvider = ({ children }: NotificationContextProviderProps) => {
+const NotificationContextProvider = ({ children, navigationRef }: NotificationContextProviderProps) => {
   const [expoPushToken, setExpoPushToken] = useState('');
   const [channels, setChannels] = useState<Notifications.NotificationChannel[]>([]);
   const [notification, setNotification] = useState<Notifications.Notification | undefined>(
@@ -41,7 +48,9 @@ const NotificationContextProvider = ({ children }: NotificationContextProviderPr
     });
 
     responseListener.current = Notifications.addNotificationResponseReceivedListener(response => {
-      console.log(response);
+      console.log(JSON.stringify(response));
+      navigationRef.current.navigate("Main",{screen:"My Library"})
+      navigationRef.current.navigate("Orders")
     });
 
     return () => {
@@ -106,6 +115,9 @@ async function registerForPushNotificationsAsync() {
 
   return token;
 }
+
+
+
 
 export { useNotification }
 export default NotificationContextProvider

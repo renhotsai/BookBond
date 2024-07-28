@@ -2,14 +2,13 @@ import { SafeAreaView, StyleSheet, Text, View } from "react-native";
 import LoginScreen from "./screens/LoginScreen";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import SignUpScreen from "./screens/SignUpScreen";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { NavigationContainer } from "@react-navigation/native";
 import StackScreen from "./screens/StackScreen";
-import NotificationContextProvider from "./context/notification";
+import NotificationContextProvider, { useNotification } from "./context/notification";
 
 const App = () => {
-  const Stack = createNativeStackNavigator();
-
+  const navigationRef = useRef(null)
   const [currentScreen, setCurrentScreen] = useState("Login")
 
   const changeScreen = (screen) => {
@@ -34,10 +33,10 @@ const App = () => {
 
   return (
     <SafeAreaView style={{ flex: 1 }}>
-      <NotificationContextProvider>
-      <NavigationContainer>
-        {renderScreen()}
-      </NavigationContainer>
+      <NotificationContextProvider navigationRef={navigationRef}>
+        <NavigationContainer ref={navigationRef}>
+          {renderScreen()}
+        </NavigationContainer>
       </NotificationContextProvider>
     </SafeAreaView>
   );
