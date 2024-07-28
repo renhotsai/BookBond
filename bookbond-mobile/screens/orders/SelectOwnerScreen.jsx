@@ -1,4 +1,4 @@
-import { FlatList, StyleSheet, Text, TouchableOpacity, View, LogBox } from 'react-native'
+import { FlatList, StyleSheet, Text, TouchableOpacity, View, LogBox, ScrollView } from 'react-native'
 import React, { useEffect, useRef, useState } from 'react'
 import { and, collection, doc, getDocs, or, query, where } from 'firebase/firestore';
 import Button from '../../components/Button';
@@ -224,7 +224,7 @@ const SelectOwnerScreen = ({ navigation, route }) => {
     }
 
     return (
-        <View style={{ margin: 10, gap: 10 }}>
+        <View style={{ marginHorizontal: 10, gap: 10,height:'100%' }}>
             <View style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-around' }}>
                 <TouchableOpacity onPress={() => setOpen(true)} style={{ display: 'flex', flexDirection: "row", gap: 10, padding: 15 }}>
                     <Text style={styles.dateTimeTxt}>{borrowDate.toDateString()}</Text>
@@ -242,23 +242,22 @@ const SelectOwnerScreen = ({ navigation, route }) => {
                     </TouchableOpacity>
                 </Dialog>
             </View>
-          
-                <MapView
-                    style={{ height: 300 }}
-                    initialRegion={currRegion}
-                    onRegionChangeComplete={mapMoved}
-                    ref={mapRef}
-                >
-                    {markers}
-                    <Marker
-                        coordinate={currCoord}
-                        title="1 Main Street, Toronto"
-                        description='Center of Toronto'>
-                        <MaterialIcons name="person-pin-circle" size={60} color="red" />
-                    </Marker>
 
-                </MapView>
+            <MapView
+                style={{ height: 300 }}
+                initialRegion={currRegion}
+                onRegionChangeComplete={mapMoved}
+                ref={mapRef}
+            >
+                {markers}
+                <Marker
+                    coordinate={currCoord}
+                    title="1 Main Street, Toronto"
+                    description='Center of Toronto'>
+                    <MaterialIcons name="person-pin-circle" size={60} color="red" />
+                </Marker>
 
+            </MapView>
             <FlatList
                 data={visibleBooks}
                 key={(item) => item.id}

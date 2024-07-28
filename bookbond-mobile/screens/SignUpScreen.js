@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import {
   StyleSheet,
   Text,
@@ -13,6 +13,7 @@ import {
   db,
   signInWithEmailAndPassword,
 } from "../controller/firebaseConfig";
+import { useNotification } from "../context/notification";
 
 const SignUpScreen = (props) => {
   const [firstNameFromUI, setFirstNameFromUI] = useState("");
@@ -22,6 +23,8 @@ const SignUpScreen = (props) => {
   const [passwordFromUI, setPasswordFromUI] = useState("");
   const [reenterPasswordFromUI, setReenterPasswordFromUI] = useState("");
   const [addressFromUI, setAddressFromUI] = useState("");
+
+  const { expoPushToken } = useNotification()
 
   const onLogin = async () => {
     try {
@@ -70,7 +73,8 @@ const SignUpScreen = (props) => {
           contactNumber: phoneNumberFromUI,
           emailAddress: emailFromUI,
           userPassword: passwordFromUI,
-          address: addressFromUI
+          address: addressFromUI,
+          expoPushToken:expoPushToken,
         });
 
         // Display success message

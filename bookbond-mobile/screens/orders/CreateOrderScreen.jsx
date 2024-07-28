@@ -55,9 +55,46 @@ const CreateOrderScreen = ({ navigation, route }) => {
         }
     }
 
+    const postNotifications = async (token) => {
+        try {
+            const response = await fetch('https://exp.host/--/api/v2/push/send', {
+                method: 'POST',
+                headers: {
+                    Accept: 'application/json',
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    to: token,
+                    title: "New Order",
+                    body: "You got a new order",
+                    badge: 1
+                }),
+            });
+        } catch (error) {
+            console.error(error);
+        }
+    }
 
     const orderToLandlord = (email, orderId, orderToInsert) => {
         const userDocRef = doc(db, UsersCollection, email)
+        getDoc(userDocRef)
+            .then((userDoc) => {
+                if (userDoc.exists()) {
+                    const expoPushToken = userDoc.data().expoPushToken;
+                    if (expoPushToken) {
+                        postNotifications(expoPushToken);
+                    } else {
+                        console.error('Expo push token not found in user document');
+                    }
+                } else {
+                    console.error('No such document!');
+                }
+            })
+            .catch((error) => {
+                console.error('Error fetching user document:', error);
+            });
+
+
         const userOrderDocRef = doc(userDocRef, Orders, orderId);
         orderToInsert.orderId = orderId;
         orderToInsert.orderType = OrderType.Out
@@ -77,15 +114,15 @@ const CreateOrderScreen = ({ navigation, route }) => {
             <View style={{ gap: 10 }} >
                 <MapWithMarker item={item} />
                 <OrderDate from={item.dates.from} to={item.dates.to} />
-                <View style={{flexDirection:'row',justifyContent:'space-between'}}>
+                <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
                     <Text style={{ fontWeight: 'bold', fontSize: '16vm' }}>Pick Up Address:</Text>
                     <Text style={{ fontWeight: 'bold', fontSize: '16vm' }}>
                         {item.address}</Text>
                 </View>
 
-                <View style={{flexDirection:'row',justifyContent:'space-between'}}>
-                <Text style={{ fontWeight: 'bold', fontSize: '16vm' }}>Owner:</Text>
-                <Text style={{ fontWeight: 'bold', fontSize: '16vm' }}>{item.owner}</Text>
+                <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+                    <Text style={{ fontWeight: 'bold', fontSize: '16vm' }}>Owner:</Text>
+                    <Text style={{ fontWeight: 'bold', fontSize: '16vm' }}>{item.owner}</Text>
                 </View>
             </View>
             <TouchableOpacity onPress={onBorrowPress} style={{
