@@ -66,7 +66,8 @@ const CreateOrderScreen = ({ navigation, route }) => {
                 body: JSON.stringify({
                     to: token,
                     title: "New Order",
-                    body: "You got a new order"
+                    body: "You got a new order",
+                    badge: 1
                 }),
             });
         } catch (error) {

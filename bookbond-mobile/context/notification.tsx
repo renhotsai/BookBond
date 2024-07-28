@@ -49,8 +49,9 @@ const NotificationContextProvider = ({ children, navigationRef }: NotificationCo
 
     responseListener.current = Notifications.addNotificationResponseReceivedListener(response => {
       console.log(JSON.stringify(response));
-      navigationRef.current.navigate("Main",{screen:"My Library"})
-      navigationRef.current.navigate("Orders")
+      navigationRef.current.navigate("Main", { screen: "My Library" })
+      navigationRef.current.navigate("Main", { screen: "Orders" })
+      Notifications.setBadgeCountAsync(0)
     });
 
     return () => {
