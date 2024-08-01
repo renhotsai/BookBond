@@ -9,6 +9,7 @@ import {
 } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
 import ReactNativeAsyncStorage from "@react-native-async-storage/async-storage";
+import { getStorage } from "firebase/storage";
 
 // TODO: Your web app's Firebase configuration
 const firebaseConfig = {
@@ -31,6 +32,8 @@ const auth = initializeAuth(app, {
 });
 
 const db = getFirestore(app);
+
+const storage = getStorage(app)
 
 //Collections
 const UsersCollection = "UsersCollection"
@@ -58,4 +61,7 @@ export {
   OwnBooks,
   CollectBooks,
   Orders,
+
+  //Storage
+  storage
 };
