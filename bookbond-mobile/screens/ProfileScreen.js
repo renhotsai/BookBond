@@ -33,11 +33,6 @@ const ProfileScreen = () => {
     navigation.navigate("Edit Profile");
   };
 
-  useEffect(() => {
-    getData();
-    setUserEmail(auth.currentUser.email);
-  }, []);
-
   const getData = () => {
     const docRef = doc(db, "UsersCollection", auth.currentUser.email);
 
@@ -78,7 +73,8 @@ const ProfileScreen = () => {
         setIsLoading(false);
       }, 2000);
     } else {
-      setImage(null);
+      // setImage(null);
+      updateProfilePicture()
       setInterval(() => {
         setIsLoading(false);
       }, 2000);
@@ -132,6 +128,26 @@ const ProfileScreen = () => {
   };
 
   const [isModalVisible, setIsModalVisible] = useState(false);
+
+  const updateProfilePicture = async () => {
+    if (userEmail) {
+      const reference = ref(storage, `images/${userEmail}`);
+      try {
+        const url = await getDownloadURL(reference);
+        setImage(url);
+      } catch (error) {
+        console.log(`Error fetching the download URL for ${userEmail}:`, error);
+      }
+    } else {
+      console.log("No user email set.");
+    }
+  };
+
+  useEffect(() => {
+    getData();
+    setUserEmail(auth.currentUser.email);
+    updateProfilePicture();
+  }, [userEmail]);
 
   return (
     <View style={{ flex: 1, padding: 20, justifyContent: "center" }}>
