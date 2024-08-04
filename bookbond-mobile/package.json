@@ -36,7 +36,11 @@
     "react-native-simple-dialogs": "^2.1.0",
     "react-native-tab-view": "^3.5.2",
     "react-native-ui-datepicker": "^2.0.3",
-    "typescript": "~5.3.3"
+    "typescript": "~5.3.3",
+    "expo-device": "~6.0.2",
+    "expo-constants": "~16.0.2",
+    "expo-notifications": "~0.28.11",
+    "expo-image-picker": "~15.0.7"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0"
