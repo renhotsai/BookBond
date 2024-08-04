@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, StyleSheet, Text } from 'react-native';
+import { View, StyleSheet } from 'react-native';
 import BorrowedBooksScreen from './BorrowedBooksScreen';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 import CollectionScreen from './CollectionScreen';
@@ -17,7 +17,7 @@ const MyLibraryScreen = () => {
         <View style={styles.container}>
             <Tab.Navigator screenOptions={{
                 tabBarShowLabel: true,
-                tabBarLabelStyle:{fontSize:'6vm'}
+                tabBarLabelStyle: { fontSize: '6vm' }
             }}>
                 <Tab.Screen name="History" component={BorrowedBooksScreen}
                     options={{ tabBarIcon: (() => (<Fontisto name="history" size={24} color="black" />)) }} />

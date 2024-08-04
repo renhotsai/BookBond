@@ -1,5 +1,5 @@
-import React, { useEffect } from 'react'
-import { Text, View, Image, StyleSheet, TouchableOpacity } from 'react-native';
+import React from 'react'
+import { Text, View, Image, StyleSheet } from 'react-native';
 import { convertToHttps } from '../utitlies /urlConvert';
 
 

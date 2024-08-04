@@ -1,4 +1,4 @@
-import { FlatList, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
+import { FlatList, StyleSheet, TouchableOpacity, View } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import Book from '../../components/Book'
 import { BooksCollection, OwnBooks, UsersCollection, auth, db } from '../../controller/firebaseConfig'

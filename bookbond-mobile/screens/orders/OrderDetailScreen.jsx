@@ -1,9 +1,7 @@
-import { Alert, Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
+import { Alert, StyleSheet, View } from 'react-native'
 import React from 'react'
-import Button from '../../components/Button';
-import { collection, doc, getDoc, getDocs, query, updateDoc, where } from 'firebase/firestore';
+import { collection, doc, getDocs, query, updateDoc, where } from 'firebase/firestore';
 import { OrderStatus } from '../../model/OrderStatus';
-import { OrderType } from '../../model/OrderType';
 import PendingScreen from './PendingScreen';
 import AcceptedScreen from './AcceptedScreen';
 import PickedScreen from './PickedScreen';

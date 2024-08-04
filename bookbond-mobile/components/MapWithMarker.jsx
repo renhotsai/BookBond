@@ -1,5 +1,5 @@
-import { Button, Dimensions, StyleSheet, Text, View } from 'react-native'
-import React, { useEffect, useRef, useState } from 'react'
+import {  StyleSheet } from 'react-native'
+import React, {  useRef } from 'react'
 import MapView, { Marker } from 'react-native-maps';
 import { Entypo } from '@expo/vector-icons';
 

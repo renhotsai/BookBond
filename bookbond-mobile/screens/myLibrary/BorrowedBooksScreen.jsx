@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { FlatList, Text, View, Image, StyleSheet, TouchableOpacity, Dimensions } from 'react-native';
-import { collection, query, where, onSnapshot, getDocs, updateDoc, doc, getDoc } from 'firebase/firestore';
+import { FlatList, Text, View, StyleSheet, TouchableOpacity } from 'react-native';
+import { collection, query, where, onSnapshot, doc, getDoc } from 'firebase/firestore';
 import { db, auth, UsersCollection, Orders, BooksCollection } from '../../controller/firebaseConfig';
 import Book from '../../components/Book';
 import { OrderType } from '../../model/OrderType';

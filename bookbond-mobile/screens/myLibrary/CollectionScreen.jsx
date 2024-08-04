@@ -1,7 +1,7 @@
-import { FlatList, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
+import { FlatList, StyleSheet, TouchableOpacity, View } from 'react-native'
 import React, { useEffect, useState } from 'react'
-import { collection, doc, getDocs, onSnapshot, query, where } from 'firebase/firestore'
-import { BooksCollection, CollectBooks, UsersCollection, auth, db } from '../../controller/firebaseConfig'
+import { collection, doc, onSnapshot, query } from 'firebase/firestore'
+import { CollectBooks, UsersCollection, auth, db } from '../../controller/firebaseConfig'
 import Book from '../../components/Book'
 import { EmptyList } from '../../components/EmptyList'
 

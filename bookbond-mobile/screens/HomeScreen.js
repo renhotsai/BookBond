@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { FlatList, Text, View, TextInput, TouchableOpacity, StyleSheet } from "react-native";
-import { AntDesign, Ionicons } from '@expo/vector-icons';
-import { Slider } from 'react-native-elements';
+import { AntDesign, Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
 import Book from "../components/Book";
 import ModalDropdown from 'react-native-modal-dropdown';
 

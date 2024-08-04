@@ -1,4 +1,4 @@
-import { View, Text, TouchableOpacity, Alert, Button } from "react-native";
+import { TouchableOpacity, Alert, Button } from "react-native";
 import React, { useState } from "react";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import TabScreen from "./TabScreen";

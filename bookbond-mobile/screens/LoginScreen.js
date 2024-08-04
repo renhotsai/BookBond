@@ -10,10 +10,8 @@ import {
 import TabScreen from "./TabScreen";
 import {
   auth,
-  db,
   signInWithEmailAndPassword,
-  signOut,
-  createUserWithEmailAndPassword,
+  signOut
 } from "../controller/firebaseConfig";
 
 const LoginScreen = (props) => {

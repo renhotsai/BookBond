@@ -1,8 +1,8 @@
-import { FlatList, StyleSheet, Text, TouchableOpacity, View, LogBox, ScrollView } from 'react-native'
+import { FlatList, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import React, { useEffect, useRef, useState } from 'react'
-import { and, collection, doc, getDocs, or, query, where } from 'firebase/firestore';
+import { collection, getDocs, query, where } from 'firebase/firestore';
 import Button from '../../components/Button';
-import { BooksCollection, OrderCollection, Orders, UsersCollection, auth, db } from '../../controller/firebaseConfig';
+import { BooksCollection, OrderCollection, db } from '../../controller/firebaseConfig';
 import MapView, { Marker } from 'react-native-maps';
 import { MaterialIcons } from '@expo/vector-icons';
 import { getCurrentLocation, reverseGeoCoding } from '../../controller/LocationHelper';
@@ -224,7 +224,7 @@ const SelectOwnerScreen = ({ navigation, route }) => {
     }
 
     return (
-        <View style={{ marginHorizontal: 10, gap: 10,height:'100%' }}>
+        <View style={{ marginHorizontal: 10, gap: 10, height: '100%' }}>
             <View style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-around' }}>
                 <TouchableOpacity onPress={() => setOpen(true)} style={{ display: 'flex', flexDirection: "row", gap: 10, padding: 15 }}>
                     <Text style={styles.dateTimeTxt}>{borrowDate.toDateString()}</Text>
