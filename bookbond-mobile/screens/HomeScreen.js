@@ -16,8 +16,8 @@ const HomeScreen = ({ navigation }) => {
     const [selectedLanguage, setSelectedLanguage] = useState('');
     const [startYear, setStartYear] = useState(1000);
     const [endYear, setEndYear] = useState(2024);
-    
-    
+
+
     useEffect(() => {
         fetchData();
     }, []);
@@ -30,23 +30,25 @@ const HomeScreen = ({ navigation }) => {
         const dataJson = await (await fetch(`https://www.googleapis.com/books/v1/volumes?q=""&startIndex=0&maxResults=40`)).json();
         const tempBooks = [];
         const tempLanguages = new Set();
-
-        for (const item of dataJson.items) {
-            if (item.volumeInfo) {
-                const book = {
-                    bookId: item.id,
-                    title: item.volumeInfo.title || "No Title",
-                    authors: item.volumeInfo.authors || ["Unknown Author"],
-                    publishedDate: item.volumeInfo.publishedDate || "No Date",
-                    language: item.volumeInfo.language || "No specified",
-                    ...item.volumeInfo
-                };
-                tempBooks.push(book);
-                tempLanguages.add(book.language);
+       
+        if (dataJson.items) {
+            for (const item of dataJson.items) {
+                if (item.volumeInfo) {
+                    const book = {
+                        bookId: item.id,
+                        title: item.volumeInfo.title || "No Title",
+                        authors: item.volumeInfo.authors || ["Unknown Author"],
+                        publishedDate: item.volumeInfo.publishedDate || "No Date",
+                        language: item.volumeInfo.language || "No specified",
+                        ...item.volumeInfo
+                    };
+                    tempBooks.push(book);
+                    tempLanguages.add(book.language);
+                }
             }
+            setBooksFromAPI(tempBooks);
+            setLanguages([...tempLanguages]);
         }
-        setBooksFromAPI(tempBooks);
-        setLanguages([...tempLanguages]);
     };
 
     const filterBooks = () => {
