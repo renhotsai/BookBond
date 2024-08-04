@@ -2,7 +2,9 @@ import React, { useEffect, useState } from "react";
 import { FlatList, Text, View, TextInput, TouchableOpacity, StyleSheet } from "react-native";
 import { AntDesign, Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
 import Book from "../components/Book";
-import ModalDropdown from 'react-native-modal-dropdown';
+import { Dialog } from "react-native-simple-dialogs";
+import SelectDropdown from 'react-native-select-dropdown'
+import ISO6391 from "iso-639-1";
 
 //https://blog.openreplay.com/setting-up-google-admob-ads-with-react-native/
 // https://medium.com/@bansikhokhani27/how-to-add-google-ads-in-react-native-9a8d3a66fe43
@@ -10,26 +12,41 @@ import ModalDropdown from 'react-native-modal-dropdown';
 const HomeScreen = ({ navigation }) => {
     const [searchText, setSearchText] = useState('');
     const [booksFromAPI, setBooksFromAPI] = useState([]);
-    const [filteredBooks, setFilteredBooks] = useState([]);
     const [languages, setLanguages] = useState([]);
     const [selectedLanguage, setSelectedLanguage] = useState('');
-    const [startYear, setStartYear] = useState(1000);
-    const [endYear, setEndYear] = useState(2024);
-
+    const [open, setOpen] = useState(false)
 
     useEffect(() => {
+        getLanguages()
         fetchData();
     }, []);
 
+    const getLanguages = () => {
+        const languagesFromAPI = ISO6391.getAllCodes()
+        const tempLanguages = [{ name: 'All', code: '' }]
+        languagesFromAPI.map((lang) => {
+            const name = ISO6391.getName(lang)
+            const item = {
+                name: name,
+                code: lang
+            }
+            tempLanguages.push(item)
+        })
+        setLanguages(tempLanguages)
+    }
+
     useEffect(() => {
-        filterBooks();
-    }, [searchText, booksFromAPI, selectedLanguage, startYear, endYear]);
+        fetchData();
+    }, [searchText, selectedLanguage]);
 
     const fetchData = async () => {
-        const dataJson = await (await fetch(`https://www.googleapis.com/books/v1/volumes?q=""&startIndex=0&maxResults=40`)).json();
+        let url = `https://www.googleapis.com/books/v1/volumes?q='${searchText}'`
+        if (selectedLanguage !== '') {
+            url += `&langRestrict=${selectedLanguage}`
+        }
+        url += `&startIndex=0&maxResults=40`
+        const dataJson = await (await fetch(url)).json();
         const tempBooks = [];
-        const tempLanguages = new Set();
-       
         if (dataJson.items) {
             for (const item of dataJson.items) {
                 if (item.volumeInfo) {
@@ -42,23 +59,10 @@ const HomeScreen = ({ navigation }) => {
                         ...item.volumeInfo
                     };
                     tempBooks.push(book);
-                    tempLanguages.add(book.language);
                 }
             }
             setBooksFromAPI(tempBooks);
-            setLanguages([...tempLanguages]);
         }
-    };
-
-    const filterBooks = () => {
-        const filtered = booksFromAPI.filter(book => {
-            const matchesSearchText = book.title.toLowerCase().includes(searchText.toLowerCase());
-            const matchesLanguage = selectedLanguage ? book.language === selectedLanguage : true;
-            const publishedYear = book.publishedDate ? new Date(book.publishedDate).getFullYear() : 0;
-            const matchesYearRange = publishedYear >= startYear && publishedYear <= endYear;
-            return matchesSearchText && matchesLanguage && matchesYearRange;
-        });
-        setFilteredBooks(filtered);
     };
 
     const onBookPress = (item) => {
@@ -92,12 +96,55 @@ const HomeScreen = ({ navigation }) => {
                     value={searchText}
                     onChangeText={setSearchText}
                 />
-                <TouchableOpacity onPress={filterBooks}>
+                <TouchableOpacity onPress={booksFromAPI}>
                     <AntDesign name="search1" size={24} color="black" />
                 </TouchableOpacity>
+                <TouchableOpacity onPress={() => setOpen(true)}>
+                    <Ionicons name="funnel" size={24} color="black" />
+                </TouchableOpacity>
             </View>
+            <Dialog
+                visible={open}
+                onTouchOutside={() => { setOpen(false) }} >
+                <View style={styles.languagePicker}>
+                    <Text style={styles.filterLabel}>Select Language</Text>
+                    <SelectDropdown
+                        data={languages}
+                        onSelect={(selectedItem, index) => {
+                            if (selectedItem.code === "") {
+                                setSelectedLanguage("")
+                            } else {
+                                setSelectedLanguage(selectedItem.code)
+                            }
+                            setOpen(false)
+                        }}
+                        renderButton={(selectedItem, isOpened) => {
+                            return (
+                                <View style={styles.dropdownButtonStyle}>
+                                    <Text style={styles.dropdownButtonTxtStyle}>
+                                        {selectedLanguage ? languages.find(lang => lang.code === selectedLanguage).name : "All"}
+                                    </Text>
+                                    <MaterialCommunityIcons name={isOpened ? 'chevron-up' : 'chevron-down'} style={styles.dropdownButtonArrowStyle} />
+                                </View>
+                            );
+                        }}
+                        renderItem={(item, index, isSelected) => {
+                            return (
+                                <View style={{ ...styles.dropdownItemStyle, ...(isSelected && { backgroundColor: '#D2D9DF' }) }}>
+                                    <Text style={styles.dropdownItemTxtStyle}>{item.name}</Text>
+                                </View>
+                            );
+                        }}
+                        showsVerticalScrollIndicator={false}
+                        dropdownStyle={styles.dropdownMenu}
+                    />
+                </View>
+            </Dialog>
+            {(languages && selectedLanguage) &&
+                <Text style={{ paddingHorizontal: 20, paddingVertical:10 }}>Language:{languages.find(lang => lang.code === selectedLanguage).name}</Text>
+            }
             <FlatList
-                data={filteredBooks}
+                data={booksFromAPI}
                 renderItem={renderBookItem}
                 keyExtractor={(item) => item.bookId}
                 contentContainerStyle={styles.bookList}
@@ -161,30 +208,56 @@ const styles = StyleSheet.create({
     languagePicker: {
         marginBottom: 20,
     },
-    dropdown: {
-        borderWidth: 1,
-        borderColor: '#ddd',
-        borderRadius: 5,
-        paddingHorizontal: 10,
+    dropdownButtonStyle: {
+        width: 200,
+        height: 50,
+        backgroundColor: '#E9ECEF',
+        borderRadius: 12,
+        flexDirection: 'row',
+        justifyContent: 'center',
+        alignItems: 'center',
+        paddingHorizontal: 12,
+    },
+    dropdownButtonTxtStyle: {
+        flex: 1,
+        fontSize: 18,
+        fontWeight: '500',
+        color: '#151E26',
+    },
+    dropdownButtonArrowStyle: {
+        fontSize: 28,
+    },
+    dropdownButtonIconStyle: {
+        fontSize: 28,
+        marginRight: 8,
+    },
+    dropdownMenuStyle: {
+        backgroundColor: '#E9ECEF',
+        borderRadius: 8,
+    },
+    dropdownItemStyle: {
+        width: '100%',
+        flexDirection: 'row',
+        paddingHorizontal: 12,
+        justifyContent: 'center',
+        alignItems: 'center',
         paddingVertical: 8,
-        backgroundColor: '#fff',
     },
-    dropdownText: {
-        fontSize: 16,
-        color: '#000',
+    dropdownItemTxtStyle: {
+        flex: 1,
+        fontSize: 18,
+        fontWeight: '500',
+        color: '#151E26',
     },
-    dropdownMenu: {
-        width: '90%',
+    dropdownItemIconStyle: {
+        fontSize: 28,
+        marginRight: 8,
     },
     filterLabel: {
         fontSize: 16,
         fontWeight: 'bold',
         marginBottom: 10,
-    },
-    sliderContainer: {
-        width: '100%',
-        alignItems: 'stretch',
-    },
+    },   
     track: {
         height: 10,
         borderRadius: 5,
@@ -193,16 +266,6 @@ const styles = StyleSheet.create({
         height: 20,
         width: 20,
         backgroundColor: '#3F51B5',
-    },
-    sliderLabelContainer: {
-        width: '100%',
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        paddingHorizontal: 20,
-        marginTop: 10,
-    },
-    sliderLabel: {
-        fontSize: 16,
     },
     bookList: {
         paddingHorizontal: 20,
