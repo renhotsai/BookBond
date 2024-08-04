@@ -5,6 +5,11 @@ import { Slider } from 'react-native-elements';
 import Book from "../components/Book";
 import ModalDropdown from 'react-native-modal-dropdown';
 
+//https://blog.openreplay.com/setting-up-google-admob-ads-with-react-native/
+// https://medium.com/@bansikhokhani27/how-to-add-google-ads-in-react-native-9a8d3a66fe43
+import { AppOpenAd, TestIds } from 'react-native-google-mobile-ads';
+
+
 const HomeScreen = ({ navigation }) => {
     const [searchText, setSearchText] = useState('');
     const [booksFromAPI, setBooksFromAPI] = useState([]);
@@ -13,6 +18,18 @@ const HomeScreen = ({ navigation }) => {
     const [selectedLanguage, setSelectedLanguage] = useState('');
     const [startYear, setStartYear] = useState(1000);
     const [endYear, setEndYear] = useState(2024);
+    
+    const appOpenAd = AppOpenAd.createForAdRequest(TestIds.APP_OPEN, {
+        requestNonPersonalizedAdsOnly: true,
+        keywords: ['fashion', 'clothing'],
+    });
+    
+    useEffect(() => {
+        appOpenAd.load();
+        setTimeout(() => {
+            appOpenAd.show();
+        }, 1000);
+    }, []);
 
     useEffect(() => {
         fetchData();
