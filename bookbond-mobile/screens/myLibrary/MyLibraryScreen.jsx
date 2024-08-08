@@ -17,10 +17,10 @@ const MyLibraryScreen = () => {
         <View style={styles.container}>
             <Tab.Navigator screenOptions={{
                 tabBarShowLabel: true,
-                tabBarLabelStyle: { fontSize: '6vm' }
+                tabBarLabelStyle: { fontSize: 6, fontWeight: 'bold' },
             }}>
                 <Tab.Screen name="History" component={BorrowedBooksScreen}
-                    options={{ tabBarIcon: (() => (<Fontisto name="history" size={24} color="black" />)) }} />
+                    options={{ tabBarIcon: (() => (<Fontisto name="history" size={24} color="black" />)), }} />
                 <Tab.Screen name="Collections" component={CollectionScreen}
                     options={{ tabBarIcon: (() => (<FontAwesome name="heart" size={24} color="black" />)) }} />
                 <Tab.Screen name="My Books" component={MyBooksScreen}
